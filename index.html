@@ -211,6 +211,16 @@ tfoot td{font-weight:700;border-bottom:0;background:var(--surface-2)}
 }
 
 
+
+.pessoa-card{border-left:4px solid var(--border)}
+.pessoa-card.rec{border-left-color:var(--success)}.pessoa-card.dev{border-left-color:var(--danger)}.pessoa-card.ok{border-left-color:var(--success)}
+.pc-n{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}.pc-n b{font-size:16px;flex:1}
+.pc-v{font-size:28px;font-weight:800;letter-spacing:-.02em;margin-bottom:10px}
+.pc-l{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid var(--border);font-size:13px}.pc-l span{color:var(--muted)}
+.pessoas{margin-bottom:16px}
+tr.tot-linha td{background:var(--primary-soft);color:var(--primary);font-weight:800;border-bottom:0}
+tr.tot-linha td.eur{font-size:15px}
+
 /* ================= TELEMÓVEL (só até 900px; o computador não muda) ================= */
 .ac-mob{display:none}
 @media(max-width:900px){
@@ -532,9 +542,11 @@ const lerLocal = k => { try { return localStorage.getItem(k); } catch (e) { retu
 const gravarLocal = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
 
 function api(fn, ...args) {
+  const escreve = !/^(get|listar|ler)/i.test(fn);   // qualquer gravação invalida o que já está carregado
+  if (escreve) S.versao = (S.versao || 0) + 1;
   return new Promise((resolve, reject) => {
     google.script.run
-      .withSuccessHandler(resolve)
+      .withSuccessHandler(r => { if (escreve) S.versao = (S.versao || 0) + 1; resolve(r); })
       .withFailureHandler(err => {
         const msg = ((err && err.message) || String(err)).replace(/^Error:\s*/, '');
         if (/Sessão expirada/i.test(msg)) sessaoExpirou();
@@ -688,7 +700,11 @@ function irPara(aba) {
   $('#v-' + aba).classList.add('ativo');
   $('#titulo').textContent = TIT[aba];
   $('#periodo').hidden = ['relatorios', 'anual', 'definicoes', 'partilhadas'].includes(aba);
+  /* já carregado há pouco, no mesmo mês e sem alterações entretanto: mostra de imediato, sem voltar a carregar */
+  const k = getAno() + '-' + getMes(), c = (S.cacheAba || (S.cacheAba = {}))[aba];
+  if (['dashboard', 'contas', 'movimentos', 'anual'].includes(aba) && c && c.k === k && c.v === (S.versao || 0) && Date.now() - c.t < 120000) return;
   carregarAba(aba);
+  S.cacheAba[aba] = {k, v:S.versao || 0, t:Date.now()};
 }
 function carregarAba(aba) {
   if (aba === 'dashboard') carregarDashboard();
@@ -701,8 +717,10 @@ function carregarAba(aba) {
   else if (aba === 'partilhadas') carregarPartilhadas();
 }
 function sincronizar() {
+  S.cacheAba = {};
   if (S.cartaoSel) return carregarDetalheCartao();
   carregarAba(S.aba);
+  S.cacheAba[S.aba] = {k:getAno() + '-' + getMes(), v:S.versao || 0, t:Date.now()};
 }
 function mudarMes(delta) {
   const d = new Date(getAno(), getMes() - 1 + delta, 1);
@@ -1753,9 +1771,21 @@ function renderPartilhadas() {
     ${kpi('Total receitas', r.receitas, '<span class="muted">receitas fixas do mês</span>', 'pos')}
     ${kpi('Pedro passou', r.pedro, '<span class="muted">contribuição fixa (abate à casa)</span>')}
     ${kpi('Cada um envia à conta conjunta', r.cadaUm, `<span class="muted">(casa − receitas) ÷ 2 · ${esc(A)} e ${esc(B)}</span>`)}</div>`;
-  const quem = `<div class="card sec"><h4>Quem transfere o quê em ${esc(refRotulo(d.ref))}</h4><div class="tabela-wrap"><table><thead><tr><th>Pessoa</th><th class="dir-r">Para a conta conjunta</th><th class="dir-r">Para o outro</th><th class="dir-r">A receber do outro</th></tr></thead><tbody>${d.transferir.map(t =>
-    `<tr><td><b>${esc(t.pessoa)}</b></td><td class="dir-r eur">${eur(t.contaConjunta)}</td><td class="dir-r eur ${t.paraOutro ? 'neg' : ''}">${eur(t.paraOutro)}</td><td class="dir-r eur ${t.receberOutro ? 'pos' : ''}">${eur(t.receberOutro)}</td></tr>`).join('')}</tbody></table></div>
-    ${r.porCartao && r.porCartao.length ? `<p class="muted mini" style="margin:10px 0 0">Compras por cartão: ${r.porCartao.map(x => `${esc(x.cartao)} ${eur(x.total)}`).join(' · ')}</p>` : ''}</div>`;
+  const cc = r.contaConjuntaPago || {a:0, b:0}, ouro = r.liquido || 0, ac = r.acertado || 0;
+  const cartaoPessoa = (P, Q, ehA) => {
+    const bruto = ehA ? ouro : -ouro, feito = ehA ? ac : -ac, aberto = ehA ? liq : -liq, pagoCC = ehA ? cc.a : cc.b, faltaCC = Math.max(0, Math.round((r.cadaUm - pagoCC) * 100) / 100);
+    const sit = Math.abs(aberto) < 0.005 ? `<span class="chip ok">Compras acertadas</span>` : aberto > 0 ? `<span class="chip ok">A receber de ${esc(Q)}</span>` : `<span class="chip mau">Tem de passar a ${esc(Q)}</span>`;
+    const val = Math.abs(aberto) < 0.005 ? 0 : Math.abs(aberto);
+    return `<div class="card pessoa-card ${Math.abs(aberto) < 0.005 ? 'ok' : aberto > 0 ? 'rec' : 'dev'}">
+      <div class="pc-n"><span class="avatar">${esc(P.slice(0, 2).toUpperCase())}</span><b>${esc(P)}</b>${sit}</div>
+      <div class="pc-v ${Math.abs(aberto) < 0.005 ? '' : aberto > 0 ? 'pos' : 'neg'}">${Math.abs(aberto) < 0.005 ? eur(0) : (aberto > 0 ? '+ ' : '− ') + eur(val)}</div>
+      <div class="pc-l"><span>Para a conta conjunta</span><b>${eur(r.cadaUm)}</b></div>
+      <div class="pc-l"><span>↳ já enviado</span><b>${eur(pagoCC)}${faltaCC > 0.004 ? ` <span class="chip av">falta ${eur(faltaCC)}</span>` : ' <span class="chip ok">✓</span>'}</b></div>
+      <div class="pc-l"><span>Compras entre vocês (mês)</span><b class="${Math.abs(bruto) < 0.005 ? '' : bruto > 0 ? 'pos' : 'neg'}">${Math.abs(bruto) < 0.005 ? eur(0) : (bruto > 0 ? 'a receber ' : 'a pagar ') + eur(Math.abs(bruto))}</b></div>
+      <div class="pc-l"><span>↳ já acertado</span><b>${eur(Math.abs(feito))}</b></div></div>`;
+  };
+  const quem = `<div class="grid cols2 pessoas">${cartaoPessoa(A, B, true)}${cartaoPessoa(B, A, false)}</div>
+    ${r.porCartao && r.porCartao.length ? `<p class="muted mini" style="margin:-6px 0 16px">Compras por cartão: ${r.porCartao.map(x => `${esc(x.cartao)} ${eur(x.total)}`).join(' · ')}</p>` : ''}`;
   const tCasa = tabelaPart(d.casa, [{t:'Data', f:x => esc(x.data)}, {t:'Descrição', f:x => `<b>${esc(x.desc)}</b>${x.parcela ? ` <span class="muted mini">${esc(x.parcela)}</span>` : ''}`}, {t:'Categoria', f:x => esc(x.cat)}, {t:'Valor', f:x => eur(x.valor), dir:1}], 'Sem despesas gerais da casa neste mês.', 'casa', true);
   const tRec = tabelaPart(d.receitas, [{t:'Data', f:x => esc(x.data)}, {t:'Descrição', f:x => `<b>${esc(x.desc)}</b>`}, {t:'Quem passou', f:x => esc(x.pagou)}, {t:'Valor', f:x => eur(x.valor), dir:1}], 'Sem receitas fixas neste mês.', 'rec', true);
   const tComp = tabelaPart(d.compras, [{t:'Data', f:x => esc(x.data)}, {t:'Descrição', f:x => `<b>${esc(x.desc)}</b>${x.parcela ? ` <span class="muted mini">${esc(x.parcela)}</span>` : ''}${x.valor < 0 ? ' <span class="chip ok">Estorno</span>' : ''}${x.origem && /cart/i.test(x.origem) ? ' <span class="chip neu">da app</span>' : ''}`},
