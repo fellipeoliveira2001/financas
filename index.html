@@ -3,7 +3,7 @@
 <head>
 <base target="_top">
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -248,21 +248,30 @@ tr.tot-linha td.eur{font-size:15px}
   .fat-nav select{min-width:0;max-width:none;flex:1;font-size:14px}
   .fat-nav .btn{padding:8px 10px;flex:none}
   /* tabelas -> cartões */
+  html,body{max-width:100%;overflow-x:hidden}
   .tabela-wrap{overflow:visible}
+  .tabela-wrap:has(table.matriz),.tabela-wrap:has(table.matriz-ac){overflow-x:auto;-webkit-overflow-scrolling:touch}
+  input,select,textarea{font-size:16px}
   table.cart,table.cart tbody,table.cart tfoot{display:block;width:100%}
   table.cart thead{display:none}
-  table.cart tr{display:grid;grid-template-columns:1fr auto;column-gap:10px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--border)}
+  table.cart tr{display:grid;grid-template-columns:1fr 1fr;column-gap:10px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--border)}
   table.cart tr:last-child{border-bottom:0}
   table.cart tr:hover{background:transparent}
-  table.cart td{display:flex;justify-content:space-between;align-items:center;gap:12px;grid-column:1/-1;padding:2px 0;border:0;text-align:right;font-size:13px;min-width:0}
-  table.cart td::before{content:attr(data-label);color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;text-align:left;flex:none}
+  table.cart td{display:flex;flex-direction:column;align-items:flex-start;gap:1px;grid-column:auto;padding:4px 0;border:0;text-align:left;font-size:13px;min-width:0;overflow-wrap:anywhere}
+  table.cart td::before{content:attr(data-label);color:var(--muted);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+  table.cart td.dir-r{align-items:flex-start;text-align:left}
   table.cart td[data-label=""]::before{display:none}
-  table.cart td.t-titulo{grid-column:1;grid-row:1;justify-content:flex-start;text-align:left;font-weight:700;font-size:14px}
+  table.cart td.t-titulo{grid-column:1;grid-row:1;align-items:flex-start;text-align:left;font-weight:700;font-size:14px}
   table.cart td.t-titulo::before{display:none}
-  table.cart td.t-valor{grid-column:2;grid-row:1;justify-content:flex-end;font-weight:700;font-size:14px}
+  table.cart td.t-valor{grid-column:2;grid-row:1;align-items:flex-end;text-align:right;font-weight:700;font-size:14px}
   table.cart td.t-valor::before{display:none}
-  table.cart td.t-acoes{justify-content:flex-end;gap:4px;padding-top:4px}
-  table.cart td.t-full{display:block;text-align:center}
+  table.cart td.t-acoes{flex-direction:row;justify-content:flex-end;align-items:center;gap:4px;padding-top:4px;grid-column:2}
+  table.cart td.t-acoes::before{display:none}
+  table.cart td.t-full{display:block;text-align:left;grid-column:1/-1}
+  table.cart tr.tot-linha{display:flex;justify-content:space-between;align-items:center;flex-direction:row;padding:12px 14px;border-radius:12px;background:var(--primary-soft);margin-top:8px;border:0}
+  table.cart tr.tot-linha td{background:transparent;padding:0;display:block;flex:none;font-size:15px;text-align:left}
+  table.cart tr.tot-linha td::before{display:none}
+  table.cart tr.tot-linha td:empty{display:none}
   table.cart td.t-full::before{display:none}
   table.cart td:empty{display:none}
   table.cart tfoot tr{background:var(--surface-2);border-radius:10px}
@@ -270,6 +279,7 @@ tr.tot-linha td.eur{font-size:15px}
   table.cart td.t-data{grid-column:1;grid-row:2;justify-content:flex-start;color:var(--muted);font-size:12px}
   table.cart td.t-data::before{display:none}
   table.cart:has(td.t-data) td.t-acoes{grid-column:2;grid-row:2;padding:0}
+  table.cart td.t-data{align-items:flex-start}
   .kpis>.card:last-child:nth-child(odd){grid-column:1/-1}
   #c-cats>div{grid-template-columns:1fr!important;gap:8px!important}
   #c-cats .chart-h.peq{height:180px}
