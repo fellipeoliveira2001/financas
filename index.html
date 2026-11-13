@@ -210,6 +210,81 @@ tfoot td{font-weight:700;border-bottom:0;background:var(--surface-2)}
   #toasts{bottom:140px;right:12px;left:12px}
 }
 
+
+/* ================= TELEMÓVEL (só até 900px; o computador não muda) ================= */
+.ac-mob{display:none}
+@media(max-width:900px){
+  /* cabeçalho: título + ícones numa linha, período por baixo */
+  .topbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 8px;padding:10px 14px 10px;padding-top:calc(10px + env(safe-area-inset-top))}
+  .topbar h1{flex:1;min-width:0;font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .topbar .dir{display:contents}
+  .topbar .periodo{order:9;flex:1 1 100%;justify-content:space-between}
+  .topbar .periodo select{flex:1;text-align:center;text-align-last:center}
+  .topbar .ib.solo{width:36px;height:36px}
+  .topbar .user{padding:3px}
+  .content{padding:12px 12px 120px}
+  .card{padding:14px;border-radius:16px}
+  .grid{gap:12px}
+  .kpis{grid-template-columns:1fr 1fr!important;gap:10px}
+  .kpis .card{padding:12px}
+  .kpi-v{font-size:19px;word-break:break-word}
+  /* filtros em grelha */
+  .filtros{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .filtros .busca,.filtros>:only-child{grid-column:1/-1}
+  .filtros input,.filtros select{width:100%;font-size:16px}
+  .campo input,.campo select{font-size:16px}
+  /* navegação das faturas numa linha */
+  .fat-nav{flex-wrap:nowrap;gap:6px}
+  .fat-nav select{min-width:0;max-width:none;flex:1;font-size:14px}
+  .fat-nav .btn{padding:8px 10px;flex:none}
+  /* tabelas -> cartões */
+  .tabela-wrap{overflow:visible}
+  table.cart,table.cart tbody,table.cart tfoot{display:block;width:100%}
+  table.cart thead{display:none}
+  table.cart tr{display:grid;grid-template-columns:1fr auto;column-gap:10px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--border)}
+  table.cart tr:last-child{border-bottom:0}
+  table.cart tr:hover{background:transparent}
+  table.cart td{display:flex;justify-content:space-between;align-items:center;gap:12px;grid-column:1/-1;padding:2px 0;border:0;text-align:right;font-size:13px;min-width:0}
+  table.cart td::before{content:attr(data-label);color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;text-align:left;flex:none}
+  table.cart td[data-label=""]::before{display:none}
+  table.cart td.t-titulo{grid-column:1;grid-row:1;justify-content:flex-start;text-align:left;font-weight:700;font-size:14px}
+  table.cart td.t-titulo::before{display:none}
+  table.cart td.t-valor{grid-column:2;grid-row:1;justify-content:flex-end;font-weight:700;font-size:14px}
+  table.cart td.t-valor::before{display:none}
+  table.cart td.t-acoes{justify-content:flex-end;gap:4px;padding-top:4px}
+  table.cart td.t-full{display:block;text-align:center}
+  table.cart td.t-full::before{display:none}
+  table.cart td:empty{display:none}
+  table.cart tfoot tr{background:var(--surface-2);border-radius:10px}
+
+  table.cart td.t-data{grid-column:1;grid-row:2;justify-content:flex-start;color:var(--muted);font-size:12px}
+  table.cart td.t-data::before{display:none}
+  table.cart:has(td.t-data) td.t-acoes{grid-column:2;grid-row:2;padding:0}
+  .kpis>.card:last-child:nth-child(odd){grid-column:1/-1}
+  #c-cats>div{grid-template-columns:1fr!important;gap:8px!important}
+  #c-cats .chart-h.peq{height:180px}
+  .legenda{max-height:none}
+  .filtros .check{grid-column:1/-1;margin:0;padding:4px 2px}
+  .filtros input[type=checkbox]{width:20px;height:20px;flex:none;accent-color:var(--primary)}
+  .filtros .btn{grid-column:1/-1}
+  /* permissões: cartões por pessoa em vez da matriz */
+  .ac-desk{display:none}
+  .ac-mob{display:block}
+  .ac-u{border:1px solid var(--border);border-radius:12px;margin-bottom:8px;background:var(--surface)}
+  .ac-u>summary{display:flex;align-items:center;gap:8px;padding:12px;cursor:pointer;list-style:none}
+  .ac-u>summary::-webkit-details-marker{display:none}
+  .ac-u>summary b{flex:1}
+  .ac-u[open]>summary{border-bottom:1px solid var(--border)}
+  .ac-g{padding:8px 12px}
+  .ac-g h5{margin:6px 0;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--primary)}
+  .ac-g label{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px}
+  .ac-g label:last-child{border:0}
+  .ac-g input{width:20px;height:20px;accent-color:var(--primary);flex:none}
+  /* formulários e menus */
+  .drawer{width:100%}
+  .card-h{flex-wrap:wrap}
+}
+
 /* --- app instalada: áreas seguras do iPhone --- */
 .topbar{padding-top:calc(14px + env(safe-area-inset-top))}
 @media(max-width:900px){.topbar{padding-top:calc(12px + env(safe-area-inset-top))}}
@@ -1786,8 +1861,20 @@ function secAcessos(ac) {
       `<td><button class="acao" data-def="ac-ed:${i}" aria-label="Editar utilizador">${ico('edit')}</button></td></tr>`; }).join('');
   return `<div class="card sec"><div class="card-h"><div><h3>Acessos e permissões</h3><p class="sub-t" style="margin:0">Uma coluna para cada página e ação da app. Marque o que cada pessoa pode ver ou fazer; as alterações guardam-se logo. Todos usam o mesmo link. A mesma tabela existe na folha "ACESSOS" da planilha.</p></div>
     <button class="btn peq pri" data-def="ac-novo">${ico('plus')} Novo utilizador</button></div>
-    <div class="tabela-wrap"><table class="matriz-ac"><thead>${cab1}${cab2}</thead><tbody>${corpo}</tbody></table></div>
+    <div class="tabela-wrap ac-desk"><table class="matriz-ac"><thead>${cab1}${cab2}</thead><tbody>${corpo}</tbody></table></div>
+    <div class="ac-mob">${acMovel(ac)}</div>
     <p class="muted mini" style="margin:10px 0 0"><b>E-mails:</b> o(s) e-mail(s) em "Notificações por e-mail" (acima) recebem sempre tudo. As outras pessoas só recebem o que marcar aqui. O alerta de metas mostra a categoria, o orçamento e o valor gasto.</p></div>`;
+}
+
+/* versão para telemóvel das permissões: um cartão por pessoa, com as mesmas caixas */
+function acMovel(ac) {
+  const grupos = []; ac.catalogo.forEach(c => { let g = grupos.find(x => x.g === c.g); if (!g) grupos.push(g = {g:c.g, it:[]}); g.it.push(c); });
+  return ac.usuarios.map((u, i) => { const adm = u.perfil === 'Administrador';
+    return `<details class="ac-u${u.ativo ? '' : ' dim'}"><summary><b>${esc(u.utilizador)}</b>${u.dono ? ' <span class="chip neu">dono</span>' : adm ? ' <span class="chip av">admin</span>' : ''}${u.ativo ? '' : ' <span class="chip mau">desativado</span>'}
+      <button class="acao" data-def="ac-ed:${i}" aria-label="Editar utilizador">${ico('edit')}</button></summary>
+      ${adm ? '<p class="muted mini">Administradores têm acesso a tudo.</p>' : grupos.map(g => `<div class="ac-g"><h5>${esc(g.g)}</h5>${g.it.map(c => `<label><input type="checkbox" data-acp="${i}:${c.k}" ${u.perms[c.k] ? 'checked' : ''}> <span>${esc(c.t)}</span></label>`).join('')}</div>`).join('')}
+      <div class="ac-g"><h5>Recebe por e-mail</h5>${ac.notif.map(n => `<label><input type="checkbox" data-acn="${i}:${n.k}" ${u.notif[n.k] ? 'checked' : ''} ${u.email ? '' : 'disabled'}> <span>${esc(n.n)}</span></label>`).join('')}${u.email ? '' : '<p class="muted mini">Defina primeiro o e-mail desta pessoa (lápis).</p>'}</div>
+    </details>`; }).join('');
 }
 
 const PRESETS_AC = {
@@ -1839,6 +1926,25 @@ document.addEventListener('change', e => {
   if (cp) { const [i, k] = cp.split(':'); guardarAcessoLinha(+i, u => { u.perms[k] = e.target.checked; }); }
   if (cn) { const [i, k] = cn.split(':'); guardarAcessoLinha(+i, u => { u.notif[k] = e.target.checked; }); }
 });
+
+
+/* ---------- telemóvel: tabelas passam a cartões (só muda a apresentação; no computador nada muda) ---------- */
+function adaptarTabelas() {
+  document.querySelectorAll('.tabela-wrap table:not(.matriz):not(.matriz-ac)').forEach(t => {
+    const ths = [...t.querySelectorAll('thead th')]; if (!ths.length) return;
+    const nomes = ths.map(h => h.textContent.trim());
+    let ti = nomes.findIndex(n => /^(descri|d[ií]vida|pessoa|fatura|m[eê]s|categoria|quem|quando)/i.test(n)); if (ti < 0) ti = 0;
+    let vi = nomes.findIndex(n => /^(valor|total)/i.test(n));
+    t.classList.add('cart');
+    t.querySelectorAll('tbody tr, tfoot tr').forEach(tr => { if (tr.dataset.cart === '1') return; tr.dataset.cart = '1';
+      [...tr.children].forEach((td, k) => { if (td.colSpan > 1) { td.classList.add('t-full'); return; }
+        td.dataset.label = (nomes[k] || '').replace(/[↓↑▲▼]/g, '').trim();
+        if (/^data$/i.test(td.dataset.label) && k !== ti) td.classList.add('t-data');
+        if (k === ti) td.classList.add('t-titulo'); else if (k === vi) td.classList.add('t-valor');
+        if (!nomes[k] && !td.textContent.trim()) td.classList.add('t-acoes'); }); }); });
+}
+(function () { let q = 0; const run = () => { q = 0; try { adaptarTabelas(); } catch (e) {} };
+  new MutationObserver(() => { if (!q) q = requestAnimationFrame(run); }).observe(document.body, {childList:true, subtree:true}); run(); })();
 
 /* =====================================================================
  * Eventos
