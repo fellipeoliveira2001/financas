@@ -304,8 +304,8 @@ tr.grp td{background:var(--surface-2);color:var(--muted);font-size:11px;font-wei
   table.cart:has(td.t-data) td.t-acoes{grid-column:2;grid-row:2;padding:0}
   table.cart td.t-data{align-items:flex-start}
   .kpis>.card:last-child:nth-child(odd){grid-column:1/-1}
-  #c-cats>div{grid-template-columns:1fr!important;gap:8px!important}
-  #c-cats .chart-h.peq{height:180px}
+  #c-cats>div,#part-cats>div:not(.card-h){grid-template-columns:1fr!important;gap:8px!important}
+  #c-cats .chart-h.peq,#part-cats .chart-h.peq{height:180px}
   .legenda{max-height:none}
   .filtros .check{grid-column:1/-1;margin:0;padding:4px 2px}
   .filtros input[type=checkbox]{width:20px;height:20px;flex:none;accent-color:var(--primary)}
@@ -1927,18 +1927,32 @@ function renderPartilhadas() {
      <div class="card sec"><div class="card-h"><h3>Compras do mês</h3><span class="muted">cartão que pagou e como se divide</span></div>${tComp}</div>
      <div class="card sec"><div class="card-h"><h3>Acertos e pagamentos</h3></div>${tAc}</div>
      ${catPartilhadas(d, A, B)}`;
+  desenharCatPart();
 }
 
-/** Gastos por categoria dos dois juntos (casa + compras do mês) — secção secundária, no fim da página. */
+/** Gastos por categoria dos dois juntos (casa + compras do mês): mesmo desenho do Dashboard, no fim da página. */
 function catPartilhadas(d, A, B) {
   const m = {};
-  [...d.casa, ...d.compras].forEach(x => { const k = x.cat || 'Sem categoria'; const o = m[k] || (m[k] = {cat:k, tot:0, a:0, b:0, n:0}); o.tot += x.valor; o.a += x.parteA; o.b += x.parteB; o.n++; });
-  const l = Object.values(m).sort((x, y) => y.tot - x.tot), total = l.reduce((t, x) => t + x.tot, 0);
-  if (!l.length || total <= 0) return '';
+  [...d.casa, ...d.compras].forEach(x => { const k = x.cat || 'Sem categoria'; const o = m[k] || (m[k] = {cat:k, tot:0, a:0, b:0}); o.tot += x.valor; o.a += x.parteA; o.b += x.parteB; });
+  const l = Object.values(m).filter(x => x.tot > 0.004).sort((x, y) => y.tot - x.tot);
+  S.partCats = l;
+  if (!l.length) return '';
+  const tot = l.reduce((t, x) => t + x.tot, 0);
   return `<div class="card sec" id="part-cats"><div class="card-h"><h3>Gastos por categoria</h3><span class="muted">${esc(A)} + ${esc(B)} · casa e compras do mês</span></div>
-    <div class="tabela-wrap"><table><thead><tr><th>Categoria</th><th class="dir-r">Total</th><th class="dir-r">%</th><th class="dir-r">${esc(A)}</th><th class="dir-r">${esc(B)}</th></tr></thead><tbody>
-    ${l.map(x => `<tr><td><b>${esc(x.cat)}</b> <span class="muted mini">${x.n} lanç.</span><div class="barra-mini"><i style="width:${Math.max(2, x.tot / l[0].tot * 100)}%"></i></div></td><td class="dir-r eur">${eur(x.tot)}</td><td class="dir-r">${(x.tot / total * 100).toFixed(0)}%</td><td class="dir-r eur">${eur(x.a)}</td><td class="dir-r eur">${eur(x.b)}</td></tr>`).join('')}
-    <tr class="tot-linha"><td><b>Total</b></td><td class="dir-r eur"><b>${eur(total)}</b></td><td class="dir-r">100%</td><td class="dir-r eur"><b>${eur(l.reduce((t, x) => t + x.a, 0))}</b></td><td class="dir-r eur"><b>${eur(l.reduce((t, x) => t + x.b, 0))}</b></td></tr></tbody></table></div></div>`;
+    <div style="display:grid;grid-template-columns:minmax(150px,200px) 1fr;gap:16px;align-items:center">
+    <div class="chart-h peq"><canvas id="ch-part-cats"></canvas></div>
+    <div class="legenda">${l.map((x, i) => `<div class="leg"><span class="dot" style="background:${PALETA[i % PALETA.length]}"></span><span class="nome">${esc(x.cat)}<span class="muted mini" style="display:block">${esc(A)} ${eur(x.a)} · ${esc(B)} ${eur(x.b)}</span></span>
+      <span class="pct">${(x.tot / tot * 100).toFixed(0)}%</span><b class="eur">${eur(x.tot)}</b></div>`).join('')}</div></div></div>`;
+}
+function desenharCatPart() {
+  const l = S.partCats || []; if (!l.length || !$('#ch-part-cats')) return;
+  const tot = l.reduce((t, x) => t + x.tot, 0), c = corTema();
+  desenhar('partcats', 'ch-part-cats', {type:'doughnut',
+    data:{labels:l.map(x => x.cat), datasets:[{data:l.map(x => x.tot), backgroundColor:l.map((_, i) => PALETA[i % PALETA.length]), borderWidth:2, borderColor:c.surface}]},
+    options:{responsive:true, maintainAspectRatio:false, cutout:'68%', plugins:{legend:{display:false}, tooltip:{callbacks:{label:x => ` ${x.label}: ${eur(x.parsed)}`}}}},
+    plugins:[{id:'centro', beforeDraw(ch) { const {ctx, width, height} = ch; ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = c.text; ctx.font = "700 14px 'Inter',sans-serif"; ctx.fillText(eur(tot), width / 2, height / 2 - 6);
+      ctx.fillStyle = c.muted; ctx.font = "500 11px 'Inter',sans-serif"; ctx.fillText('Total', width / 2, height / 2 + 12); ctx.restore(); }}]});
 }
 
 function refsDisponiveis() {
