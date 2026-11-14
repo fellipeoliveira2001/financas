@@ -241,7 +241,7 @@ tr.grp td{background:var(--surface-2);color:var(--muted);font-size:11px;font-wei
   .sim-l>input,.sim-t>span:first-child{grid-row:1/4;align-self:start}
   .sim-l span:nth-child(n+3),.sim-t span:nth-child(n+3){text-align:left}
   .sim-l span[data-l]::before,.sim-t span[data-l]::before{content:attr(data-l);display:block;font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.03em}
-  .sim-t span:empty{display:none}
+  .sim-t span:empty:not(:first-child){display:none}
 }
 
 /* ================= TELEMÓVEL (só até 900px; o computador não muda) ================= */
