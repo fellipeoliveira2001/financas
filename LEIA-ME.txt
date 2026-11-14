@@ -1,0 +1,33 @@
+APP INSTALÁVEL NO IPHONE (PWA) — passo a passo
+==============================================
+
+PARTE A — Apps Script (uma vez)
+1. Substitua Code.gs, Dashboard.html e appsscript.json pelos novos e guarde.
+   (No appsscript.json, "access" passa a ANYONE_ANONYMOUS.)
+2. Execute 'migrarEstrutura' (se ainda não executou depois da última versão).
+3. Implementar ▸ Gerir implementações ▸ editar (lápis) ▸ Versão: Nova versão
+   Executar como: Eu · Quem tem acesso: QUALQUER PESSOA (não "com Conta Google").
+   Implementar. Copie o "URL da aplicação Web" (termina em /exec).
+
+PARTE B — Pôr a app online (GitHub Pages, grátis)
+1. Crie conta em github.com (se não tiver) e depois "New repository":
+   nome: financas · Public · Create repository.
+2. "uploading an existing file": arraste TODOS os ficheiros desta pasta (index.html,
+   manifest.webmanifest, sw.js, config.js e os 4 ícones .png) · Commit changes.
+3. Settings ▸ Pages ▸ Source: "Deploy from a branch" · Branch: main · pasta /(root) · Save.
+4. Ao fim de 1–2 minutos aparece o endereço: https://O-SEU-UTILIZADOR.github.io/financas/
+
+PARTE C — No iPhone
+1. Abra esse endereço no Safari.
+2. Na 1.ª vez cola o URL /exec do Apps Script (Parte A) e toca em "Guardar e continuar".
+3. Entre com o seu utilizador e senha (deixe marcado "Manter sessão iniciada").
+4. Partilhar (quadrado com seta) ▸ "Adicionar ao ecrã principal" ▸ Adicionar.
+   Fica o ícone "Finanças". Abre em ecrã inteiro, sem barras do Safari.
+Para o Kenneth: o mesmo endereço do GitHub; ele entra com o utilizador dele e faz o passo 4.
+
+NOTAS
+- A planilha, as permissões, os e-mails e as cópias continuam todos no Apps Script.
+- O endereço do GitHub é público, mas sem utilizador e senha ninguém vê dados.
+- Sessão: fica iniciada até 30 dias (ou até tocar em sair / mudar a senha).
+- Se atualizar o Dashboard.html no futuro, peça-me o index.html novo e substitua-o no GitHub.
+- O link antigo do Apps Script continua a funcionar em paralelo.
