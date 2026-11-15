@@ -37,6 +37,7 @@ html,body{margin:0}
 body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
 button,input,select{font:inherit;color:inherit}
 .num,.kpi-v,td.n,.eur{font-variant-numeric:tabular-nums}
+td.eur,td.dir-r{white-space:nowrap}
 .ico{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
 .muted{color:var(--muted)}
 [hidden]{display:none!important}
@@ -78,7 +79,7 @@ button,input,select{font:inherit;color:inherit}
 
 /* ---------- componentes ---------- */
 .grid{display:grid;gap:16px;margin-bottom:16px}
-.kpis{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(176px,1fr))}
 .g21{grid-template-columns:2fr 1fr}.g11{grid-template-columns:1fr 1fr}
 .cards-auto{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow)}
@@ -304,7 +305,7 @@ tr.grp td{background:var(--surface-2);color:var(--muted);font-size:11px;font-wei
   table.cart:has(td.t-data) td.t-acoes{grid-column:2;grid-row:2;padding:0}
   table.cart td.t-data{align-items:flex-start}
   .kpis>.card:last-child:nth-child(odd){grid-column:1/-1}
-  #c-cats>div,#part-cats>div:not(.card-h){grid-template-columns:1fr!important;gap:8px!important}
+  #c-cats>div.cats-grid,#part-cats>div:not(.card-h){grid-template-columns:1fr!important;gap:8px!important}
   #c-cats .chart-h.peq,#part-cats .chart-h.peq{height:180px}
   .legenda{max-height:none}
   .filtros .check{grid-column:1/-1;margin:0;padding:4px 2px}
@@ -397,12 +398,33 @@ body:not(.p-OBJETIVOS_GERIR) [data-obj-novo],body:not(.p-OBJETIVOS_GERIR) .obj-a
   .imp-row{grid-template-columns:auto 1fr auto;grid-template-areas:"ck d v" "cat cat cat"}.imp-row .imp-ck{grid-area:ck}.imp-row .imp-d{grid-area:d}.imp-row>b.eur{grid-area:v}.imp-row select{grid-area:cat}
   .busca-dlg{padding-top:4vh}.fecho-vs{display:none}
 }
+
+/* ---------- categorias com subcategorias ---------- */
+.cats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;align-items:start}.cats-grid .chart-h.peq{height:190px;max-width:260px;width:100%;margin:0 auto}.cats-grid .legenda{max-height:none}
+.leg-cab{cursor:pointer}.leg-cab:hover{background:var(--surface-2)}.leg-cab .chev{display:inline-flex;width:14px;margin-right:4px;transition:transform .15s;vertical-align:middle}.leg-cab .chev svg{width:12px;height:12px}.leg-g.aberto .chev{transform:rotate(90deg)}
+.leg.sub{padding-left:30px;font-size:13px;color:var(--muted)}.leg.sub .eur{font-weight:600;color:var(--text)}
+tr.grp-cab{cursor:pointer;background:var(--surface-2);font-weight:700}tr.grp-cab:hover{background:var(--primary-soft)}tr.grp-cab .chev{display:inline-flex;width:14px;margin-right:4px;transition:transform .15s;vertical-align:middle}tr.grp-cab .chev svg{width:12px;height:12px}tr.grp-cab.aberto .chev{transform:rotate(90deg)}
+tr.grp-sub td.ind{padding-left:28px;color:var(--muted)}
+.cat-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.cat-grp{border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden}.cat-grp>header{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;background:var(--surface-2);flex-wrap:wrap}
+.cat-grp>summary{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;background:var(--surface-2);flex-wrap:wrap;cursor:pointer;list-style:none}
+.cat-grp>summary::-webkit-details-marker{display:none}
+.cat-grp>summary>b::before{content:'›';display:inline-block;width:14px;transition:transform .15s}
+.cat-grp[open]>summary>b::before{transform:rotate(90deg)}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:6px}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:0}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+.cat-grp .lin{padding:8px 12px 8px 22px}.cat-grp.dim{opacity:.6}
+.inc-card{border:1px solid var(--warn,#f0b429);background:var(--warn-soft);border-radius:12px;padding:12px 14px;margin-bottom:14px}
+.inc-it{display:grid;grid-template-columns:1fr minmax(180px,260px) auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid rgba(0,0,0,.08)}.inc-it:first-of-type{border-top:0}
+@media (max-width:760px){.inc-it{grid-template-columns:1fr}.cat-grp .lin{padding-left:14px}}
 </style>
 </head>
 <body>
 
 <!-- ícones -->
 <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-seta" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></symbol>
   <symbol id="i-dash" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></symbol>
   <symbol id="i-contas" viewBox="0 0 24 24"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></symbol>
   <symbol id="i-lista" viewBox="0 0 24 24"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></symbol>
@@ -441,7 +463,7 @@ body:not(.p-OBJETIVOS_GERIR) [data-obj-novo],body:not(.p-OBJETIVOS_GERIR) .obj-a
     <input type="text" id="l-user" placeholder="Utilizador" autocomplete="username">
     <input type="password" id="l-pass" placeholder="Senha" autocomplete="current-password">
     <label class="check"><input type="checkbox" id="l-ver"> Mostrar senha</label>
-    <label class="check" id="l-lembrar-box" hidden><input type="checkbox" id="l-lembrar" checked> Manter sessão iniciada neste dispositivo</label>
+    
     <button class="btn pri bloco" id="l-btn">Entrar</button>
     <div class="erro" id="l-erro"></div>
     <button class="voltar" id="l-servidor" hidden style="margin:14px auto 0;font-size:12px;font-weight:600;opacity:.7">Mudar endereço do servidor</button>
@@ -598,8 +620,9 @@ if (MODO_PWA) {
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const EUR = new Intl.NumberFormat('pt-PT', {style:'currency', currency:'EUR'});
+const EUR = new Intl.NumberFormat('pt-PT', {style:'currency', currency:'EUR', useGrouping:'always'});
 const eur = v => EUR.format(Number(v) || 0);
+const pl = (n, u, m) => (Number(n) === 1 ? u : m);
 const norm = s => String(s ?? '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 const ico = n => `<svg class="ico"><use href="#i-${n}"/></svg>`;
 const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
@@ -616,7 +639,8 @@ const S = {token:null, usuario:'', aba:'dashboard', opcoes:null, movs:[], movOrd
 const hojeISO = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
 const getMes = () => parseInt($('#f-mes').value, 10);
 const getAno = () => parseInt($('#f-ano').value, 10);
-const armazem = () => (MODO_PWA ? localStorage : sessionStorage);      // na app instalada a sessão mantém-se entre aberturas
+const armazem = () => sessionStorage;      // a sessão não persiste: ao reabrir a app pede sempre o login
+try { localStorage.removeItem('pf_token'); } catch (e) {}
 const guardar = (k, v) => { try { armazem().setItem(k, v); } catch (e) {} };
 const ler = k => { try { return armazem().getItem(k); } catch (e) { return null; } };
 const lerLocal = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
@@ -754,7 +778,7 @@ function fazerLogin() {
       else er.textContent = (r && r.mensagem) || 'Utilizador ou senha incorretos.';
     })
     .withFailureHandler(e => { btn.disabled = false; btn.textContent = 'Entrar'; er.textContent = 'Erro no servidor: ' + (e.message || e); })
-    .validarLogin(u, p, MODO_PWA && $('#l-lembrar').checked);
+    .validarLogin(u, p, false);
 }
 
 function sessaoExpirou() {
@@ -821,6 +845,11 @@ function mudouPeriodo() {
   S.cartaoRef = {mes:getMes(), ano:getAno()};
   sincronizar();
 }
+function catMae(nome) {
+  const o = S.opcoes; if (!o || !nome) return '';
+  if (!S._mae || S._mae.ref !== o) { const m = {}; [...(o.planoDespesa || []), ...(o.planoReceita || [])].forEach(g => g.subs.forEach(x => { const k = norm(x); if (!m[k]) m[k] = g.categoria; })); S._mae = {ref: o, m}; }
+  const c = S._mae.m[norm(nome)]; return c && norm(c) !== norm(nome) ? c : '';
+}
 function garantirOpcoes() {
   if (S.opcoes) return Promise.resolve(S.opcoes);
   return api('getOpcoesFormulario').then(o => (S.opcoes = o));
@@ -830,8 +859,14 @@ function garantirOpcoes() {
  * Formulários em drawer
  * =================================================================== */
 function opcHTML(lista, atual) {
-  return lista.map(o => { const v = typeof o === 'object' ? o.v : o, t = typeof o === 'object' ? o.t : o;
+  return lista.map(o => { if (o && o.grupo) return `<optgroup label="${esc(o.grupo)}">${opcHTML(o.itens, atual)}</optgroup>`; const v = typeof o === 'object' ? o.v : o, t = typeof o === 'object' ? o.t : o;
     return `<option value="${esc(v)}"${String(v) === String(atual) ? ' selected' : ''}>${esc(t)}</option>`; }).join('');
+}
+/** Menu agrupado Categoria › Subcategoria. Se o valor atual já não existe no plano, aparece à parte para poder ser corrigido. */
+function catOpcoes(plano, atual) {
+  const todas = (plano || []).flatMap(g => g.subs), l = (plano || []).map(g => ({grupo:g.tipoPlano === 'Transferência' ? 'Transferência › ' + g.categoria : g.categoria, itens:g.subs}));
+  if (atual && !todas.includes(atual)) l.unshift({grupo:'Fora do plano (corrigir)', itens:[atual]});
+  return l.length ? l : ['Outros'];
 }
 function comAtual(lista, atual) { return atual && !lista.includes(atual) ? [atual, ...lista] : lista; }
 
@@ -945,7 +980,7 @@ async function formTransacao(tipo, cartaoPre) {
   const titulo = ehRec ? 'Nova receita' : ehCartao ? 'Nova despesa de cartão' : 'Nova despesa';
   if (ehCartao && !o.cartoes.length) return toast('Crie primeiro um cartão.', 'erro');
   if (!ehCartao && !o.contas.length) return toast('Crie primeiro uma conta.', 'erro');
-  const cats = ehRec ? o.categoriasReceita : o.categoriasDespesa;
+  const plano = ehRec ? o.planoReceita : o.planoDespesa;
   const faturas = []; const base = new Date(getAno(), getMes() - 3, 1);
   for (let i = 0; i < 16; i++) { const d = new Date(base.getFullYear(), base.getMonth() + i, 1); faturas.push({v: valFatura(d.getMonth() + 1, d.getFullYear()), t: MESES[d.getMonth()].substring(0, 3) + '/' + d.getFullYear()}); }
   const campos = [{id:'valor', tipo:'valor', obrigatorio:true}];
@@ -953,7 +988,7 @@ async function formTransacao(tipo, cartaoPre) {
   campos.push(
     {id:'data', label:'Data', tipo:'date', valor:hojeISO(), obrigatorio:true},
     {id:'descricao', label:'Descrição', placeholder:ehRec ? 'Ex.: Salário' : 'Ex.: Supermercado'},
-    {id:'categoria', label:'Categoria', tipo:'select', opcoes:cats.length ? cats : ['Geral']},
+    {id:'categoria', label:'Categoria › Subcategoria', tipo:'select', opcoes:catOpcoes(plano)},
     {id:'conta', label:ehCartao ? 'Cartão' : 'Conta', tipo:'select', opcoes:ehCartao ? o.cartoes : o.contas, valor:cartaoPre});
   if (ehCartao) {
     campos.push({id:'fatura', label:'Fatura de referência', tipo:'select', opcoes:faturas});
@@ -987,12 +1022,12 @@ async function formTransacao(tipo, cartaoPre) {
 async function formEditarTransacao(item) {
   let o; try { o = await garantirOpcoes(); } catch (e) { return falhou(e); }
   const ehCartao = item.tipoAba === ABA_CART, ehRec = item.tipoAba === ABA_REC;
-  const cats = ehRec ? o.categoriasReceita : o.categoriasDespesa;
+  const plano = ehRec ? o.planoReceita : o.planoDespesa;
   const campos = [{id:'valor', tipo:'valor', valor:Math.abs(item.valor), obrigatorio:true}];
   if (!ehRec) campos.push({id:'reembolso', label:'Tipo', tipo:'select', opcoes:[{v:'nao', t:'Despesa'}, {v:'sim', t:'Reembolso / estorno (valor a favor)'}], valor:item.valor < 0 ? 'sim' : 'nao'});
   campos.push({id:'data', label:'Data', tipo:'date', valor:item.iso, obrigatorio:true},
     {id:'descricao', label:'Descrição', valor:item.descricao},
-    {id:'categoria', label:'Categoria', tipo:'select', opcoes:comAtual(cats, item.categoria), valor:item.categoria});
+    {id:'categoria', label:'Categoria › Subcategoria', tipo:'select', opcoes:catOpcoes(plano, item.categoria), valor:item.categoria});
   if (!ehCartao) campos.push({id:'conta', label:'Conta', tipo:'select', opcoes:comAtual(o.contas, item.conta), valor:item.conta});
   if (ehCartao && item.faturaRef) {
     const [fm, fa] = item.faturaRef.split('/').map(Number), fats = [];
@@ -1080,20 +1115,28 @@ function renderFluxo(h) {
       scales:{y:{beginAtZero:true, ticks:{callback:v => eur(v)}, grid:{drawBorder:false}}, x:{grid:{display:false}}}}});
 }
 
-function renderCategorias(cat) {
-  const tot = cat.valores.reduce((a, b) => a + b, 0);
-  if (!cat.labels.length) { $('#c-cats').innerHTML = vazio('Sem gastos neste mês', 'Registe uma despesa para ver a distribuição.'); return; }
-  $('#c-cats').innerHTML = `<div style="display:grid;grid-template-columns:minmax(150px,200px) 1fr;gap:16px;align-items:center">
-    <div class="chart-h peq"><canvas id="ch-cats"></canvas></div>
-    <div class="legenda">${cat.labels.map((n, i) => `<div class="leg"><span class="dot" style="background:${PALETA[i % PALETA.length]}"></span><span class="nome">${esc(n)}</span>
-      <span class="pct">${tot ? (cat.valores[i] / tot * 100).toFixed(0) : 0}%</span><b class="eur">${eur(cat.valores[i])}</b></div>`).join('')}</div></div>`;
-  const c = corTema();
-  desenhar('cats', 'ch-cats', {type:'doughnut',
-    data:{labels:cat.labels, datasets:[{data:cat.valores, backgroundColor:cat.labels.map((_, i) => PALETA[i % PALETA.length]), borderWidth:2, borderColor:c.surface}]},
+/** Legenda por categoria-mãe; clicar numa linha mostra as subcategorias. */
+function legendaGrupos(grupos, tot, cls) {
+  return grupos.map((g, i) => `<div class="leg-g"><div class="leg leg-cab" role="button" tabindex="0" aria-expanded="false"><span class="dot" style="background:${PALETA[i % PALETA.length]}"></span><span class="nome"><span class="chev">${ico('seta')}</span>${esc(g.categoria)}${g.incidencia ? ' <span class="chip av">a classificar</span>' : ''}</span>
+      <span class="pct">${tot ? (g.total / tot * 100).toFixed(g.total / tot < 0.1 ? 1 : 0) : 0}%</span><b class="eur ${cls || ''}">${eur(g.total)}</b></div>
+    <div class="subs" hidden>${g.subs.map(x => `<div class="leg sub"><span class="nome">${esc(x.nome)}</span><span class="pct">${tot ? (x.total / tot * 100).toFixed(1) : 0}%</span><b class="eur">${eur(x.total)}</b></div>`).join('')}</div></div>`).join('');
+}
+function desenharDonutGrupos(chave, canvasId, grupos, centro) {
+  const tot = grupos.reduce((a, g) => a + g.total, 0), c = corTema();
+  desenhar(chave, canvasId, {type:'doughnut',
+    data:{labels:grupos.map(g => g.categoria), datasets:[{data:grupos.map(g => g.total), backgroundColor:grupos.map((_, i) => PALETA[i % PALETA.length]), borderWidth:2, borderColor:c.surface}]},
     options:{responsive:true, maintainAspectRatio:false, cutout:'68%', plugins:{legend:{display:false}, tooltip:{callbacks:{label:x => ` ${x.label}: ${eur(x.parsed)}`}}}},
     plugins:[{id:'centro', beforeDraw(ch) { const {ctx, width, height} = ch; ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillStyle = c.text; ctx.font = "700 14px 'Inter',sans-serif"; ctx.fillText(eur(tot), width / 2, height / 2 - 6);
-      ctx.fillStyle = c.muted; ctx.font = "500 11px 'Inter',sans-serif"; ctx.fillText('Total', width / 2, height / 2 + 12); ctx.restore(); }}]});
+      ctx.fillStyle = c.muted; ctx.font = "500 11px 'Inter',sans-serif"; ctx.fillText(centro || 'Total', width / 2, height / 2 + 12); ctx.restore(); }}]});
+}
+function renderCategorias(cat) {
+  const grupos = cat.grupos || cat.labels.map((n, i) => ({categoria:n, total:cat.valores[i], subs:[]}));
+  const tot = grupos.reduce((a, g) => a + g.total, 0);
+  if (!grupos.length) { $('#c-cats').innerHTML = vazio('Sem gastos neste mês', 'Registe uma despesa para ver a distribuição.'); return; }
+  $('#c-cats').innerHTML = `<div class="cats-grid"><div class="chart-h peq"><canvas id="ch-cats"></canvas></div>
+    <div class="legenda">${legendaGrupos(grupos, tot)}</div></div>`;
+  desenharDonutGrupos('cats', 'ch-cats', grupos);
 }
 
 function renderDividasMes(l) {
@@ -1105,7 +1148,7 @@ function renderDividasMes(l) {
     : p.atrasada ? '<span class="chip mau">Em atraso</span>'
     : p.dias < 0 ? '<span class="chip mau">Venceu</span>'
     : p.dias === 0 ? '<span class="chip mau">Vence hoje</span>'
-    : p.dias <= 3 ? `<span class="chip av">Em ${p.dias} dia(s)</span>` : '<span class="chip neu">Pendente</span>';
+    : p.dias <= 3 ? `<span class="chip av">Em ${p.dias} ${pl(p.dias,'dia','dias')}</span>` : '<span class="chip neu">Pendente</span>';
   box.innerHTML = `<div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:10px;font-size:13px">
       <span><span class="muted">Total</span> <b class="eur">${eur(tot)}</b></span><span><span class="muted">Pago</span> <b class="eur pos">${eur(pago)}</b></span><span><span class="muted">Falta</span> <b class="eur neg">${eur(tot - pago)}</b></span></div>
     <table><thead><tr><th>Prest.</th><th>Vence</th><th>Descrição</th><th class="dir-r">Valor</th><th>Estado</th><th></th></tr></thead><tbody>` +
@@ -1151,7 +1194,7 @@ async function carregarContas() {
         <div class="muted" style="font-size:12px">${esc(c.instituicao)} · ${esc(c.modalidade)}</div><div class="kpi-v ${c.saldo < 0 ? 'neg' : ''}">${eur(c.saldo)}</div>
         ${c.arquivada ? '' : `<button class="btn peq" data-acerto="${i}">Acertar saldo</button>`}</div>`; };
     g.innerHTML = (l.length ? `<div class="card" style="background:var(--primary);color:var(--on-primary);border:0"><div class="kpi-t" style="color:inherit;opacity:.8">Total em contas</div><div class="kpi-v">${eur(total)}</div>
-        <div class="kpi-x">${ativas.length} conta(s) <button class="btn peq" id="btn-transf" style="margin-left:auto">${ico('troca')} Transferir</button></div></div>` : '') +
+        <div class="kpi-x">${ativas.length} ${pl(ativas.length,'conta','contas')} <button class="btn peq" id="btn-transf" style="margin-left:auto">${ico('troca')} Transferir</button></div></div>` : '') +
       ativas.map(cartao).join('') + arq.map(cartao).join('') +
       `<button class="add-card" id="add-conta">${ico('plus')}Nova conta</button>`;
     $('#add-conta').onclick = () => formConta();
@@ -1258,10 +1301,10 @@ function renderMovimentos() {
   const th = (c, t, cls) => `<th class="ord ${cls || ''}" data-ord="${c}">${t}${col === c ? (dir > 0 ? ' ↑' : ' ↓') : ''}</th>`;
   $('#t-mov').innerHTML = `<table><thead><tr>${th('iso', 'Data')}${th('descricao', 'Descrição')}${th('categoria', 'Categoria')}${th('conta', 'Conta')}${th('valor', 'Valor', 'dir-r')}<th></th></tr></thead><tbody>` +
     l.map(m => { const [sg, cls, v] = sinalMov(m), editavel = ['receita', 'despesa', 'cartao'].includes(m.tipo);
-      return `<tr><td>${esc(m.data)}</td><td><b>${esc(m.descricao)}</b>${chipMov(m)}</td><td>${esc(m.categoria)}</td><td>${esc(m.conta)}</td>
+      return `<tr><td>${esc(m.data)}</td><td><b>${esc(m.descricao)}</b>${chipMov(m)}</td><td>${esc(m.categoria)}${catMae(m.categoria) ? `<div class="muted mini">${esc(catMae(m.categoria))}</div>` : ''}</td><td>${esc(m.conta)}</td>
       <td class="dir-r eur ${cls}"><b>${sg} ${eur(v)}</b></td>
       <td class="dir-r" style="white-space:nowrap">${editavel ? `<button class="acao" data-ed="${m._i}" aria-label="Editar">${ico('edit')}</button>` : ''}<button class="acao del" data-del="${m._i}" aria-label="Eliminar">${ico('del')}</button></td></tr>`; }).join('') +
-    `</tbody><tfoot><tr><td colspan="4">${l.length} movimento(s)${S.mvTruncado ? ` (de ${S.mvTotal}; refine a pesquisa)` : ''} · Receitas <span class="pos">${eur(rec)}</span> · Despesas <span class="neg">${eur(des)}</span></td><td class="dir-r ${rec - des >= 0 ? 'pos' : 'neg'}">${eur(rec - des)}</td><td></td></tr></tfoot></table>`;
+    `</tbody><tfoot><tr><td colspan="4">${l.length} ${pl(l.length,'movimento','movimentos')}${S.mvTruncado ? ` (de ${S.mvTotal}; refine a pesquisa)` : ''} · Receitas <span class="pos">${eur(rec)}</span> · Despesas <span class="neg">${eur(des)}</span></td><td class="dir-r ${rec - des >= 0 ? 'pos' : 'neg'}">${eur(rec - des)}</td><td></td></tr></tfoot></table>`;
 }
 
 function exportarMovimentos() {
@@ -1293,9 +1336,9 @@ async function carregarCartoes() {
       const f0 = c.fechadas[0];
       let est;
       if (!f0) est = '<span class="chip ok">Em dia</span>';
-      else if (f0.dias < 0) est = `<span class="chip mau">Venceu há ${-f0.dias} dia(s)</span>`;
+      else if (f0.dias < 0) est = `<span class="chip mau">Venceu há ${-f0.dias} ${pl(-f0.dias,'dia','dias')}</span>`;
       else if (f0.dias === 0) est = '<span class="chip mau">Vence hoje</span>';
-      else if (f0.dias <= 5) est = `<span class="chip av">Vence em ${f0.dias} dia(s)</span>`;
+      else if (f0.dias <= 5) est = `<span class="chip av">Vence em ${f0.dias} ${pl(f0.dias,'dia','dias')}</span>`;
       else est = `<span class="chip neu">Vence em ${f0.dias} dias</span>`;
       const fechadasHTML = c.fechadas.length ? c.fechadas.map((f, j) => `<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--border)">
           <div><div style="font-weight:700">${esc(f.rotulo)} · <span class="eur">${eur(f.total)}</span></div><div class="muted" style="font-size:12px">Vence a ${esc(f.vencimentoTxt)}${f.pago > 0 ? ` · já pagou ${eur(f.pago)} de ${eur(f.bruto)}` : ''}</div></div>
@@ -1506,7 +1549,7 @@ function renderSimulacao(sub) {
     $('#sim-corpo').innerHTML = `<div class="sim-h"><span></span><span>Dívida</span><span>Já coberto</span><span>Prest. seguintes</span><span>A quitar</span><span>Juros evitados</span></div>` +
       S.dividas.map((d, i) => { const l = r.linhas[i]; if (!l.vis) return '';
         return `<label class="sim-l ${l.sel ? 'on' : ''}"><input type="checkbox" data-sim="${i}" ${S.simSel[i] ? 'checked' : ''}><span class="sim-n"><b>${esc(d.descricao)}</b><small>${esc(d.credor)}</small></span><span data-l="Já coberto" class="eur">${eur(l.vencido)}</span><span data-l="Prest. seguintes">${l.n}</span><span data-l="A quitar" class="eur"><b>${eur(l.quitar)}</b></span><span data-l="Juros evitados" class="eur pos">${eur(l.juros)}</span></label>`; }).join('') +
-      `<div class="sim-t"><span></span><span class="sim-n">${r.nSel} selecionada(s)</span><span data-l="Já coberto" class="eur">${eur(r.vencido)}</span><span></span><span data-l="A quitar" class="eur">${eur(r.quitar)}</span><span data-l="Juros evitados" class="eur">${eur(r.juros)}</span></div>`;
+      `<div class="sim-t"><span></span><span class="sim-n">${r.nSel} ${pl(r.nSel,'selecionada','selecionadas')}</span><span data-l="Já coberto" class="eur">${eur(r.vencido)}</span><span></span><span data-l="A quitar" class="eur">${eur(r.quitar)}</span><span data-l="Juros evitados" class="eur">${eur(r.juros)}</span></div>`;
     $('#sim-resumo').innerHTML = r.nSel ? `<div class="grid kpis" style="margin:0">
         <div class="card sim-dest"><div class="kpi-t">Para quitar o restante</div><div class="kpi-v neg">${eur(r.quitar)}</div><div class="kpi-x"><span class="muted">${sm.modo === 'total' ? 'soma das prestações seguintes' : 'capital das prestações seguintes'}</span></div></div>
         ${kpi('Já no orçamento', r.vencido, `<span class="muted">prestações até ${esc(fmtDataBR(r.alvo))}</span>`)}${kpi('Juros que evita', r.juros, '<span class="muted">nas prestações seguintes</span>', 'pos')}${kpi('Liberta por mês', r.mensal, '<span class="muted">prestação mensal que deixa de pagar</span>', 'pos')}</div>
@@ -1547,7 +1590,7 @@ function formDivida(d) {
     {id:'numParcelas', label:'Nº de parcelas', tipo:'number', valor:d ? d.totalParcelas : 12, min:1},
     {id:'diaVencimento', label:'Dia de vencimento', tipo:'number', valor:d ? d.diaVenc : 10, min:1, max:31},
     {id:'dataIniciacao', label:'Mês da 1.ª prestação', tipo:'date', valor:d && d.inicioISO ? d.inicioISO : hojeISO()},
-    {id:'categoria', label:'Categoria', tipo:'select', opcoes:comAtual(o.categoriasDespesa, d && d.categoria), valor:d ? d.categoria : ''}],
+    {id:'categoria', label:'Categoria › Subcategoria', tipo:'select', opcoes:catOpcoes(o.planoDespesa, d && d.categoria), valor:d ? d.categoria : ''}],
     onSubmit: async v => {
       if (!novo && !await confirmar('Recalcular prestações?', 'As prestações serão geradas de novo. O estado pago/pendente é mantido, mas valores editados manualmente voltam ao cálculo automático.', 'Recalcular')) throw new Error('Cancelado');
       await api(novo ? 'salvarDivida' : 'atualizarDivida', {...v, idMestre:d && d.idMestre});
@@ -1579,11 +1622,9 @@ async function relIntervalo() {
   $('#rel-corpo').innerHTML = intervaloHTML('int');
   const go = async () => {
     try {
-      const r = await api('getDespesasPorIntervalo', $('#int-i').value, $('#int-f').value), tot = r.valores.reduce((a, b) => a + b, 0), c = corTema();
-      $('#lg-int').innerHTML = r.labels.length ? r.labels.map((n, i) => `<div class="leg"><span class="dot" style="background:${PALETA[i % PALETA.length]}"></span><span class="nome">${esc(n)}</span><span class="pct">${tot ? (r.valores[i] / tot * 100).toFixed(1) : 0}%</span><b class="eur neg">${eur(r.valores[i])}</b></div>`).join('') +
-        `<div class="leg"><span class="nome">Total</span><b class="eur">${eur(tot)}</b></div>` : vazio('Sem despesas neste intervalo');
-      desenhar('int', 'ch-int', {type:'doughnut', data:{labels:r.labels.length ? r.labels : ['Sem dados'], datasets:[{data:r.valores.length ? r.valores : [1], backgroundColor:r.valores.length ? r.labels.map((_, i) => PALETA[i % PALETA.length]) : [c.muted], borderWidth:2, borderColor:c.surface}]},
-        options:{responsive:true, maintainAspectRatio:false, cutout:'62%', plugins:{legend:{position:'bottom'}, tooltip:{callbacks:{label:x => ` ${x.label}: ${eur(x.parsed)}`}}}}});
+      const r = await api('getDespesasPorIntervalo', $('#int-i').value, $('#int-f').value), tot = r.valores.reduce((a, b) => a + b, 0);
+      $('#lg-int').innerHTML = r.grupos.length ? legendaGrupos(r.grupos, tot, 'neg') + `<div class="leg"><span class="nome">Total</span><b class="eur">${eur(tot)}</b></div>` : vazio('Sem despesas neste intervalo');
+      if (r.grupos.length) desenharDonutGrupos('int', 'ch-int', r.grupos); else desenhar('int', 'ch-int', {type:'doughnut', data:{labels:['Sem dados'], datasets:[{data:[1], backgroundColor:[corTema().muted], borderWidth:0}]}, options:{responsive:true, maintainAspectRatio:false, cutout:'62%', plugins:{legend:{display:false}}}});
     } catch (e) { falhou(e); }
   };
   $('#int-go').onclick = go; go();
@@ -1627,7 +1668,7 @@ async function relMetas() {
 }
 
 async function copiarOrcamento() {
-  try { const n = await api('copiarOrcamentoAnterior', getMes(), getAno()); toast(n ? `${n} orçamento(s) copiado(s) do mês anterior.` : 'Nada para copiar: este mês já tem tudo definido.', 'ok'); relMetas(); }
+  try { const n = await api('copiarOrcamentoAnterior', getMes(), getAno()); toast(n ? `${n} ${pl(n,'orçamento copiado','orçamentos copiados')} do mês anterior.` : 'Nada para copiar: este mês já tem tudo definido.', 'ok'); relMetas(); }
   catch (e) { falhou(e); }
 }
 
@@ -1668,10 +1709,17 @@ async function carregarAnual() {
     S.anual = r; S.anoAnual = ano;
     const anos = []; for (let a = new Date().getFullYear() - 4; a <= new Date().getFullYear() + 1; a++) anos.push(a);
     const t = r.totais;
-    const matriz = (lista, cls) => !lista.length ? vazio('Sem registos neste ano') :
-      `<div class="tabela-wrap"><table class="matriz"><thead><tr><th>Categoria</th>${r.meses.map(m => `<th class="dir-r">${esc(m.rotulo)}</th>`).join('')}<th class="dir-r">Total</th></tr></thead><tbody>` +
-      lista.map(x => `<tr><td>${esc(x.nome)}</td>${x.meses.map(v => `<td class="dir-r eur ${v < 0 ? 'pos' : ''}">${Math.abs(v) < 0.005 ? '<span class="muted">·</span>' : eur(v)}</td>`).join('')}<td class="dir-r eur ${cls}"><b>${eur(x.total)}</b></td></tr>`).join('') +
-      `</tbody></table></div>`;
+    const linhaM = (x, cls, ind) => `<td${ind ? ' class="ind"' : ''}>${esc(x.nome)}</td>${x.meses.map(v => `<td class="dir-r eur ${v < 0 ? 'pos' : ''}">${Math.abs(v) < 0.005 ? '<span class="muted">·</span>' : eur(v)}</td>`).join('')}<td class="dir-r eur ${cls}"><b>${eur(x.total)}</b></td>`;
+    const matriz = (lista, cls) => {
+      if (!lista.length) return vazio('Sem registos neste ano');
+      const cab = `<thead><tr><th>Categoria</th>${r.meses.map(m => `<th class="dir-r">${esc(m.rotulo)}</th>`).join('')}<th class="dir-r">Total</th></tr></thead>`;
+      if (!lista[0].categoria) return `<div class="tabela-wrap"><table class="matriz">${cab}<tbody>${lista.map(x => `<tr>${linhaM(x, cls)}</tr>`).join('')}</tbody></table></div>`;
+      const g = {}, ordem = [];
+      lista.forEach(x => { if (!g[x.categoria]) { g[x.categoria] = {nome:x.categoria, meses:Array(12).fill(0), total:0, subs:[]}; ordem.push(x.categoria); } const o = g[x.categoria]; x.meses.forEach((v, i) => { o.meses[i] += v; }); o.total += x.total; o.subs.push(x); });
+      const gs = ordem.map(k => g[k]).sort((a, b) => b.total - a.total);
+      return `<div class="tabela-wrap"><table class="matriz matriz-g">${cab}<tbody>${gs.map(o => `<tr class="grp-cab" tabindex="0" role="button" aria-expanded="false">${linhaM({...o, nome:o.nome}, cls).replace('<td>', `<td><span class="chev">${ico('seta')}</span>`)}</tr>` +
+        o.subs.map(x => `<tr class="grp-sub" hidden>${linhaM(x, cls, true)}</tr>`).join('')).join('')}</tbody></table></div>`;
+    };
     c.innerHTML = `<div class="filtros no-print" style="align-items:center"><select class="sel-inline" id="an-ano">${opcHTML(anos, ano)}</select>
         <select class="sel-inline" id="an-crit" title="Em que mês contam as compras de cartão"><option value="fatura" ${r.criterio === 'fatura' ? 'selected' : ''}>Cartões: pela fatura do banco</option><option value="compra" ${r.criterio === 'compra' ? 'selected' : ''}>Cartões: pela data da compra</option></select><span style="flex:1"></span>
         <button class="btn peq" id="an-csv">Exportar CSV</button><button class="btn peq" id="an-pdf">Imprimir / guardar PDF</button></div>
@@ -1704,6 +1752,7 @@ async function carregarDefinicoes() {
   const c = $('#def-corpo'); skeleton(c, 1, 300);
   const id = S.req.def = (S.req.def || 0) + 1;
   try {
+    garantirOpcoes().catch(() => {});
     const [def, rec, cats, q, ac] = await Promise.all([api('getDefinicoes'), api('getRecorrentes'), api('getCategorias'), api('getQualidadeDados'), S.admin ? api('getAcessos') : Promise.resolve(null)]);
     if (id !== S.req.def) return;
     S.def = def; S.rec = rec; S.cats = cats; S.acessos = ac;
@@ -1732,11 +1781,21 @@ function secRecorrentes(l) {
       <td class="dir-r" style="white-space:nowrap"><button class="btn peq" data-def="rec-toggle:${i}">${r.ativo ? 'Pausar' : 'Ativar'}</button> <button class="acao" data-def="rec-ed:${i}" aria-label="Editar">${ico('edit')}</button><button class="acao del" data-def="rec-del:${i}" aria-label="Eliminar">${ico('del')}</button></td></tr>`).join('') + '</tbody></table></div>'}</div>`;
 }
 
+const TIPO_TAB = {despesa:'Despesa', receita:'Receita', transferencia:'Transferência'};
 function secCategorias(c) {
-  const col = (tipo, titulo) => `<div><div class="card-h"><h3>${titulo}</h3><button class="btn peq" data-def="cat-novo:${tipo}">${ico('plus')} Nova</button></div><div style="max-height:420px;overflow:auto">
-    ${c[tipo].map((x, i) => `<div class="lin ${x.arquivada ? 'dim' : ''}"><span><b>${esc(x.nome)}</b> <span class="muted mini">${x.usos} lançamento(s)${x.arquivada ? ' · arquivada' : ''}</span></span>
-      <span style="white-space:nowrap"><button class="acao" data-def="cat-ren:${tipo}:${i}" aria-label="Renomear">${ico('edit')}</button><button class="btn peq" data-def="cat-arq:${tipo}:${i}">${x.arquivada ? 'Reativar' : 'Arquivar'}</button></span></div>`).join('') || vazio('Sem categorias')}</div></div>`;
-  return `<div class="card sec"><h3>Categorias</h3><p class="sub-t">Renomear atualiza todos os lançamentos. Arquivar tira a categoria das listas, mas mantém o histórico.</p><div class="cols2">${col('despesa', 'Despesa')}${col('receita', 'Receita')}</div></div>`;
+  const tab = S.catTab || 'despesa', grupos = c.plano[tab], inc = c.incidencias || [];
+  const opcDest = t => catOpcoes((t === 'receita' ? (S.opcoes || {}).planoReceita : (S.opcoes || {}).planoDespesa) || [], '');
+  const incHTML = inc.length ? `<div class="inc-card"><b>${inc.length} ${inc.length === 1 ? 'nome' : 'nomes'} em lançamentos que não existem no plano</b>
+      <p class="sub-t" style="margin:2px 0 8px">Vêm de categorias antigas ou de erros de escrita. Escolha para onde cada um deve ir e toque em "Passar". Também pode apagá-los na folha ou editar lançamento a lançamento.</p>
+      ${inc.map((x, k) => `<div class="inc-it"><div><b>${esc(x.nome)}</b> <span class="chip neu">${x.tipo === 'receita' ? 'Receita' : 'Despesa'}</span><div class="muted mini">${x.n} ${pl(x.n,'lançamento','lançamentos')} · ${eur(x.total)} · ${Object.keys(x.onde).map(o => esc(o) + ' ' + x.onde[o]).join(', ')}${x.exemplos.length ? ' · ex.: ' + esc(x.exemplos[0].desc) + ' (' + esc(x.exemplos[0].data) + ')' : ''}</div></div>
+        <select id="inc-d-${k}" aria-label="Destino">${opcHTML([{v:'', t:'Escolher destino…'}, ...opcDest(x.tipo)], '')}</select><button class="btn peq pri" data-def="inc-rec:${k}">Passar</button></div>`).join('')}</div>` : '';
+  const tabs = `<div class="cat-tabs">${Object.keys(TIPO_TAB).map(k => `<button class="btn peq ${k === tab ? 'pri' : ''}" data-def="cat-tab:${k}">${TIPO_TAB[k]}</button>`).join('')}<span class="esp"></span><button class="btn peq" data-def="sub-novo:${tab}:-1">${ico('plus')} Nova categoria</button></div>`;
+  const corpo = grupos.length ? grupos.map((g, i) => { const todasArq = g.subs.every(x => x.arquivada);
+    return `<details class="cat-grp ${todasArq ? 'dim' : ''}" data-k="${tab}|${esc(g.categoria)}" ${(S.catAb || {})[tab + '|' + g.categoria] ? 'open' : ''}><summary><b>${esc(g.categoria)} <span class="muted mini">${g.subs.length} ${pl(g.subs.length,'subcategoria','subcategorias')}${todasArq ? ' · arquivada' : ''}</span></b>
+      <span style="white-space:nowrap"><button class="btn peq" data-def="sub-novo:${tab}:${i}">${ico('plus')} Subcategoria</button><button class="acao" data-def="cat-ren:${tab}:${i}" aria-label="Renomear categoria">${ico('edit')}</button><button class="btn peq" data-def="cat-arq:${tab}:${i}">${todasArq ? 'Reativar' : 'Arquivar'}</button></span></summary>
+      ${g.subs.map((x, j) => `<div class="lin ${x.arquivada ? 'dim' : ''}"><span>${esc(x.nome)} <span class="muted mini">${x.usos} ${pl(x.usos,'lançamento','lançamentos')}${x.arquivada ? ' · arquivada' : ''}</span></span>
+        <span style="white-space:nowrap"><button class="acao" data-def="sub-ren:${tab}:${i}.${j}" aria-label="Renomear">${ico('edit')}</button><button class="btn peq" data-def="sub-mov:${tab}:${i}.${j}">Mover</button><button class="btn peq" data-def="sub-arq:${tab}:${i}.${j}">${x.arquivada ? 'Reativar' : 'Arquivar'}</button></span></div>`).join('')}</details>`; }).join('') : vazio('Sem categorias', 'Crie a primeira categoria deste tipo.');
+  return `<div class="card sec"><h3>Categorias e subcategorias</h3><p class="sub-t">Nos lançamentos escolhe-se a subcategoria; os gráficos agrupam pela categoria. Renomear atualiza todos os lançamentos. Arquivar tira da lista de escolha, mas mantém o histórico.</p>${incHTML}${tabs}${corpo}</div>`;
 }
 
 function secContas() {
@@ -1778,12 +1837,19 @@ async function acaoDef(cmd) {
     else if (a === 'ac-ed') formAcesso(S.acessos[+x]);
     else if (a === 'rec-novo') formRecorrente();
     else if (a === 'rec-ed') formRecorrente(S.rec[+x]);
-    else if (a === 'rec-gerar') { const n = await api('executarRecorrentes'); toast(n ? `${n} lançamento(s) gerado(s).` : 'Nada em falta: tudo está em dia.', 'ok'); carregarDefinicoes(); }
+    else if (a === 'rec-gerar') { const n = await api('executarRecorrentes'); toast(n ? `${n} ${pl(n,'lançamento gerado','lançamentos gerados')}.` : 'Nada em falta: tudo está em dia.', 'ok'); carregarDefinicoes(); }
     else if (a === 'rec-toggle') { const r = S.rec[+x]; await api('atualizarRecorrente', {id:r.id, tipo:r.tipo, descricao:r.descricao, categoria:r.categoria, conta:r.conta, valor:r.valor, dia:r.dia, inicio:r.inicio, fim:r.fim, ativo:!r.ativo}); carregarDefinicoes(); }
     else if (a === 'rec-del') { const r = S.rec[+x]; if (await confirmar('Eliminar regra?', `"${r.descricao}" deixa de ser gerada. Os lançamentos já criados mantêm-se.`, 'Eliminar', true)) { await api('excluirRecorrente', r.id); carregarDefinicoes(); } }
-    else if (a === 'cat-novo') formCategoria(x);
-    else if (a === 'cat-ren') formCategoria(x, S.cats[x][+y]);
-    else if (a === 'cat-arq') { const c = S.cats[x][+y]; await api('arquivarCategoria', {tipo:x, nome:c.nome, arquivar:!c.arquivada}); S.opcoes = null; carregarDefinicoes(); }
+    else if (a === 'cat-tab') { S.catTab = x; $('#def-corpo .cat-tabs').closest('.card').outerHTML = secCategorias(S.cats); }
+    else if (a === 'sub-novo') formSub(x, +y >= 0 ? S.cats.plano[x][+y] : null);
+    else if (a === 'sub-ren') { const [i, j] = y.split('.').map(Number), g = S.cats.plano[x][i]; formSub(x, g, g.subs[j]); }
+    else if (a === 'sub-mov') { const [i, j] = y.split('.').map(Number), g = S.cats.plano[x][i]; formMover(x, g, g.subs[j]); }
+    else if (a === 'sub-arq') { const [i, j] = y.split('.').map(Number), sb = S.cats.plano[x][i].subs[j]; await api('arquivarSubcategoria', {tipo:TIPO_TAB[x], nome:sb.nome, arquivar:!sb.arquivada}); depoisCategorias(); }
+    else if (a === 'cat-ren') { const g = S.cats.plano[x][+y]; formCatMae(x, g); }
+    else if (a === 'cat-arq') { const g = S.cats.plano[x][+y]; await api('arquivarSubcategoria', {tipo:TIPO_TAB[x], categoria:g.categoria, arquivar:!g.subs.every(z => z.arquivada)}); depoisCategorias(); }
+    else if (a === 'inc-rec') { const it = S.cats.incidencias[+x], dest = $('#inc-d-' + x).value; if (!dest) return toast('Escolha a subcategoria de destino.', 'erro');
+      if (!await confirmar('Reclassificar lançamentos?', `${it.n} ${pl(it.n,'lançamento','lançamentos')} de "${it.nome}" passam para "${dest}".`, 'Passar')) return;
+      const n = await api('reclassificarCategoria', {tipo:it.tipo, de:it.nome, para:dest}); toast(`${n} ${pl(n,'lançamento atualizado','lançamentos atualizados')}.`, 'ok'); depoisCategorias(); }
     else if (a === 'parc-analisar') {
       const l = await api('getSeriesParcelas'); S.series = l;
       $('#def-parc').innerHTML = !l.length ? vazio('Tudo certo', 'Não há prestações com datas a corrigir.') :
@@ -1794,8 +1860,8 @@ async function acaoDef(cmd) {
     else if (a === 'parc-aplicar') {
       const alt = []; $$('[data-serie]').forEach(cb => { if (cb.checked) S.series[+cb.dataset.serie].itens.forEach(it => alt.push({linha:it.linha, iso:it.isoProposta})); });
       if (!alt.length) return toast('Nenhuma série selecionada.', 'erro');
-      if (!await confirmar('Aplicar correções?', `${alt.length} lançamento(s) mudam de data. As despesas passam a contar no mês de cada prestação.`, 'Aplicar')) return;
-      const n = await api('aplicarCorrecaoParcelas', alt); toast(`${n} data(s) corrigida(s).`, 'ok'); $('#def-parc').innerHTML = '';
+      if (!await confirmar('Aplicar correções?', `${alt.length} ${pl(alt.length,'lançamento','lançamentos')} ${pl(alt.length,'muda','mudam')} de data. As despesas passam a contar no mês de cada prestação.`, 'Aplicar')) return;
+      const n = await api('aplicarCorrecaoParcelas', alt); toast(`${n} ${pl(n,'data corrigida','datas corrigidas')}.`, 'ok'); $('#def-parc').innerHTML = '';
     }
     else if (a === 'log') {
       const l = await api('getLog', 150);
@@ -1814,24 +1880,40 @@ function formSenha() {
       await api('alterarSenha', v.atual, v.nova); toast('Senha alterada.', 'ok'); }});
 }
 
-function formCategoria(tipo, c) {
-  abrirForm({titulo:c ? 'Renomear categoria' : (tipo === 'receita' ? 'Nova categoria de receita' : 'Nova categoria de despesa'), botao:c ? 'Renomear' : 'Criar', campos:[
-    {id:'nome', label:'Nome', valor:c ? c.nome : '', obrigatorio:true}],
+function depoisCategorias() { S.opcoes = null; S.cacheAba = {}; carregarDefinicoes(); }
+function formSub(tab, g, sub) {
+  const novaCat = !g, ren = !!sub;
+  const campos = ren ? [{id:'nome', label:'Nome da subcategoria', valor:sub.nome, obrigatorio:true}]
+    : novaCat ? [{id:'cat', label:'Nome da categoria', placeholder:'Ex.: Pets', obrigatorio:true}, {id:'nome', label:'Primeira subcategoria', placeholder:'Ex.: Ração / Veterinário', obrigatorio:true}]
+    : [{id:'nome', label:`Nova subcategoria em "${g.categoria}"`, placeholder:'Ex.: Talho', obrigatorio:true}];
+  abrirForm({titulo:ren ? 'Renomear subcategoria' : novaCat ? 'Nova categoria' : 'Nova subcategoria', botao:ren ? 'Renomear' : 'Criar', campos,
     onSubmit: async v => {
-      if (c) { const n = await api('renomearCategoria', {tipo, de:c.nome, para:v.nome}); toast(`Categoria renomeada (${n} lançamentos atualizados).`, 'ok'); }
-      else { await api('salvarCategoria', {tipo, nome:v.nome}); toast('Categoria criada.', 'ok'); }
-      S.opcoes = null; carregarDefinicoes(); }});
+      if (ren) { const n = await api('renomearSubcategoria', {tipo:TIPO_TAB[tab], de:sub.nome, para:v.nome}); toast(`Renomeada (${n} lançamentos atualizados).`, 'ok'); }
+      else { await api('salvarSubcategoria', {tipo:TIPO_TAB[tab], categoria:novaCat ? v.cat : g.categoria, nome:v.nome}); toast('Criada.', 'ok'); }
+      depoisCategorias(); }});
 }
+function formCatMae(tab, g) {
+  abrirForm({titulo:'Renomear categoria', botao:'Renomear', campos:[{id:'nome', label:'Nome', valor:g.categoria, obrigatorio:true}],
+    onSubmit: async v => { await api('renomearCategoriaMae', {tipo:TIPO_TAB[tab], de:g.categoria, para:v.nome}); toast('Categoria renomeada.', 'ok'); depoisCategorias(); }});
+}
+function formMover(tab, g, sub) {
+  const outras = S.cats.plano[tab].map(x => x.categoria).filter(n => n !== g.categoria);
+  abrirForm({titulo:`Mover "${sub.nome}"`, botao:'Mover', campos:[
+    {id:'dest', label:'Para a categoria', tipo:'select', opcoes:[{v:'', t:'Escolher…'}, ...outras]}, {id:'nova', label:'ou criar uma categoria nova', placeholder:'Nome da nova categoria'}],
+    onSubmit: async v => { const cat = (v.nova || '').trim() || v.dest; if (!cat) throw new Error('Escolha a categoria de destino.');
+      await api('moverSubcategoria', {tipo:TIPO_TAB[tab], nome:sub.nome, categoria:cat}); toast('Subcategoria movida (os lançamentos não mudam).', 'ok'); depoisCategorias(); }});
+}
+
 
 function formRecorrente(r) {
   garantirOpcoes().then(o => {
     const tipoIni = r ? r.tipo : 'despesa';
-    const contasDe = t => t === 'cartao' ? o.cartoes : o.contas, catsDe = t => t === 'receita' ? o.categoriasReceita : o.categoriasDespesa;
+    const contasDe = t => t === 'cartao' ? o.cartoes : o.contas, catsDe = (t, at) => catOpcoes(t === 'receita' ? o.planoReceita : o.planoDespesa, at);
     abrirForm({titulo:r ? 'Editar regra' : 'Nova regra recorrente', botao:r ? 'Guardar' : 'Criar regra', campos:[
       {id:'valor', tipo:'valor', valor:r ? r.valor : '', obrigatorio:true},
       {id:'tipo', label:'Tipo', tipo:'select', opcoes:[{v:'despesa', t:'Despesa numa conta'}, {v:'receita', t:'Receita numa conta'}, {v:'cartao', t:'Despesa no cartão'}], valor:tipoIni},
       {id:'descricao', label:'Descrição', valor:r ? r.descricao : '', placeholder:'Ex.: Renda', obrigatorio:true},
-      {id:'categoria', label:'Categoria', tipo:'select', opcoes:comAtual(catsDe(tipoIni), r && r.categoria), valor:r ? r.categoria : ''},
+      {id:'categoria', label:'Categoria › Subcategoria', tipo:'select', opcoes:catsDe(tipoIni, r && r.categoria), valor:r ? r.categoria : ''},
       {id:'conta', label:'Conta / cartão', tipo:'select', opcoes:comAtual(contasDe(tipoIni), r && r.conta), valor:r ? r.conta : ''},
       {id:'dia', label:'Dia do mês', tipo:'number', valor:r ? r.dia : 1, min:1, max:31},
       {id:'inicio', label:'Começa em', tipo:'date', valor:r ? r.inicio : hojeISO()},
@@ -2048,7 +2130,7 @@ function secAcessos(ac) {
     <button class="btn peq pri" data-def="ac-novo">${ico('plus')} Novo utilizador</button></div>
     <div class="tabela-wrap ac-desk"><table class="matriz-ac"><thead>${cab1}${cab2}</thead><tbody>${corpo}</tbody></table></div>
     <div class="ac-mob">${acMovel(ac)}</div>
-    <p class="muted mini" style="margin:10px 0 0"><b>E-mails:</b> o(s) e-mail(s) em "Notificações por e-mail" (acima) recebem sempre tudo. As outras pessoas só recebem o que marcar aqui. O alerta de metas mostra a categoria, o orçamento e o valor gasto.</p></div>`;
+    <p class="muted mini" style="margin:10px 0 0"><b>E-mails:</b> os e-mails em "Notificações por e-mail" (acima) recebem sempre tudo. As outras pessoas só recebem o que marcar aqui. O alerta de metas mostra a categoria, o orçamento e o valor gasto.</p></div>`;
 }
 
 /* versão para telemóvel das permissões: um cartão por pessoa, com as mesmas caixas */
@@ -2094,8 +2176,16 @@ async function formAcesso(u) {
       toast(u ? 'Utilizador atualizado.' : 'Utilizador criado. Ajuste na tabela o que pode ver e fazer. Dê-lhe o link da app e a senha provisória.', 'ok'); carregarDefinicoes(); }});
 }
 
+function alternarGrupo(el) {
+  if (el.matches('.leg-cab')) { const g = el.closest('.leg-g'), ab = g.classList.toggle('aberto'); $('.subs', g).hidden = !ab; el.setAttribute('aria-expanded', ab); return; }
+  const ab = el.classList.toggle('aberto'); el.setAttribute('aria-expanded', ab);
+  let n = el.nextElementSibling; while (n && n.classList.contains('grp-sub')) { n.hidden = !ab; n = n.nextElementSibling; }
+}
+document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.leg-cab,tr.grp-cab')) { e.preventDefault(); alternarGrupo(e.target); } });
+document.addEventListener('toggle', e => { const d = e.target; if (d && d.classList && d.classList.contains('cat-grp')) { S.catAb = S.catAb || {}; S.catAb[d.dataset.k.replace(/&amp;/g,'&')] = d.open; } }, true);
 document.addEventListener('click', e => {
   const t = e.target; let b;
+  if ((b = t.closest('.leg-cab, tr.grp-cab'))) return alternarGrupo(b);
   if ((b = t.closest('[data-pnovo]'))) return formPartilhada(null);
   if (t.closest('[data-acnovo]')) return formAcerto();
   if ((b = t.closest('[data-ped]'))) { const [k, i] = b.dataset.ped.split(':'); return formPartilhada(S.partLista[k][+i]); }
@@ -2177,7 +2267,7 @@ async function correrBusca() {
     const top = r.itens.slice().sort((a, b) => b.iso.localeCompare(a.iso)).slice(0, 12);
     res.innerHTML = top.map(m => { const [sg, cls, v] = sinalMov(m);
       return `<div class="busca-it"><div><b>${esc(m.descricao)}</b><span class="muted mini">${esc(m.data)} · ${esc(m.categoria)} · ${esc(m.conta)}</span></div><b class="eur ${cls}">${sg} ${eur(v)}</b></div>`; }).join('') +
-      `<button class="btn bloco" data-bver="1" style="margin:10px 0 4px">Ver os ${r.total || r.itens.length} resultado(s) em Movimentos</button>`;
+      `<button class="btn bloco" data-bver="1" style="margin:10px 0 4px">Ver os ${r.total || r.itens.length} ${pl(r.total || r.itens.length,'resultado','resultados')} em Movimentos</button>`;
   } catch (e) { if ($('#busca-res')) $('#busca-res').innerHTML = `<p class="neg" style="padding:14px">${esc(e.message)}</p>`; }
 }
 
@@ -2282,10 +2372,14 @@ function chipVar(dif, bomSeSobe, pct) {
 function renderFecho() {
   const d = S.fechoD, A = d.a, B = d.b, pc = (x, y) => y > 0.004 ? Math.round((x - y) / y * 100) : null;
   const cartao = (t, v, dif, bom, cls, extra) => `<div class="card"><div class="kpi-t">${t}</div><div class="kpi-v ${cls}">${eur(v)}</div><div class="kpi-x">${chipVar(dif, bom, pc(v, v - dif))}<span class="muted">vs ${esc(B.rotulo)}</span></div>${extra || ''}</div>`;
-  const max = Math.max(1, ...d.cats.map(x => Math.max(x.a, x.b)));
-  const lin = x => `<tr><td><b>${esc(x.nome)}</b></td><td class="dir-r eur">${eur(x.b)}</td><td class="dir-r eur">${eur(x.a)}</td><td class="dir-r">${chipVar(x.dif, false, x.pct)}</td>
-    <td class="fe-bars"><div class="fe-b"><i style="width:${x.b / max * 100}%"></i></div><div class="fe-a"><i style="width:${x.a / max * 100}%"></i></div></td></tr>`;
-  const lista = (t, l, cls) => l.length ? `<div class="card"><div class="card-h"><h3>${t}</h3></div>${l.map(x => `<div class="linha-kv"><span><b>${esc(x.nome)}</b> <span class="muted mini">${eur(x.b)} → ${eur(x.a)}</span></span><b class="eur ${cls}">${x.dif > 0 ? '+' : '−'} ${eur(Math.abs(x.dif))}</b></div>`).join('')}</div>` : '';
+  const gm = {}, ordem = [];
+  d.cats.forEach(x => { const k = x.categoria || x.nome; if (!gm[k]) { gm[k] = {nome:k, a:0, b:0, subs:[]}; ordem.push(k); } gm[k].a += x.a; gm[k].b += x.b; gm[k].subs.push(x); });
+  const gs = ordem.map(k => { const o = gm[k]; o.a = Math.round(o.a * 100) / 100; o.b = Math.round(o.b * 100) / 100; o.dif = Math.round((o.a - o.b) * 100) / 100; o.pct = o.b > 0.004 ? Math.round((o.a - o.b) / o.b * 100) : null; return o; }).sort((x, y) => Math.max(y.a, y.b) - Math.max(x.a, x.b));
+  const max = Math.max(1, ...gs.map(x => Math.max(x.a, x.b)));
+  const lin = (x, sub) => `<td${sub ? ' class="ind"' : ''}>${sub ? '' : `<span class="chev">${ico('seta')}</span>`}<b>${esc(x.nome)}</b></td><td class="dir-r eur">${eur(x.b)}</td><td class="dir-r eur">${eur(x.a)}</td><td class="dir-r">${chipVar(x.dif, false, x.pct)}</td>
+    <td class="fe-bars">${sub ? '' : `<div class="fe-b"><i style="width:${x.b / max * 100}%"></i></div><div class="fe-a"><i style="width:${x.a / max * 100}%"></i></div>`}</td>`;
+  const corpoCats = gs.map(g => `<tr class="grp-cab" tabindex="0" role="button" aria-expanded="false">${lin(g, false)}</tr>` + g.subs.map(x => `<tr class="grp-sub" hidden>${lin(x, true)}</tr>`).join('')).join('');
+  const lista = (t, l, cls) => l.length ? `<div class="card"><div class="card-h"><h3>${t}</h3></div>${l.map(x => `<div class="linha-kv"><span><b>${esc(x.nome)}</b> <span class="muted mini">${x.categoria && x.categoria !== x.nome ? esc(x.categoria) + ' · ' : ''}${eur(x.b)} → ${eur(x.a)}</span></span><b class="eur ${cls}">${x.dif > 0 ? '+' : '−'} ${eur(Math.abs(x.dif))}</b></div>`).join('')}</div>` : '';
   const resumo = (() => {
     const p = [];
     p.push(`Em <b>${esc(A.rotulo)}</b> recebeu ${eur(A.receita)} e gastou ${eur(A.despesa)}, ${A.poupanca >= 0 ? `poupando <b class="pos">${eur(A.poupanca)}</b>${A.taxa != null ? ` (${A.taxa}% do que recebeu)` : ''}` : `ficando <b class="neg">${eur(-A.poupanca)}</b> abaixo do que recebeu`}.`);
@@ -2299,7 +2393,7 @@ function renderFecho() {
     <div class="grid cols2">${lista('O que piorou', d.piorou, 'neg')}${lista('O que melhorou', d.melhorou, 'pos')}</div>
     ${d.metas.length ? `<div class="card sec"><div class="card-h"><h3>Metas ultrapassadas em ${esc(A.rotulo)}</h3></div>${d.metas.map(m => `<div class="linha-kv"><span>${esc(m.categoria)}</span><b class="eur neg">${eur(m.gasto)} <span class="muted">de ${eur(m.orcamento)}</span></b></div>`).join('')}</div>` : ''}
     <div class="card sec"><div class="card-h"><h3>Despesas por categoria</h3><span class="muted fe-leg"><i class="fe-ld b"></i>${esc(B.rotulo)} <i class="fe-ld a"></i>${esc(A.rotulo)}</span></div>
-      ${d.cats.length ? `<div class="tabela-wrap"><table><thead><tr><th>Categoria</th><th class="dir-r">${esc(B.rotulo)}</th><th class="dir-r">${esc(A.rotulo)}</th><th class="dir-r">Diferença</th><th></th></tr></thead><tbody>${d.cats.map(lin).join('')}
+      ${d.cats.length ? `<div class="tabela-wrap"><table><thead><tr><th>Categoria <span class="muted mini">(toque para ver subcategorias)</span></th><th class="dir-r">${esc(B.rotulo)}</th><th class="dir-r">${esc(A.rotulo)}</th><th class="dir-r">Diferença</th><th></th></tr></thead><tbody>${corpoCats}
       <tr class="tot-linha"><td>Total</td><td class="dir-r eur">${eur(B.despesa)}</td><td class="dir-r eur">${eur(A.despesa)}</td><td class="dir-r">${chipVar(d.dif.despesa, false, pc(A.despesa, B.despesa))}</td><td></td></tr></tbody></table></div>` : vazio('Sem despesas', 'Não há despesas nestes meses.')}</div>`;
 }
 
@@ -2396,11 +2490,11 @@ async function analisarImportacao() {
 }
 function renderRevisao() {
   const a = IMP.analise, ls = a.linhas.filter(l => !l.erro), erros = a.linhas.length - ls.length, dup = ls.filter(l => l.duplicado).length;
-  const cats = v => v < 0 ? a.categorias.despesa : a.categorias.receita;
+  const cats = v => catOpcoes(v < 0 ? a.planoDespesa : a.planoReceita, '');
   const sel = ls.filter(l => IMP.sel[l.i]), sd = sel.filter(l => l.valor < 0).reduce((t, l) => t + l.valor, 0), sr = sel.filter(l => l.valor > 0).reduce((t, l) => t + l.valor, 0);
-  const defCat = v => v < 0 ? 'Outros' : 'Receitas';
+  const defCat = v => 'Outros';
   $('#imp-passo2').innerHTML = `<div class="card sec"><div class="card-h"><h3>3. Reveja e escolha o que importar</h3><span class="muted">${esc(a.conta)}</span></div>
-    <p class="muted" style="margin:0 0 10px">${ls.length} movimentos lidos${dup ? ` · <b>${dup}</b> parecem já estar registados (desmarcados)` : ''}${erros ? ` · ${erros} linha(s) ignoradas por dados inválidos` : ''}. Desmarque o que não quer e ajuste a categoria se precisar.</p>
+    <p class="muted" style="margin:0 0 10px">${ls.length} movimentos lidos${dup ? ` · <b>${dup}</b> parecem já estar registados (desmarcados)` : ''}${erros ? ` · ${erros} ${pl(erros, 'linha ignorada', 'linhas ignoradas')} por dados inválidos` : ''}. Desmarque o que não quer e ajuste a categoria se precisar.</p>
     <div class="imp-barra"><button class="btn peq" data-imp-todos="1">Marcar todos</button><button class="btn peq" data-imp-todos="0">Desmarcar todos</button>${dup ? '<button class="btn peq" data-imp-todos="novos">Só os novos</button>' : ''}<span class="esp"></span><label class="check" style="margin:0"><input type="checkbox" id="imp-so-sel"> Mostrar só os marcados</label></div>
     <div class="imp-lista" id="imp-lista">${ls.map(l => `<div class="imp-row ${IMP.sel[l.i] ? '' : 'off'}" data-i="${l.i}"><label class="imp-ck"><input type="checkbox" data-imp-sel="${l.i}" ${IMP.sel[l.i] ? 'checked' : ''}></label>
       <div class="imp-d"><b>${esc(l.desc || 'Sem descrição')}</b><span class="muted mini">${esc(l.data.split('-').reverse().join('/'))}${l.duplicado ? ' · <span class="chip av">possível duplicado</span>' : ''}</span></div>
@@ -2523,7 +2617,7 @@ async function pintarLock() {
   const el = $('#lock-box'); if (!el) return;
   if (!MODO_PWA) { el.innerHTML = ''; return; }
   const ok = await lockDisponivel();
-  el.innerHTML = ok ? `<div class="lock-linha"><div><b>Bloqueio com Face ID</b><span class="muted mini">Pede Face ID (ou o código do telemóvel) sempre que abrir a app ou voltar a ela passados 30 segundos.</span></div>
+  el.innerHTML = ok ? `<div class="lock-linha"><div><b>Bloqueio com Face ID</b><span class="muted mini">Pede Face ID (ou o código do telemóvel) quando voltar à app passados 30 segundos. Ao abrir a app o login é sempre pedido.</span></div>
       ${lockAtivo() ? '<span class="chip ok">Ativo</span><button class="btn peq" data-lock="off">Desativar</button>' : '<button class="btn peq pri" data-lock="on">Ativar</button>'}</div>`
     : '<p class="muted mini" style="margin:12px 0 0">O bloqueio com Face ID só está disponível na app instalada no ecrã principal, em telemóveis com Face ID / Touch ID.</p>';
 }
@@ -2612,7 +2706,7 @@ $('#l-ver').onchange = e => { $('#l-pass').type = e.target.checked ? 'text' : 'p
   for (let a = h.getFullYear() - 3; a <= h.getFullYear() + 2; a++) selA.add(new Option(a, a));
   selM.value = h.getMonth() + 1; selA.value = h.getFullYear();
   if (MODO_PWA) {
-    $('#l-lembrar-box').hidden = false; $('#l-servidor').hidden = false;
+    $('#l-servidor').hidden = false;
     if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
     if (!apiUrl()) { $('#login .login-card:not(#setup)').hidden = true; $('#setup').hidden = false; }
     $('#s-btn').onclick = () => { const u = $('#s-url').value.trim(); if (!/^https:\/\/script\.google\.com\/.+\/exec$/.test(u)) { $('#s-erro').textContent = 'Endereço inválido: tem de começar por https://script.google.com e terminar em /exec.'; return; } try { localStorage.setItem('pf_api', u); } catch (e) {} location.reload(); };
