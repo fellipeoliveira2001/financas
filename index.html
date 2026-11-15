@@ -161,6 +161,7 @@ tfoot td{font-weight:700;border-bottom:0;background:var(--surface-2)}
 .campo{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
 .campo label{font-size:12px;font-weight:700;color:var(--muted)}
 .campo input,.campo select{width:100%}
+.campo input[type=checkbox]{width:20px;height:20px;flex:none;padding:0;accent-color:var(--primary);cursor:pointer}
 .valor-box{display:flex;align-items:center;gap:8px;border-bottom:2px solid var(--primary);padding-bottom:6px;margin-bottom:6px}
 .valor-box span{font-size:22px;font-weight:800;color:var(--primary)}
 .valor-box input{border:0!important;box-shadow:none!important;font-size:28px;font-weight:800;color:var(--primary);padding:0!important;background:transparent!important}
@@ -461,8 +462,10 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:0
   <div class="login-card">
     <img src="https://lh3.googleusercontent.com/d/1OIQAMN2cUuVMErMSU5N6uXTV5DXLkMiN" alt="Performance Financial">
     <input type="text" id="l-user" placeholder="Utilizador" autocomplete="username">
-    <input type="password" id="l-pass" placeholder="Senha" autocomplete="current-password">
-    <label class="check"><input type="checkbox" id="l-ver"> Mostrar senha</label>
+    <input type="password" id="l-pass" placeholder="Palavra-passe" autocomplete="current-password">
+    <label class="check" style="margin-bottom:8px"><input type="checkbox" id="l-ver"> Mostrar palavra-passe</label>
+    <label class="check" style="margin-bottom:4px"><input type="checkbox" id="l-lembrar"> Guardar o acesso neste dispositivo</label>
+    <p class="muted mini" style="margin:0 0 14px;text-align:left">Entra sozinho nas próximas vezes. Não use em computadores partilhados.</p>
     
     <button class="btn pri bloco" id="l-btn">Entrar</button>
     <div class="erro" id="l-erro"></div>
@@ -488,7 +491,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:0
 
   <div class="main">
     <header class="topbar">
-      <h1 id="titulo">Dashboard</h1>
+      <h1 id="titulo">Painel</h1>
       <div class="dir">
         <div class="periodo" id="periodo">
           <button class="ib" id="mes-ant" aria-label="Mês anterior"><svg class="ico"><use href="#i-esq"/></svg></button>
@@ -500,7 +503,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:0
         <button class="ib solo" id="btn-atualizar" title="Atualizar" aria-label="Atualizar"><svg class="ico"><use href="#i-refresh"/></svg></button>
         <button class="ib solo" id="btn-ajuda" hidden title="Como registar cada coisa" aria-label="Como registar cada coisa"><svg class="ico"><use href="#i-ajuda"/></svg></button>
         <button class="ib solo" id="btn-tema" title="Tema" aria-label="Alternar tema"><svg class="ico" id="ico-tema"><use href="#i-lua"/></svg></button>
-        <div class="user" id="user-box" title="Alterar a minha senha" style="cursor:pointer"><div class="avatar" id="avatar">U</div><span id="user-nome">Utilizador</span>
+        <div class="user" id="user-box" title="Alterar a minha palavra-passe" style="cursor:pointer"><div class="avatar" id="avatar">U</div><span id="user-nome">Utilizador</span>
           <button class="ib" id="btn-sair" title="Terminar sessão" aria-label="Terminar sessão" style="width:28px;height:28px"><svg class="ico"><use href="#i-sair"/></svg></button></div>
       </div>
     </header>
@@ -515,7 +518,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:0
         </div>
         <div class="card sec" id="c-obj" hidden></div>
         <div class="grid g11">
-          <div class="card"><div class="card-h"><h3>Gastos por categoria</h3><span class="muted" id="c-cats-crit">contas + cartões</span></div><div id="c-cats"></div></div>
+          <div class="card"><div class="card-h"><h3>Despesas por categoria</h3><span class="muted" id="c-cats-crit">contas + cartões</span></div><div id="c-cats"></div></div>
           <div class="card"><div class="card-h"><h3>Prestações de dívidas a vencer</h3></div><div class="tabela-wrap" id="c-div-mes"></div></div>
         </div>
       </section>
@@ -588,7 +591,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:0
 <aside class="drawer" id="drawer" aria-hidden="true"></aside>
 <div id="toasts"></div>
 <div id="bloqueio" role="dialog" aria-label="App bloqueada"><div class="bl-ico">🔒</div><h2 style="margin:0">Performance Financial</h2><p class="muted" style="margin:0">A app está bloqueada.</p>
-  <button class="btn pri" id="bl-btn">Desbloquear com Face ID</button><button class="btn" id="bl-senha">Entrar com a senha</button><p class="neg" id="bl-erro" style="min-height:20px;margin:0"></p></div>
+  <button class="btn pri" id="bl-btn">Desbloquear com Face ID</button><button class="btn" id="bl-senha">Entrar com a palavra-passe</button><p class="neg" id="bl-erro" style="min-height:20px;margin:0"></p></div>
 
 <script>
 /* =====================================================================
@@ -622,13 +625,15 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const EUR = new Intl.NumberFormat('pt-PT', {style:'currency', currency:'EUR', useGrouping:'always'});
 const eur = v => EUR.format(Number(v) || 0);
+const pctLeg = v => v.toLocaleString('pt-PT', {maximumFractionDigits: v < 10 ? 1 : 0});
+const mesTxt = r => String(r || '').replace(/^(\S+)\s+(\d{4})$/, (m, a, b) => a.toLowerCase() + ' de ' + b);
 const pl = (n, u, m) => (Number(n) === 1 ? u : m);
 const norm = s => String(s ?? '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 const ico = n => `<svg class="ico"><use href="#i-${n}"/></svg>`;
 const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const ABREV = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 const PALETA = ['#7b1fa2','#16a34a','#f59e0b','#0ea5e9','#ef4444','#14b8a6','#ec4899','#6366f1','#84cc16','#f97316'];
-const TIT = {dashboard:'Dashboard', contas:'Contas', movimentos:'Movimentos', cartoes:'Cartões de crédito', relatorios:'Relatórios', anual:'Visão anual', definicoes:'Definições', partilhadas:'Despesas partilhadas', objetivos:'Objetivos', fecho:'Fecho do mês', importar:'Importar'};
+const TIT = {dashboard:'Painel', contas:'Contas', movimentos:'Movimentos', cartoes:'Cartões de crédito', relatorios:'Relatórios', anual:'Visão anual', definicoes:'Definições', partilhadas:'Despesas partilhadas', objetivos:'Objetivos', fecho:'Fecho do mês', importar:'Importar'};
 const ABA_DESP = 'DESPESAS', ABA_REC = 'RECEITA', ABA_CART = 'REGISTOS CARTÃO DE CRÉDITO';
 
 const S = {token:null, usuario:'', aba:'dashboard', opcoes:null, movs:[], movOrd:{col:'iso', dir:-1}, cartoes:[], cartaoSel:null,
@@ -639,8 +644,15 @@ const S = {token:null, usuario:'', aba:'dashboard', opcoes:null, movs:[], movOrd
 const hojeISO = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
 const getMes = () => parseInt($('#f-mes').value, 10);
 const getAno = () => parseInt($('#f-ano').value, 10);
-const armazem = () => sessionStorage;      // a sessão não persiste: ao reabrir a app pede sempre o login
-try { localStorage.removeItem('pf_token'); } catch (e) {}
+const armazem = () => sessionStorage;      // por omissão a sessão não persiste: ao reabrir a app pede sempre o login
+const LEMB_K = 'pf_lembrar';
+// só fica guardada neste dispositivo se a pessoa escolheu "guardar o acesso" ou tem o Face ID / código ativado
+const persistente = () => { try { return localStorage.getItem(LEMB_K) === '1' || !!localStorage.getItem('pf_lock_cred'); } catch (e) { return false; } };
+const guardarToken = t => {
+  try { sessionStorage.setItem('pf_token', t || ''); } catch (e) {}
+  try { if (t && persistente()) localStorage.setItem('pf_token', t); else localStorage.removeItem('pf_token'); } catch (e) {}
+};
+const lerToken = () => { try { return sessionStorage.getItem('pf_token') || localStorage.getItem('pf_token') || null; } catch (e) { return null; } };
 const guardar = (k, v) => { try { armazem().setItem(k, v); } catch (e) {} };
 const ler = k => { try { return armazem().getItem(k); } catch (e) { return null; } };
 const lerLocal = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
@@ -718,7 +730,7 @@ function alternarTema() {
  * Login / sessão
  * =================================================================== */
 const PAGINAS = [
-  {aba:'dashboard', t:'Dashboard', tb:'Início', ico:'dash', perm:['DASHBOARD_VER']},
+  {aba:'dashboard', t:'Painel', tb:'Início', ico:'dash', perm:['DASHBOARD_VER']},
   {aba:'contas', t:'Contas', tb:'Contas', ico:'contas', perm:['CONTAS_VER']},
   {aba:'movimentos', t:'Movimentos', tb:'Movimentos', ico:'lista', perm:['MOVIMENTOS_VER']},
   {aba:'cartoes', t:'Cartões', tb:'Cartões', ico:'cartao', perm:['CARTOES_VER']},
@@ -769,28 +781,29 @@ function mostrarApp(usuario, acesso) {
 function fazerLogin() {
   const u = $('#l-user').value.trim(), p = $('#l-pass').value.trim(), btn = $('#l-btn'), er = $('#l-erro');
   er.textContent = '';
-  if (!u || !p) { er.textContent = 'Preencha o utilizador e a senha.'; return; }
+  if (!u || !p) { er.textContent = 'Preencha o utilizador e a palavra-passe.'; return; }
   btn.disabled = true; btn.textContent = 'A entrar…';
   google.script.run
     .withSuccessHandler(r => {
       btn.disabled = false; btn.textContent = 'Entrar';
-      if (r && r.sucesso) { S.token = r.token; guardar('pf_token', r.token); $('#l-pass').value = ''; mostrarApp(r.usuario, r); }
-      else er.textContent = (r && r.mensagem) || 'Utilizador ou senha incorretos.';
+      if (r && r.sucesso) { S.token = r.token; try { if ($('#l-lembrar').checked) localStorage.setItem(LEMB_K, '1'); else localStorage.removeItem(LEMB_K); } catch (e) {}
+        guardarToken(r.token); $('#l-pass').value = ''; mostrarApp(r.usuario, r); }
+      else er.textContent = (r && r.mensagem) || 'Utilizador ou palavra-passe incorretos.';
     })
     .withFailureHandler(e => { btn.disabled = false; btn.textContent = 'Entrar'; er.textContent = 'Erro no servidor: ' + (e.message || e); })
-    .validarLogin(u, p, false);
+    .validarLogin(u, p, persistente() || $('#l-lembrar').checked);
 }
 
 function sessaoExpirou() {
   if (!S.token) return;
-  S.token = null; guardar('pf_token', '');
+  S.token = null; guardarToken('');
   $('#app').hidden = true; $('#bottom-nav').hidden = true; $('#fab').hidden = true;
   fecharDrawer(); $('#login').hidden = false;
   $('#l-erro').textContent = 'A sessão expirou. Inicie sessão novamente.';
 }
 
 function sair() {
-  const t = S.token; S.token = null; guardar('pf_token', ''); S.opcoes = null; S.part = null; S.partOp = null;
+  const t = S.token; S.token = null; guardarToken(''); try { localStorage.removeItem(LEMB_K); localStorage.removeItem('pf_token'); } catch (e) {} S.opcoes = null; S.part = null; S.partOp = null;
   if (t) google.script.run.terminarSessao(t);
   $('#app').hidden = true; $('#bottom-nav').hidden = true; $('#fab').hidden = true;
   fecharDrawer(); $('#login').hidden = false; $('#l-erro').textContent = '';
@@ -919,10 +932,10 @@ function abrirGuia() {
     ${item('Pagar a fatura do cartão', 'Cartões › Pagar', 'Tira o dinheiro da conta e liberta o limite. <b>Não entra nas despesas nem no orçamento</b> (as compras já foram contadas).')}
     ${item('Pagamento na hora (débito, MB Way, dinheiro)', 'Novo lançamento › Despesa', 'Conta no dia e reduz o saldo da conta escolhida.')}
     ${item('Cartão refeição / subsídio de alimentação', 'Contas › Nova conta "Cartão refeição"', 'O subsídio que carrega entra como <b>Receita</b> nessa conta; cada compra é uma <b>Despesa</b> dessa conta. Assim cada euro conta uma vez, quando gasta, e o saldo do cartão fica certo.')}
-    ${item('Prestação de empréstimo ou compra parcelada', 'Dashboard › Prestações › Pagar', 'Escolha "Saiu de uma conta" para lançar a despesa na categoria da dívida. Escolha "Já registado noutro lado" se essa compra já está nos registos do cartão, para não contar duas vezes.')}
+    ${item('Prestação de empréstimo ou compra em prestações', 'Painel › Prestações › Pagar', 'Escolha "Saiu de uma conta" para lançar a despesa na categoria da dívida. Escolha "Já registado noutro lado" se essa compra já está nos registos do cartão, para não contar duas vezes.')}
 ${item('Transferência entre as suas contas', 'Novo lançamento › Transferência', 'Move dinheiro de uma conta para outra <b>sem ser receita nem despesa</b>. Use-a também para carregar o cartão refeição a partir da conta ordenado.')}
     ${item('Reembolso ou estorno', 'Novo lançamento › Despesa › Tipo: Reembolso', 'Fica com valor negativo, <b>abate à categoria e ao total de despesas</b> e aparece a verde com "+". Num cartão, abate à fatura.')}
-    ${item('Compra a prestações no cartão', 'Despesa de cartão › Nº de prestações', 'Divide o valor por N meses: cada parcela conta na sua data e cai na sua fatura.')}
+    ${item('Compra a prestações no cartão', 'Despesa de cartão › Nº de prestações', 'Divide o valor por N meses: cada prestação conta na sua data e cai na sua fatura.')}
     ${item('Pagar só parte da fatura', 'Cartões › Pagar › Valor a pagar', 'O que falta continua como fatura por pagar. Se o banco cobrou juros, indique-os em "Juros / encargos": entram como despesa do cartão.')}
     ${item('Saldo diferente do banco', 'Contas › Acertar saldo', 'Grava a diferença como acerto (não é receita nem despesa) e põe o saldo igual ao do banco.')}
     ${item('Salário, renda, subscrições', 'Definições › Lançamentos recorrentes', 'São criados sozinhos no dia certo, todos os meses.')}</div>
@@ -995,7 +1008,7 @@ async function formTransacao(tipo, cartaoPre) {
     campos.push({id:'parcelas', label:'Nº de prestações (1 = pagamento único)', tipo:'number', valor:1, min:1, max:60});
   }
   if (S.perms.PARTILHADAS_LANCAR && !ehRec && (ehCartao || tipo === ABA_DESP)) campos.push({id:'partilhar', tipo:'check', label:'Registar também nas despesas partilhadas (não preciso de lançar duas vezes)'},
-    {id:'partilha', label:'Como dividir', tipo:'select', opcoes:[{v:'igual', t:'Dividir 50/50'}, {v:'outro', t:'Gasto do outro titular (100% dele/dela)'}]});
+    {id:'partilha', label:'Como dividir', tipo:'select', opcoes:[{v:'igual', t:'Dividir 50/50'}, {v:'outro', t:'Despesa do outro titular (100% dele/dela)'}]});
   campos.push({id:'codigo', label:'Código (opcional)', placeholder:''});
   abrirForm({titulo, campos, botao:'Concluir',
     aoAbrir: d => {
@@ -1034,12 +1047,23 @@ async function formEditarTransacao(item) {
     for (let i = -6; i <= 9; i++) { const d = new Date(fa, fm - 1 + i, 1); fats.push({v:(d.getMonth() + 1) + '/' + d.getFullYear(), t:MESES[d.getMonth()].substring(0, 3) + '/' + d.getFullYear()}); }
     campos.push({id:'fatura', label:'Fatura em que o banco debitou', tipo:'select', opcoes:fats, valor:item.faturaRef});
   }
+  const ehParc = ehCartao && /\(\d+\/\d+\)\s*$/.test(item.descricao || '');
   if (item.partilha) campos.unshift({id:'infop', tipo:'info', html:'<span class="chip av">Partilhada</span> <span class="muted">Alterar o valor aqui atualiza também as despesas partilhadas.</span>'});
+  else if (S.perms.PARTILHADAS_LANCAR && !ehRec && (ehCartao || item.tipoAba === ABA_DESP)) {
+    campos.push({id:'partilhar', tipo:'check', label:'Registar também nas despesas partilhadas'},
+      {id:'partilha', label:'Como dividir', tipo:'select', opcoes:[{v:'igual', t:'Dividir 50/50'}, {v:'outro', t:'Despesa do outro titular (100% dele/dela)'}]});
+    if (ehParc) campos.push({id:'partTodas', tipo:'check', label:'Aplicar a todas as prestações desta compra', valor:'sim'});
+  }
   abrirForm({titulo:'Editar lançamento', campos, botao:'Guardar alterações',
+    aoAbrir: d => {
+      const pc = $('#f_partilhar', d); if (!pc) return;
+      const vp = () => { $('[data-c="partilha"]', d).hidden = !pc.checked; const pt = $('[data-c="partTodas"]', d); if (pt) pt.hidden = !pc.checked; };
+      pc.onchange = vp; vp();
+    },
     onSubmit: async v => {
       await api('atualizarTransacao', {tipoAba:item.tipoAba, idLinha:item.idLinha, descOriginal:item.descricao === 'Sem descrição' ? '' : item.descricao,
-        valor:parseFloat(v.valor) || 0, reembolso:v.reembolso === 'sim', data:v.data, descricao:v.descricao, categoria:v.categoria, conta:v.conta || '', fatura:v.fatura || ''});
-      toast('Lançamento atualizado.', 'ok'); sincronizar();
+        valor:parseFloat(v.valor) || 0, reembolso:v.reembolso === 'sim', data:v.data, descricao:v.descricao, categoria:v.categoria, conta:v.conta || '', fatura:v.fatura || '', partilha:v.partilhar === 'sim' ? v.partilha : '', partilhaTodas:v.partilhar === 'sim' && v.partTodas === 'sim'});
+      toast('Lançamento atualizado.' + (v.partilhar === 'sim' ? ' Também registado nas despesas partilhadas.' : ''), 'ok'); sincronizar(); if (v.partilhar === 'sim') S.part = null;
     }});
 }
 
@@ -1118,8 +1142,8 @@ function renderFluxo(h) {
 /** Legenda por categoria-mãe; clicar numa linha mostra as subcategorias. */
 function legendaGrupos(grupos, tot, cls) {
   return grupos.map((g, i) => `<div class="leg-g"><div class="leg leg-cab" role="button" tabindex="0" aria-expanded="false"><span class="dot" style="background:${PALETA[i % PALETA.length]}"></span><span class="nome"><span class="chev">${ico('seta')}</span>${esc(g.categoria)}${g.incidencia ? ' <span class="chip av">a classificar</span>' : ''}</span>
-      <span class="pct">${tot ? (g.total / tot * 100).toFixed(g.total / tot < 0.1 ? 1 : 0) : 0}%</span><b class="eur ${cls || ''}">${eur(g.total)}</b></div>
-    <div class="subs" hidden>${g.subs.map(x => `<div class="leg sub"><span class="nome">${esc(x.nome)}</span><span class="pct">${tot ? (x.total / tot * 100).toFixed(1) : 0}%</span><b class="eur">${eur(x.total)}</b></div>`).join('')}</div></div>`).join('');
+      <span class="pct">${tot ? pctLeg(g.total / tot * 100) : 0}%</span><b class="eur ${cls || ''}">${eur(g.total)}</b></div>
+    <div class="subs" hidden>${g.subs.map(x => `<div class="leg sub"><span class="nome">${esc(x.nome)}</span><span class="pct">${tot ? pctLeg(x.total / tot * 100) : 0}%</span><b class="eur">${eur(x.total)}</b></div>`).join('')}</div></div>`).join('');
 }
 function desenharDonutGrupos(chave, canvasId, grupos, centro) {
   const tot = grupos.reduce((a, g) => a + g.total, 0), c = corTema();
@@ -1133,7 +1157,7 @@ function desenharDonutGrupos(chave, canvasId, grupos, centro) {
 function renderCategorias(cat) {
   const grupos = cat.grupos || cat.labels.map((n, i) => ({categoria:n, total:cat.valores[i], subs:[]}));
   const tot = grupos.reduce((a, g) => a + g.total, 0);
-  if (!grupos.length) { $('#c-cats').innerHTML = vazio('Sem gastos neste mês', 'Registe uma despesa para ver a distribuição.'); return; }
+  if (!grupos.length) { $('#c-cats').innerHTML = vazio('Sem despesas neste mês', 'Registe uma despesa para ver a distribuição.'); return; }
   $('#c-cats').innerHTML = `<div class="cats-grid"><div class="chart-h peq"><canvas id="ch-cats"></canvas></div>
     <div class="legenda">${legendaGrupos(grupos, tot)}</div></div>`;
   desenharDonutGrupos('cats', 'ch-cats', grupos);
@@ -1142,7 +1166,7 @@ function renderCategorias(cat) {
 function renderDividasMes(l) {
   S.dividasMes = l;
   const box = $('#c-div-mes');
-  if (!l.length) { box.innerHTML = vazio('Sem prestações a vencer', 'Nenhuma dívida parcelada vence neste mês.'); return; }
+  if (!l.length) { box.innerHTML = vazio('Sem prestações a vencer', 'Nenhuma dívida em prestações vence neste mês.'); return; }
   const tot = l.reduce((a, p) => a + p.valorTotal, 0), pago = l.filter(p => p.pago).reduce((a, p) => a + p.valorTotal, 0);
   const estado = p => p.pago ? '<span class="chip ok">Pago</span>'
     : p.atrasada ? '<span class="chip mau">Em atraso</span>'
@@ -1206,8 +1230,8 @@ function formConta(c) {
   const novo = !c;
   garantirOpcoes().then(o => abrirForm({titulo:novo ? 'Nova conta' : 'Editar conta', botao:novo ? 'Guardar conta' : 'Guardar alterações', campos:[
     {id:'saldoInicial', tipo:'valor', valor:c ? c.saldoInicial : ''},
-    {id:'nome', label:'Nome da conta', placeholder:'Ex.: Millennium', valor:c ? c.nome : '', obrigatorio:true},
-    {id:'instituicao', label:'Banco / instituição', placeholder:'Ex.: Santander', valor:c ? c.instituicao : ''},
+    {id:'nome', label:'Nome da conta', placeholder:'Ex.: Conta à ordem', valor:c ? c.nome : '', obrigatorio:true},
+    {id:'instituicao', label:'Banco / instituição', placeholder:'Ex.: Nome do banco', valor:c ? c.instituicao : ''},
     {id:'modalidade', label:'Modalidade', tipo:'select', opcoes:comAtual(o.modalidades, c && c.modalidade), valor:c ? c.modalidade : 'Conta corrente'}]
     .concat(novo ? [] : [{id:'arquivada', label:'Estado', tipo:'select', opcoes:[{v:'nao', t:'Ativa'}, {v:'sim', t:'Arquivada (só com saldo zero)'}], valor:c.arquivada ? 'sim' : 'nao'}]),
     onSubmit: async v => {
@@ -1418,7 +1442,7 @@ async function carregarDetalheCartao() {
       <button class="btn" id="cd-seg" data-cdtab="${alvo(pos + 1)}" ${pos >= lista.length - 1 ? 'disabled' : ''} aria-label="Fatura seguinte">Seguinte ›</button>
       ${vig && !(vig.mes === ref.mes && vig.ano === ref.ano) ? `<button class="btn peq" data-cdtab="${vig.mes}-${vig.ano}">Ir para a fatura em vigor</button>` : ''}`;
     const chipE = {vigente:'neu', paga:'ok', porPagar:'av', futura:'neu', vazia:'neu'};
-    $('#cd-todas').innerHTML = `<div class="card-h"><h3>Todas as faturas</h3><span class="muted">clique numa linha para abrir</span></div><div class="tabela-wrap fat-tab"><table><thead><tr><th>Fatura</th><th>Vencimento</th><th class="dir-r">Compras</th><th class="dir-r">Total</th><th class="dir-r">Pago</th><th>Estado</th></tr></thead><tbody>${[...lista].reverse().map(f =>
+    $('#cd-todas').innerHTML = `<div class="card-h"><h3>Todas as faturas</h3><span class="muted">toque numa linha para abrir</span></div><div class="tabela-wrap fat-tab"><table><thead><tr><th>Fatura</th><th>Vencimento</th><th class="dir-r">Compras</th><th class="dir-r">Total</th><th class="dir-r">Pago</th><th>Estado</th></tr></thead><tbody>${[...lista].reverse().map(f =>
       `<tr data-cdtab="${f.mes}-${f.ano}" class="${f.mes === ref.mes && f.ano === ref.ano ? 'sel' : ''}"><td><b>${esc(f.rotulo)}</b></td><td>${esc(f.vencimentoTxt)}</td><td class="dir-r">${f.n}</td><td class="dir-r eur"><b>${eur(f.total)}</b></td><td class="dir-r eur ${f.pago > 0 ? 'pos' : ''}">${eur(f.pago)}</td><td><span class="chip ${chipE[f.estado]}">${rot[f.estado]}</span></td></tr>`).join('')}</tbody></table></div>`;
 
     $('#cd-titulo').textContent = `Despesas da fatura de ${MESES[ref.mes - 1]} ${ref.ano}`;
@@ -1455,11 +1479,11 @@ function voltarCartoes() { S.cartaoSel = null; S.cartaoRef = null; irPara('carto
  * RELATÓRIOS
  * =================================================================== */
 const RELATORIOS = [
-  {id:'dividas', perm:'DIVIDAS_VER', icone:'divida', titulo:'Dívidas parceladas', desc:'Panorama mês a mês e gestão dos contratos ativos.'},
+  {id:'dividas', perm:'DIVIDAS_VER', icone:'divida', titulo:'Dívidas a prestações', desc:'Panorama mês a mês e gestão dos contratos ativos.'},
   {id:'intervalo', perm:'REL_INTERVALO', icone:'ativ', titulo:'Despesas por intervalo', desc:'Contas e cartões, por data da compra, num período à escolha.'},
   {id:'metas', perm:'REL_METAS', icone:'meta', titulo:'Metas e alertas', desc:'Orçamento por categoria com barras de progresso e alertas por e-mail.'},
-  {id:'media', perm:'REL_MEDIA', icone:'rel', titulo:'Média histórica', desc:'Média mensal de gastos por categoria num intervalo de datas.'},
-  {id:'orcado', perm:'REL_ORCADO', icone:'balanca', titulo:'Orçado vs. realizado', desc:'Planeamento face aos gastos efetivos do mês selecionado.'}];
+  {id:'media', perm:'REL_MEDIA', icone:'rel', titulo:'Média histórica', desc:'Média mensal de despesas por categoria num intervalo de datas.'},
+  {id:'orcado', perm:'REL_ORCADO', icone:'balanca', titulo:'Orçado vs. realizado', desc:'Planeamento face às despesas efetivas do mês selecionado.'}];
 
 function desenharHubRelatorios() {
   S.relAtual = null; $('#periodo').hidden = true;
@@ -1478,7 +1502,7 @@ function renderRelatorio() {
 /* ---------- dívidas ---------- */
 async function relDividas() {
   const c = $('#rel-corpo');
-  c.innerHTML = `<div class="abas"><button data-tab="contratos" class="${S.relTab === 'contratos' ? 'ativo' : ''}">Contratos</button><button data-tab="panorama" class="${S.relTab === 'panorama' ? 'ativo' : ''}">Panorama</button><button data-tab="simulacao" class="${S.relTab === 'simulacao' ? 'ativo' : ''}">Simulação de quitação</button></div><div id="rel-sub"></div>`;
+  c.innerHTML = `<div class="abas"><button data-tab="contratos" class="${S.relTab === 'contratos' ? 'ativo' : ''}">Contratos</button><button data-tab="panorama" class="${S.relTab === 'panorama' ? 'ativo' : ''}">Panorama</button><button data-tab="simulacao" class="${S.relTab === 'simulacao' ? 'ativo' : ''}">Simulação de liquidação</button></div><div id="rel-sub"></div>`;
   const sub = $('#rel-sub'); skeleton(sub, 1, 260);
   try {
     if (S.relTab === 'panorama') {
@@ -1496,8 +1520,8 @@ async function relDividas() {
       const grupo = t => `<tr class="grp"><td colspan="6">${t}</td></tr>`;
       const corpo = (atrasados.length ? grupo('Em atraso') + atrasados.map(linha).join('') : '') + (futuros.length ? (atrasados.length || pagos.length ? grupo('Mês atual e seguintes') : '') + futuros.map(linha).join('') : '') + (pagos.length ? grupo('Meses anteriores (pagos)') + pagos.map(linha).join('') : '');
       sub.innerHTML = `<div class="grid kpis">${kpi('Falta pagar este mês', mesAtual ? mesAtual.faltaMes : 0, `<span class="muted">${mesAtual ? mesAtual.quantidadePagas + ' de ' + mesAtual.quantidade + ' prestações pagas' : 'sem prestações este mês'}</span>`, mesAtual && mesAtual.faltaMes > 0 ? 'neg' : '')}${kpi('Saldo devedor', r.saldoDevedorGeral, `<span class="muted">${r.totalFaltam} prestações por pagar</span>`, 'neg')}${kpi('Total contratado', r.totalGeral, '<span class="muted">capital + juros</span>')}
-        <div class="card"><div class="kpi-t">Quitação total</div><div class="kpi-v" style="color:var(--primary)">${esc(r.ultimaData)}</div><div class="kpi-x muted">última prestação</div></div></div>
-        <div class="card"><div class="card-h"><div><h3>Gastos com dívidas parceladas por mês</h3><span class="muted">total do mês = todas as prestações, pagas ou não</span></div>
+        <div class="card"><div class="kpi-t">Liquidação total</div><div class="kpi-v" style="color:var(--primary)">${esc(r.ultimaData)}</div><div class="kpi-x muted">última prestação</div></div></div>
+        <div class="card"><div class="card-h"><div><h3>Despesa mensal com dívidas a prestações</h3><span class="muted">total do mês = todas as prestações, pagas ou não</span></div>
           <select id="pan-per" class="sel-inline" aria-label="Meses anteriores a mostrar"><option value="atual" ${per === 'atual' ? 'selected' : ''}>Do mês atual em diante</option><option value="3" ${per === '3' ? 'selected' : ''}>+ últimos 3 meses</option><option value="6" ${per === '6' ? 'selected' : ''}>+ últimos 6 meses</option><option value="12" ${per === '12' ? 'selected' : ''}>+ últimos 12 meses</option><option value="todos" ${per === 'todos' ? 'selected' : ''}>Mostrar tudo</option></select></div>
         ${!corpo ? vazio('Sem prestações') : `<div class="tabela-wrap"><table><thead><tr><th>Mês</th><th>Prestações</th><th class="dir-r">Total do mês</th><th class="dir-r">Pago</th><th class="dir-r">Falta</th><th>Estado</th></tr></thead><tbody>${corpo}</tbody></table></div>`}
         ${ocultos > 0 ? `<p class="muted mini" style="margin:10px 0 0">${ocultos} ${ocultos === 1 ? 'mês anterior já pago está oculto' : 'meses anteriores já pagos estão ocultos'}. Escolha acima para os ver.</p>` : ''}</div>`;
@@ -1511,7 +1535,7 @@ async function relDividas() {
   } catch (e) { falhou(e); }
 }
 
-/* ---------- simulação de quitação ---------- */
+/* ---------- simulação de liquidação ---------- */
 const dataBR = t => { const [d, m, a] = String(t).split('/').map(Number); return new Date(a, m - 1, d); };
 const fimDoMes = ym => { const [a, m] = ym.split('-').map(Number); return new Date(a, m, 0); };
 function calcSimulacao() {
@@ -1528,7 +1552,7 @@ function calcSimulacao() {
   return {linhas, vencido, quitar, juros, mensal, nSel:n, alvo};
 }
 function renderSimulacao(sub) {
-  if (!S.dividas.length) { sub.innerHTML = vazio('Sem dívidas ativas', 'Não há nada para quitar.'); return; }
+  if (!S.dividas.length) { sub.innerHTML = vazio('Sem dívidas ativas', 'Não há nada para liquidar.'); return; }
   const sm = S.sim || (S.sim = {cob:hojeISO().slice(0, 7), modo:'capital', credor:''});
   if (!S.simSel || S.simSel.length !== S.dividas.length) S.simSel = S.dividas.map(() => false);
   const credores = [...new Set(S.dividas.map(d => d.credor).filter(Boolean))];
@@ -1539,21 +1563,21 @@ function renderSimulacao(sub) {
   if (sm.cob !== 'nenhum' && !meses.includes(sm.cob)) sm.cob = ini;
   sub.innerHTML = `<div class="card sec"><div class="sim-ctl">
       <div class="campo"><label>Prestações já cobertas até</label><select id="sim-cob"><option value="nenhum" ${sm.cob === 'nenhum' ? 'selected' : ''}>Nenhuma (só em atraso)</option>${meses.map(k => `<option value="${k}" ${sm.cob === k ? 'selected' : ''}>Fim de ${esc(refRotulo(k))}</option>`).join('')}</select></div>
-      <div class="campo"><label>Valor a quitar</label><select id="sim-modo"><option value="capital" ${sm.modo === 'capital' ? 'selected' : ''}>Só o capital (sem juros futuros)</option><option value="total" ${sm.modo === 'total' ? 'selected' : ''}>Prestações completas (com juros)</option></select></div>
+      <div class="campo"><label>Valor a liquidar</label><select id="sim-modo"><option value="capital" ${sm.modo === 'capital' ? 'selected' : ''}>Só o capital (sem juros futuros)</option><option value="total" ${sm.modo === 'total' ? 'selected' : ''}>Prestações completas (com juros)</option></select></div>
       ${credores.length > 1 ? `<div class="campo"><label>Credor</label><select id="sim-credor"><option value="">Todos</option>${credores.map(c => `<option ${sm.credor === c ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select></div>` : ''}</div>
-    <p class="muted mini" style="margin:0 0 10px">As prestações até ao fim do mês escolhido já estão no seu orçamento e contam como pagamento normal. O valor a quitar é o que precisa, além disso, para liquidar as seguintes.</p>
+    <p class="muted mini" style="margin:0 0 10px">As prestações até ao fim do mês escolhido já estão no seu orçamento e contam como pagamento normal. O valor a liquidar é o que precisa, além disso, para liquidar as seguintes.</p>
     <div class="sim-bar"><button class="btn peq" id="sim-todas">Selecionar todas</button><button class="btn peq" id="sim-nenhuma">Limpar seleção</button></div>
     <div class="sim-lista" id="sim-corpo"></div></div><div class="card" id="sim-resumo"></div>`;
   const pintar = () => {
     const r = calcSimulacao();
-    $('#sim-corpo').innerHTML = `<div class="sim-h"><span></span><span>Dívida</span><span>Já coberto</span><span>Prest. seguintes</span><span>A quitar</span><span>Juros evitados</span></div>` +
+    $('#sim-corpo').innerHTML = `<div class="sim-h"><span></span><span>Dívida</span><span>Já coberto</span><span>Prest. seguintes</span><span>A liquidar</span><span>Juros evitados</span></div>` +
       S.dividas.map((d, i) => { const l = r.linhas[i]; if (!l.vis) return '';
-        return `<label class="sim-l ${l.sel ? 'on' : ''}"><input type="checkbox" data-sim="${i}" ${S.simSel[i] ? 'checked' : ''}><span class="sim-n"><b>${esc(d.descricao)}</b><small>${esc(d.credor)}</small></span><span data-l="Já coberto" class="eur">${eur(l.vencido)}</span><span data-l="Prest. seguintes">${l.n}</span><span data-l="A quitar" class="eur"><b>${eur(l.quitar)}</b></span><span data-l="Juros evitados" class="eur pos">${eur(l.juros)}</span></label>`; }).join('') +
-      `<div class="sim-t"><span></span><span class="sim-n">${r.nSel} ${pl(r.nSel,'selecionada','selecionadas')}</span><span data-l="Já coberto" class="eur">${eur(r.vencido)}</span><span></span><span data-l="A quitar" class="eur">${eur(r.quitar)}</span><span data-l="Juros evitados" class="eur">${eur(r.juros)}</span></div>`;
+        return `<label class="sim-l ${l.sel ? 'on' : ''}"><input type="checkbox" data-sim="${i}" ${S.simSel[i] ? 'checked' : ''}><span class="sim-n"><b>${esc(d.descricao)}</b><small>${esc(d.credor)}</small></span><span data-l="Já coberto" class="eur">${eur(l.vencido)}</span><span data-l="Prest. seguintes">${l.n}</span><span data-l="A liquidar" class="eur"><b>${eur(l.quitar)}</b></span><span data-l="Juros evitados" class="eur pos">${eur(l.juros)}</span></label>`; }).join('') +
+      `<div class="sim-t"><span></span><span class="sim-n">${r.nSel} ${pl(r.nSel,'selecionada','selecionadas')}</span><span data-l="Já coberto" class="eur">${eur(r.vencido)}</span><span></span><span data-l="A liquidar" class="eur">${eur(r.quitar)}</span><span data-l="Juros evitados" class="eur">${eur(r.juros)}</span></div>`;
     $('#sim-resumo').innerHTML = r.nSel ? `<div class="grid kpis" style="margin:0">
-        <div class="card sim-dest"><div class="kpi-t">Para quitar o restante</div><div class="kpi-v neg">${eur(r.quitar)}</div><div class="kpi-x"><span class="muted">${sm.modo === 'total' ? 'soma das prestações seguintes' : 'capital das prestações seguintes'}</span></div></div>
+        <div class="card sim-dest"><div class="kpi-t">Para liquidar o restante</div><div class="kpi-v neg">${eur(r.quitar)}</div><div class="kpi-x"><span class="muted">${sm.modo === 'total' ? 'soma das prestações seguintes' : 'capital das prestações seguintes'}</span></div></div>
         ${kpi('Já no orçamento', r.vencido, `<span class="muted">prestações até ${esc(fmtDataBR(r.alvo))}</span>`)}${kpi('Juros que evita', r.juros, '<span class="muted">nas prestações seguintes</span>', 'pos')}${kpi('Liberta por mês', r.mensal, '<span class="muted">prestação mensal que deixa de pagar</span>', 'pos')}</div>
-      <p class="muted mini" style="margin:12px 0 0">Se somar tudo, precisa de ${eur(r.vencido + r.quitar)} (${eur(r.vencido)} já no orçamento + ${eur(r.quitar)} para quitar). Estimativa: o valor exato de liquidação antecipada é o que o credor indicar, que pode ter comissões ou outro cálculo de juros.</p>` : '<p class="muted" style="margin:0">Marque pelo menos uma dívida para ver o valor necessário.</p>';
+      <p class="muted mini" style="margin:12px 0 0">Se somar tudo, precisa de ${eur(r.vencido + r.quitar)} (${eur(r.vencido)} já no orçamento + ${eur(r.quitar)} para liquidar). Estimativa: o valor exato de liquidação antecipada é o que o credor indicar, que pode ter comissões ou outro cálculo de juros.</p>` : '<p class="muted" style="margin:0">Marque pelo menos uma dívida para ver o valor necessário.</p>';
   };
   pintar();
   sub.onchange = e => { const t = e.target;
@@ -1567,9 +1591,9 @@ const fmtDataBR = d => String(d.getDate()).padStart(2, '0') + '/' + String(d.get
 
 function renderContratos() {
   const sub = $('#rel-sub'); if (!sub) return;
-  sub.innerHTML = `<div class="filtros" style="justify-content:space-between;align-items:center"><label class="check" style="margin:0"><input type="checkbox" id="mq" ${S.mostrarQuitadas ? 'checked' : ''}> Mostrar dívidas quitadas</label>
+  sub.innerHTML = `<div class="filtros" style="justify-content:space-between;align-items:center"><label class="check" style="margin:0"><input type="checkbox" id="mq" ${S.mostrarQuitadas ? 'checked' : ''}> Mostrar dívidas liquidadas</label>
     <button class="btn pri" id="nova-div">${ico('plus')} Registar dívida</button></div>
-    <div class="card" style="padding:6px 8px"><div class="tabela-wrap">${!S.dividas.length ? vazio('Sem dívidas ativas', 'Registe uma dívida parcelada para acompanhar as prestações.') :
+    <div class="card" style="padding:6px 8px"><div class="tabela-wrap">${!S.dividas.length ? vazio('Sem dívidas ativas', 'Registe uma dívida a prestações para acompanhar as prestações.') :
     `<table><thead><tr><th>Descrição</th><th>Credor</th><th class="dir-r">Total</th><th>Pagas</th><th class="dir-r">Saldo devedor</th><th>Progresso</th><th></th></tr></thead><tbody>` +
     S.dividas.map((d, i) => `<tr class="clic" data-div="${i}"><td><b>${esc(d.descricao)}</b></td><td>${esc(d.credor)}</td><td class="dir-r eur">${eur(d.valorTotal)}</td><td>${d.parcelasPagas}/${d.totalParcelas}</td>
       <td class="dir-r eur neg"><b>${eur(d.saldoDevedor)}</b></td><td><div style="display:flex;align-items:center;gap:8px"><div class="prog ${d.quitada ? 'ok' : ''}" style="width:90px"><i style="width:${d.progresso}%"></i></div><span class="muted" style="font-size:12px">${d.progresso}%</span></div></td>
@@ -1587,7 +1611,7 @@ function formDivida(d) {
     {id:'credor', label:'Instituição / credor', valor:d ? d.credor : '', placeholder:'Ex.: Banco X'},
     {id:'valorPrincipal', label:'Valor principal (capital)', tipo:'number', step:'0.01', valor:d ? d.valorCapital : '', obrigatorio:true},
     {id:'totalJuros', label:'Total de juros', tipo:'number', step:'0.01', valor:d ? d.totalJuros : 0},
-    {id:'numParcelas', label:'Nº de parcelas', tipo:'number', valor:d ? d.totalParcelas : 12, min:1},
+    {id:'numParcelas', label:'Nº de prestações', tipo:'number', valor:d ? d.totalParcelas : 12, min:1},
     {id:'diaVencimento', label:'Dia de vencimento', tipo:'number', valor:d ? d.diaVenc : 10, min:1, max:31},
     {id:'dataIniciacao', label:'Mês da 1.ª prestação', tipo:'date', valor:d && d.inicioISO ? d.inicioISO : hojeISO()},
     {id:'categoria', label:'Categoria › Subcategoria', tipo:'select', opcoes:catOpcoes(o.planoDespesa, d && d.categoria), valor:d ? d.categoria : ''}],
@@ -1659,7 +1683,7 @@ async function relMetas() {
       ${r.somaCategorias > 0 ? `<p class="muted mini" style="margin:8px 0 0">Soma dos orçamentos por categoria: ${eur(r.somaCategorias)}</p>` : ''}</div>`;
     c.innerHTML = total + `<div class="filtros" style="justify-content:space-between;align-items:center"><p class="muted" style="margin:0;flex:1;min-width:220px">Se não definir um valor para este mês, usa-se o do mês anterior. Recebe um e-mail aos 50%, 80% e 100% do orçamento.</p>
       <button class="btn" id="btn-copiar-orc">Copiar orçamento do mês anterior</button><button class="btn" id="btn-teste-notif">${ico('ok')} Enviar e-mail de teste</button></div>
-      <div class="card" style="padding:6px 8px"><div class="tabela-wrap"><table><thead><tr><th>Categoria</th><th class="dir-r">Orçamento</th><th class="dir-r">Gasto</th>${prev ? '<th class="dir-r">Previsão</th>' : ''}<th>Consumo</th><th></th></tr></thead><tbody>` +
+      <div class="card" style="padding:6px 8px"><div class="tabela-wrap"><table><thead><tr><th>Categoria</th><th class="dir-r">Orçamento</th><th class="dir-r">Realizado</th>${prev ? '<th class="dir-r">Previsão</th>' : ''}<th>Consumo</th><th></th></tr></thead><tbody>` +
       l.map((m, i) => `<tr><td><b>${esc(m.categoria)}</b></td><td class="dir-r eur">${m.orcamento > 0 ? eur(m.orcamento) : '—'}</td><td class="dir-r eur">${eur(m.gasto)}</td>
         ${prev ? `<td class="dir-r eur ${m.orcamento > 0 && m.previsao > m.orcamento ? 'neg' : 'muted'}">${m.gasto > 0 ? eur(m.previsao) : '—'}</td>` : ''}
         <td>${m.orcamento > 0 ? `<div style="display:flex;align-items:center;gap:8px"><div class="prog ${cl(m.progresso)}" style="width:130px"><i style="width:${Math.min(m.progresso, 100)}%"></i></div><b>${m.progresso}%</b></div>` : '<span class="muted">sem meta</span>'}</td>
@@ -1762,11 +1786,11 @@ async function carregarDefinicoes() {
 
 function secNotificacoes(d) {
   return `<div class="card sec"><h3>Notificações por e-mail</h3><p class="sub-t">Alertas de metas, vencimentos e resumos. Pode indicar vários e-mails separados por vírgula.</p>
-    ${d.rotinasAtivas ? '' : '<div style="padding:10px 12px;border-radius:10px;background:var(--warn-soft);color:var(--text);margin-bottom:12px;font-size:13px">As rotinas automáticas ainda não estão ativas. Na folha de cálculo: menu <b>Gestão Financeira ▸ Ativar rotinas automáticas</b>.</div>'}
+    ${d.rotinasAtivas ? '' : '<div style="padding:10px 12px;border-radius:10px;background:var(--warn-soft);color:var(--text);margin-bottom:12px;font-size:13px">As rotinas automáticas ainda não estão ativas. Na folha de cálculo: menu <b>Performance Financial ▸ Ativar rotinas automáticas</b>.</div>'}
     <div class="campo"><label for="def-emails">E-mails</label><input id="def-emails" type="text" value="${esc(d.emails)}" placeholder="eu@exemplo.pt, parceiro@exemplo.pt"></div>
     <label class="check"><input type="checkbox" id="def-sem" ${d.resumoSemanal ? 'checked' : ''}> Resumo semanal por categoria (segundas-feiras)</label>
     <label class="check"><input type="checkbox" id="def-men" ${d.resumoMensal ? 'checked' : ''}> Resumo mensal por categoria (dia 1)</label>
-    <div class="campo"><label for="def-crit">Despesas de cartão contam em</label><select id="def-crit"><option value="fatura" ${d.criterioCartoes !== 'compra' ? 'selected' : ''}>Mês da fatura atribuída pelo banco (recomendado)</option><option value="compra" ${d.criterioCartoes === 'compra' ? 'selected' : ''}>Data da compra</option></select><p class="muted mini" style="margin:6px 0 0">Vale para o Dashboard, categorias, histórico, metas, relatórios e Visão anual.</p></div>
+    <div class="campo"><label for="def-crit">Despesas de cartão contam em</label><select id="def-crit"><option value="fatura" ${d.criterioCartoes !== 'compra' ? 'selected' : ''}>Mês da fatura atribuída pelo banco (recomendado)</option><option value="compra" ${d.criterioCartoes === 'compra' ? 'selected' : ''}>Data da compra</option></select><p class="muted mini" style="margin:6px 0 0">Vale para o Painel, categorias, histórico, metas, relatórios e Visão anual.</p></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri" data-def="guardar-notif">Guardar</button><button class="btn" data-def="teste-alerta">E-mail de teste (alerta)</button>
       <button class="btn" data-def="teste-semanal">Teste do resumo semanal</button><button class="btn" data-def="teste-mensal">Teste do resumo mensal</button></div></div>`;
 }
@@ -1803,10 +1827,10 @@ function secContas() {
 }
 
 function secSeguranca(d) {
-  return `<div class="card sec"><h3>Segurança e cópias</h3><p class="sub-t">A senha é guardada cifrada. As cópias ficam na pasta "Performance Financial - Cópias de segurança" do seu Google Drive (mantêm-se as 8 mais recentes).</p>
-    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-def="senha">Alterar senha</button><button class="btn" data-def="backup">Fazer cópia de segurança agora</button></div>
+  return `<div class="card sec"><h3>Segurança e cópias</h3><p class="sub-t">A palavra-passe é guardada cifrada. As cópias ficam na pasta "Performance Financial - Cópias de segurança" do seu Google Drive (mantêm-se as 8 mais recentes).</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-def="senha">Alterar palavra-passe</button><button class="btn" data-def="backup">Fazer cópia de segurança agora</button></div>
     <div id="lock-box"></div>
-    <p class="muted mini" style="margin:10px 0 0">Cópia automática semanal: ${d.backupAtivo ? '<b class="pos">ativa</b> (domingos, 3h)' : '<b class="neg">não ativa</b> — menu Gestão Financeira ▸ Ativar rotinas automáticas'}.</p></div>`;
+    <p class="muted mini" style="margin:10px 0 0">Cópia automática semanal: ${d.backupAtivo ? '<b class="pos">ativa</b> (domingos, 3h)' : '<b class="neg">não ativa</b> — menu Performance Financial ▸ Ativar rotinas automáticas'}.</p></div>`;
 }
 
 function secQualidade(q) {
@@ -1871,13 +1895,13 @@ async function acaoDef(cmd) {
 }
 
 function formSenha() {
-  abrirForm({titulo:'Alterar senha', botao:'Alterar', campos:[
-    {id:'atual', label:'Senha atual', tipo:'password', obrigatorio:true},
-    {id:'nova', label:'Nova senha (mín. 8 caracteres)', tipo:'password', obrigatorio:true},
-    {id:'conf', label:'Repetir nova senha', tipo:'password', obrigatorio:true}],
+  abrirForm({titulo:'Alterar palavra-passe', botao:'Alterar', campos:[
+    {id:'atual', label:'Palavra-passe atual', tipo:'password', obrigatorio:true},
+    {id:'nova', label:'Nova palavra-passe (mín. 8 caracteres)', tipo:'password', obrigatorio:true},
+    {id:'conf', label:'Repetir a nova palavra-passe', tipo:'password', obrigatorio:true}],
     onSubmit: async v => {
-      if (v.nova !== v.conf) throw new Error('As senhas novas não coincidem.');
-      await api('alterarSenha', v.atual, v.nova); toast('Senha alterada.', 'ok'); }});
+      if (v.nova !== v.conf) throw new Error('As palavras-passe não coincidem.');
+      await api('alterarSenha', v.atual, v.nova); toast('Palavra-passe alterada.', 'ok'); }});
 }
 
 function depoisCategorias() { S.opcoes = null; S.cacheAba = {}; carregarDefinicoes(); }
@@ -1979,7 +2003,7 @@ function renderPartilhadas() {
   const kpis = `<div class="grid kpis">
     ${kpi('Total despesas', r.totalDespesas, `<span class="muted">Casa ${eur(r.casa)} · Compras ${eur(r.compras)}</span>`, 'neg')}
     ${kpi('Total receitas', r.receitas, '<span class="muted">receitas fixas do mês</span>', 'pos')}
-    ${kpi('Pedro passou', r.pedro, '<span class="muted">contribuição fixa (abate à casa)</span>')}
+    ${kpi('Contribuição fixa', r.pedro, '<span class="muted">contribuição fixa (abate à casa)</span>')}
     ${kpi('Cada um envia à conta conjunta', r.cadaUm, `<span class="muted">(casa − receitas) ÷ 2 · ${esc(A)} e ${esc(B)}</span>`)}</div>`;
   const cc = r.contaConjuntaPago || {a:0, b:0}, ouro = r.liquido || 0, ac = r.acertado || 0;
   const cartaoPessoa = (P, Q, ehA) => {
@@ -2004,7 +2028,7 @@ function renderPartilhadas() {
     `<div class="tabela-wrap"><table><thead><tr><th>Data</th><th>Quem → quem</th><th>Tipo</th><th class="dir-r">Valor</th><th>Notas</th><th></th></tr></thead><tbody>${d.acertos.map((x, j) =>
       `<tr><td>${esc(x.data)}</td><td><b>${esc(x.de)}</b> → ${esc(x.para)}</td><td>${esc(x.tipo)}</td><td class="dir-r eur">${eur(x.valor)}</td><td class="muted">${esc(x.obs)}</td><td class="dir-r">${x.editavel ? `<button class="acao del" data-acdel="${j}" aria-label="Eliminar">${ico('del')}</button>` : ''}</td></tr>`).join('')}</tbody></table></div>`;
   c.innerHTML = topo + hero + kpis + quem +
-    `<div class="card sec"><div class="card-h"><h3>Despesas gerais da casa</h3><span class="muted">dividas ao meio depois das receitas fixas</span></div>${tCasa}</div>
+    `<div class="card sec"><div class="card-h"><h3>Despesas gerais da casa</h3><span class="muted">divididas ao meio depois das receitas fixas</span></div>${tCasa}</div>
      <div class="card sec"><div class="card-h"><h3>Receitas fixas</h3></div>${tRec}</div>
      <div class="card sec"><div class="card-h"><h3>Compras do mês</h3><span class="muted">cartão que pagou e como se divide</span></div>${tComp}</div>
      <div class="card sec"><div class="card-h"><h3>Acertos e pagamentos</h3></div>${tAc}</div>
@@ -2012,7 +2036,7 @@ function renderPartilhadas() {
   desenharCatPart();
 }
 
-/** Gastos por categoria dos dois juntos (casa + compras do mês): mesmo desenho do Dashboard, no fim da página. */
+/** Despesas por categoria dos dois juntos (casa + compras do mês): mesmo desenho do Dashboard, no fim da página. */
 function catPartilhadas(d, A, B) {
   const m = {};
   [...d.casa, ...d.compras].forEach(x => { const k = x.cat || 'Sem categoria'; const o = m[k] || (m[k] = {cat:k, tot:0, a:0, b:0}); o.tot += x.valor; o.a += x.parteA; o.b += x.parteB; });
@@ -2020,11 +2044,11 @@ function catPartilhadas(d, A, B) {
   S.partCats = l;
   if (!l.length) return '';
   const tot = l.reduce((t, x) => t + x.tot, 0);
-  return `<div class="card sec" id="part-cats"><div class="card-h"><h3>Gastos por categoria</h3><span class="muted">${esc(A)} + ${esc(B)} · casa e compras do mês</span></div>
+  return `<div class="card sec" id="part-cats"><div class="card-h"><h3>Despesas por categoria</h3><span class="muted">${esc(A)} + ${esc(B)} · casa e compras do mês</span></div>
     <div style="display:grid;grid-template-columns:minmax(150px,200px) 1fr;gap:16px;align-items:center">
     <div class="chart-h peq"><canvas id="ch-part-cats"></canvas></div>
     <div class="legenda">${l.map((x, i) => `<div class="leg"><span class="dot" style="background:${PALETA[i % PALETA.length]}"></span><span class="nome">${esc(x.cat)}<span class="muted mini" style="display:block">${esc(A)} ${eur(x.a)} · ${esc(B)} ${eur(x.b)}</span></span>
-      <span class="pct">${(x.tot / tot * 100).toFixed(0)}%</span><b class="eur">${eur(x.tot)}</b></div>`).join('')}</div></div></div>`;
+      <span class="pct">${pctLeg(x.tot / tot * 100)}%</span><b class="eur">${eur(x.tot)}</b></div>`).join('')}</div></div></div>`;
 }
 function desenharCatPart() {
   const l = S.partCats || []; if (!l.length || !$('#ch-part-cats')) return;
@@ -2051,7 +2075,7 @@ async function formPartilhada(x, tipoIni) {
   const cats = [...new Set(o.categorias.map(c => c.nome))];
   const cartoes = o.cartoes.map(c => c.nome);
   const campos = [];
-  if (admin) campos.push({id:'tipo', label:'Tipo', tipo:'select', opcoes:[{v:'Compra', t:'Compra com cartão'}, {v:'Casa', t:'Despesa geral da casa'}, {v:'Receita', t:'Receita fixa (ex.: Pedro)'}], valor:tipo0});
+  if (admin) campos.push({id:'tipo', label:'Tipo', tipo:'select', opcoes:[{v:'Compra', t:'Compra com cartão'}, {v:'Casa', t:'Despesa geral da casa'}, {v:'Receita', t:'Receita fixa (contribuição de terceiros)'}], valor:tipo0});
   campos.push({id:'valor', tipo:'valor', valor:x ? Math.abs(x.valor) : '', obrigatorio:true});
   campos.push({id:'estorno', label:'Movimento', tipo:'select', opcoes:[{v:'nao', t:'Despesa / valor normal'}, {v:'sim', t:'Estorno (valor a favor)'}], valor:x && x.valor < 0 ? 'sim' : 'nao'});
   campos.push({id:'data', label:'Data', tipo:'date', valor:x ? x.iso : hojeISO(), obrigatorio:true},
@@ -2062,7 +2086,7 @@ async function formPartilhada(x, tipoIni) {
   campos.push({id:'div', label:'Como se divide', tipo:'select', opcoes:[{v:'Igual', t:'Dividir 50/50'}, {v:'100% ' + A, t:`Só ${A} deve (100% ${A})`}, {v:'100% ' + B, t:`Só ${B} deve (100% ${B})`}], valor:x ? x.div : 'Igual'},
     {id:'ref', label:'Mês de referência (fatura)', tipo:'select', opcoes:refsDisponiveis(), valor:x ? x.ref : S.partRef},
     {id:'parcela', label:'Prestação (opcional, ex.: 3/9)', valor:x ? x.parcela : ''});
-  if (!admin) campos.push({id:'nota', tipo:'info', html:`<span class="muted">Fica registado em seu nome (${esc(o.eu.pessoa)}) e só você o pode alterar.</span>`});
+  if (!admin) campos.push({id:'nota', tipo:'info', html:`<span class="muted">Fica registado em seu nome (${esc(o.eu.pessoa)}) e só pode ser alterado por si.</span>`});
   abrirForm({titulo:x ? 'Editar lançamento' : 'Novo lançamento partilhado', botao:x ? 'Guardar' : 'Lançar', campos,
     aoAbrir: d => {
       const ver = () => {
@@ -2126,7 +2150,7 @@ function secAcessos(ac) {
       ac.catalogo.map((c, k) => `<td class="${k && ac.catalogo[k - 1].g !== c.g ? 's' : ''}"><input type="checkbox" data-acp="${i}:${c.k}" ${u.perms[c.k] ? 'checked' : ''} ${adm ? 'disabled title="Administradores têm acesso a tudo"' : ''} aria-label="${esc(c.t)}"></td>`).join('') +
       ac.notif.map((n, k) => `<td class="${k ? '' : 's'}"><input type="checkbox" data-acn="${i}:${n.k}" ${u.notif[n.k] ? 'checked' : ''} ${u.email ? '' : 'disabled title="Defina primeiro o e-mail desta pessoa"'} aria-label="${esc(n.n)}"></td>`).join('') +
       `<td><button class="acao" data-def="ac-ed:${i}" aria-label="Editar utilizador">${ico('edit')}</button></td></tr>`; }).join('');
-  return `<div class="card sec"><div class="card-h"><div><h3>Acessos e permissões</h3><p class="sub-t" style="margin:0">Uma coluna para cada página e ação da app. Marque o que cada pessoa pode ver ou fazer; as alterações guardam-se logo. Todos usam o mesmo link. A mesma tabela existe na folha "ACESSOS" da planilha.</p></div>
+  return `<div class="card sec"><div class="card-h"><div><h3>Acessos e permissões</h3><p class="sub-t" style="margin:0">Uma coluna para cada página e ação da app. Marque o que cada pessoa pode ver ou fazer; as alterações guardam-se logo. Todos usam o mesmo endereço. A mesma tabela existe na folha "ACESSOS" da folha de cálculo.</p></div>
     <button class="btn peq pri" data-def="ac-novo">${ico('plus')} Novo utilizador</button></div>
     <div class="tabela-wrap ac-desk"><table class="matriz-ac"><thead>${cab1}${cab2}</thead><tbody>${corpo}</tbody></table></div>
     <div class="ac-mob">${acMovel(ac)}</div>
@@ -2161,8 +2185,8 @@ async function guardarAcessoLinha(i, mudar) {
 async function formAcesso(u) {
   let o; try { o = S.partOp || (S.partOp = await api('getPartilhaOpcoes')); } catch (e) { return falhou(e); }
   const SN = ['Sim', 'Não'], campos = [];
-  campos.push(u ? {id:'nome', tipo:'info', label:'Utilizador', html:`<b>${esc(u.utilizador)}</b>`} : {id:'nome', label:'Nome de utilizador', placeholder:'Ex.: Kenneth', obrigatorio:true});
-  campos.push({id:'senha', label:u ? 'Nova senha (deixe vazio para manter)' : 'Senha provisória (mín. 8 caracteres)', placeholder:u ? '' : 'a pessoa pode alterá-la depois', obrigatorio:!u});
+  campos.push(u ? {id:'nome', tipo:'info', label:'Utilizador', html:`<b>${esc(u.utilizador)}</b>`} : {id:'nome', label:'Nome de utilizador', placeholder:'Ex.: Maria', obrigatorio:true});
+  campos.push({id:'senha', label:u ? 'Nova palavra-passe (deixe vazio para manter)' : 'Palavra-passe provisória (mín. 8 caracteres)', placeholder:u ? '' : 'a pessoa pode alterá-la depois', obrigatorio:!u});
   if (!u || !u.dono) campos.push({id:'perfil', label:'Perfil', tipo:'select', opcoes:[{v:'Membro', t:'Membro (só vê o que liberar)'}, {v:'Administrador', t:'Administrador (vê e altera tudo, incluindo acessos)'}], valor:u ? u.perfil : 'Membro'},
     {id:'ativo', label:'Acesso ativo', tipo:'select', opcoes:SN, valor:u ? (u.ativo ? 'Sim' : 'Não') : 'Sim'});
   campos.push({id:'pessoa', label:'Quem é nas despesas partilhadas', tipo:'select', opcoes:[{v:'', t:'—'}].concat(o.titulares.map(t => ({v:t, t}))), valor:u ? u.pessoa : ''},
@@ -2173,7 +2197,7 @@ async function formAcesso(u) {
       const perms = {}, pre = u ? null : PRESETS_AC[v.modelo].p;
       PERMS_TODAS.forEach(k => { perms[k] = u ? !!u.perms[k] : pre.includes(k); });
       await api('salvarAcesso', {utilizador:u ? u.utilizador : v.nome, senha:v.senha || '', perfil:u && u.dono ? 'Administrador' : v.perfil, ativo:u && u.dono ? true : v.ativo !== 'Não', pessoa:v.pessoa, email:v.email, perms, notif:u ? u.notif : {}});
-      toast(u ? 'Utilizador atualizado.' : 'Utilizador criado. Ajuste na tabela o que pode ver e fazer. Dê-lhe o link da app e a senha provisória.', 'ok'); carregarDefinicoes(); }});
+      toast(u ? 'Utilizador atualizado.' : 'Utilizador criado. Ajuste na tabela o que pode ver e fazer. Envie-lhe o endereço da app e a palavra-passe provisória.', 'ok'); carregarDefinicoes(); }});
 }
 
 function alternarGrupo(el) {
@@ -2313,7 +2337,7 @@ function formObjetivo(o) {
       toast(o ? 'Objetivo atualizado.' : 'Objetivo criado.', 'ok'); S.cacheAba = {}; carregarObjetivos();
     }});
   if (o) { const b = document.createElement('button'); b.className = 'btn peq'; b.style.cssText = 'margin-top:8px;color:var(--danger)'; b.textContent = 'Apagar este objetivo'; b.onclick = async () => {
-    if (!await confirmar('Apagar objetivo?', `"${o.nome}" e todos os seus aportes serão apagados.`, 'Apagar', true)) return;
+    if (!await confirmar('Apagar objetivo?', `"${o.nome}" e todas as suas contribuições serão apagadas.`, 'Apagar', true)) return;
     try { await api('excluirObjetivo', o.id); fecharDrawer(); toast('Objetivo apagado.', 'ok'); S.cacheAba = {}; carregarObjetivos(); } catch (e) { falhou(e); } };
     $('#drawer .corpo').appendChild(b); }
 }
@@ -2382,8 +2406,8 @@ function renderFecho() {
   const lista = (t, l, cls) => l.length ? `<div class="card"><div class="card-h"><h3>${t}</h3></div>${l.map(x => `<div class="linha-kv"><span><b>${esc(x.nome)}</b> <span class="muted mini">${x.categoria && x.categoria !== x.nome ? esc(x.categoria) + ' · ' : ''}${eur(x.b)} → ${eur(x.a)}</span></span><b class="eur ${cls}">${x.dif > 0 ? '+' : '−'} ${eur(Math.abs(x.dif))}</b></div>`).join('')}</div>` : '';
   const resumo = (() => {
     const p = [];
-    p.push(`Em <b>${esc(A.rotulo)}</b> recebeu ${eur(A.receita)} e gastou ${eur(A.despesa)}, ${A.poupanca >= 0 ? `poupando <b class="pos">${eur(A.poupanca)}</b>${A.taxa != null ? ` (${A.taxa}% do que recebeu)` : ''}` : `ficando <b class="neg">${eur(-A.poupanca)}</b> abaixo do que recebeu`}.`);
-    if (B.despesa > 0) { const v = pc(A.despesa, B.despesa); p.push(`As despesas ${v > 0 ? 'subiram' : v < 0 ? 'desceram' : 'ficaram iguais'}${v ? ` <b>${Math.abs(v)}%</b>` : ''} face a ${esc(B.rotulo)}.`); }
+    p.push(`Em <b>${esc(mesTxt(A.rotulo))}</b> recebeu ${eur(A.receita)} e gastou ${eur(A.despesa)}, ${A.poupanca >= 0 ? `poupando <b class="pos">${eur(A.poupanca)}</b>${A.taxa != null ? ` (${A.taxa}% do que recebeu)` : ''}` : `ficando <b class="neg">${eur(-A.poupanca)}</b> abaixo do que recebeu`}.`);
+    if (B.despesa > 0) { const v = pc(A.despesa, B.despesa); p.push(`As despesas ${v > 0 ? 'subiram' : v < 0 ? 'desceram' : 'ficaram iguais'}${v ? ` <b>${Math.abs(v)}%</b>` : ''} face a ${esc(mesTxt(B.rotulo))}.`); }
     if (d.piorou.length) p.push(`Piorou sobretudo: ${d.piorou.slice(0, 3).map(x => `<b>${esc(x.nome)}</b> (+${eur(x.dif)})`).join(', ')}.`);
     return p.join(' ');
   })();
@@ -2443,7 +2467,7 @@ function iniciarImportar() {
   IMP.analise = null; IMP.linhas = [];
   const contas = (S.opcoes && S.opcoes.contas) || [];
   $('#imp-corpo').innerHTML = `<div class="card"><h3 style="margin-top:0">1. Escolha o ficheiro do banco</h3>
-    <p class="muted" style="margin-top:4px">No homebanking, exporte os movimentos em <b>CSV</b> (ou Excel guardado como CSV). O ficheiro é lido aqui, no seu dispositivo: só os movimentos que escolher seguem para a folha.</p>
+    <p class="muted" style="margin-top:4px">No homebanking, exporte os movimentos em <b>CSV</b> (ou Excel guardado como CSV). O ficheiro é lido aqui, no seu dispositivo: só os movimentos que escolher são importados.</p>
     <div class="campo"><label for="imp-conta">Conta a que pertence o extrato</label><select id="imp-conta">${opcHTML(contas, IMP.conta)}</select></div>
     <div class="campo"><label for="imp-file">Ficheiro CSV</label><input type="file" id="imp-file" accept=".csv,.txt,text/csv,text/plain"></div></div><div id="imp-passo2"></div>`;
   garantirOpcoes().then(o => { if ($('#imp-conta') && !$('#imp-conta').options.length) { $('#imp-conta').innerHTML = opcHTML(o.contas, IMP.conta); } }).catch(() => {});
@@ -2534,13 +2558,14 @@ async function lockAtivar() {
   const cred = await navigator.credentials.create({publicKey:{challenge:ch, rp:{name:'Performance Financial', id:location.hostname}, user:{id:uid, name:S.usuario || 'utilizador', displayName:S.usuario || 'Utilizador'},
     pubKeyCredParams:[{type:'public-key', alg:-7}, {type:'public-key', alg:-257}], authenticatorSelection:{authenticatorAttachment:'platform', userVerification:'required', residentKey:'discouraged'}, timeout:60000, attestation:'none'}});
   gravarLocal(LOCK_K, b64u(cred.rawId));
+  guardarToken(S.token);
 }
 async function lockVerificar() {
   const id = lerLocal(LOCK_K); if (!id) return true;
   await navigator.credentials.get({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)), rpId:location.hostname, allowCredentials:[{type:'public-key', id:deB64u(id), transports:['internal']}], userVerification:'required', timeout:60000}});
   return true;
 }
-function lockDesativar() { try { localStorage.removeItem(LOCK_K); } catch (e) {} }
+function lockDesativar() { try { localStorage.removeItem(LOCK_K); } catch (e) {} guardarToken(S.token); }
 function mostrarBloqueio() {
   if (!lockAtivo() || $('#bloqueio').classList.contains('on')) return;
   $('#bloqueio').classList.add('on'); $('#bl-erro').textContent = '';
@@ -2617,7 +2642,7 @@ async function pintarLock() {
   const el = $('#lock-box'); if (!el) return;
   if (!MODO_PWA) { el.innerHTML = ''; return; }
   const ok = await lockDisponivel();
-  el.innerHTML = ok ? `<div class="lock-linha"><div><b>Bloqueio com Face ID</b><span class="muted mini">Pede Face ID (ou o código do telemóvel) quando voltar à app passados 30 segundos. Ao abrir a app o login é sempre pedido.</span></div>
+  el.innerHTML = ok ? `<div class="lock-linha"><div><b>Bloqueio com Face ID</b><span class="muted mini">Com o Face ID (ou o código do telemóvel) ativo, a app guarda o acesso neste dispositivo e abre depois de confirmar a sua identidade; volta a pedir ao regressar passados 30 segundos. Desativado, e sem “Guardar o acesso” no login, pede sempre utilizador e palavra-passe.</span></div>
       ${lockAtivo() ? '<span class="chip ok">Ativo</span><button class="btn peq" data-lock="off">Desativar</button>' : '<button class="btn peq pri" data-lock="on">Ativar</button>'}</div>`
     : '<p class="muted mini" style="margin:12px 0 0">O bloqueio com Face ID só está disponível na app instalada no ecrã principal, em telemóveis com Face ID / Touch ID.</p>';
 }
@@ -2713,7 +2738,7 @@ $('#l-ver').onchange = e => { $('#l-pass').type = e.target.checked ? 'text' : 'p
     $('#l-servidor').onclick = () => { try { localStorage.removeItem('pf_api'); } catch (e) {} location.reload(); };
   }
   if (MODO_PWA && lockAtivo() && lockSuportado()) mostrarBloqueio();
-  const t = apiUrl() || !MODO_PWA ? ler('pf_token') : null;
+  const t = apiUrl() || !MODO_PWA ? lerToken() : null;
   if (t) google.script.run.withSuccessHandler(r => { if (r && r.sucesso) { S.token = t; mostrarApp(r.usuario, r); } }).withFailureHandler(() => {}).validarSessao(t);
 })();
 </script>
