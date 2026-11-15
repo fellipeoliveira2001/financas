@@ -214,6 +214,11 @@ tfoot td{font-weight:700;border-bottom:0;background:var(--surface-2)}
 
 
 
+.blocos3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))!important;margin-bottom:12px}
+.bloco{border-top:4px solid var(--border)}.bloco.b-casa{border-top-color:#2563eb}.bloco.b-comp{border-top-color:#16a34a}.bloco.b-prest{border-top-color:#d97706}
+.bloco .bl-t{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}.bloco .bl-v{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:2px 0}.bloco .bl-s{margin-bottom:8px}
+.seg{display:inline-flex;gap:2px;background:var(--surface-2);padding:3px;border-radius:10px;flex-wrap:wrap}.seg-b{border:0;background:transparent;color:var(--muted);font:inherit;font-size:12.5px;font-weight:600;padding:5px 11px;border-radius:8px;cursor:pointer}.seg-b.on{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.leg .det{display:block;white-space:normal;overflow:visible;text-overflow:clip}
 .pessoa-card{border-left:4px solid var(--border)}
 .pessoa-card.rec{border-left-color:var(--success)}.pessoa-card.dev{border-left-color:var(--danger)}.pessoa-card.ok{border-left-color:var(--success)}
 .pc-n{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}.pc-n b{font-size:16px;flex:1}
@@ -406,6 +411,12 @@ body:not(.p-OBJETIVOS_GERIR) [data-obj-novo],body:not(.p-OBJETIVOS_GERIR) .obj-a
 .leg.sub{padding-left:30px;font-size:13px;color:var(--muted)}.leg.sub .eur{font-weight:600;color:var(--text)}
 tr.grp-cab{cursor:pointer;background:var(--surface-2);font-weight:700}tr.grp-cab:hover{background:var(--primary-soft)}tr.grp-cab .chev{display:inline-flex;width:14px;margin-right:4px;transition:transform .15s;vertical-align:middle}tr.grp-cab .chev svg{width:12px;height:12px}tr.grp-cab.aberto .chev{transform:rotate(90deg)}
 tr.grp-sub td.ind{padding-left:28px;color:var(--muted)}
+
+.ntf-r{display:grid;grid-template-columns:1fr 56px;cursor:pointer;gap:8px;align-items:center;padding:12px 0;border-top:1px solid var(--border)}.ntf-r>span:first-child{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ntf-h{border-top:0;padding:0 0 6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}.ntf-c{text-align:center}.ntf-c input{width:22px;height:22px;accent-color:var(--primary);cursor:pointer}
+.prazo-r{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--border);flex-wrap:wrap}.prazo-r>div:first-child{flex:1;min-width:200px}
+.prazo-c{display:flex;gap:8px;align-items:center}.prazo-c input{width:70px}.prazo-c select{min-width:150px}
+@media (max-width:760px){.ntf-r{grid-template-columns:1fr 48px}.prazo-c{width:100%}.prazo-c select{flex:1;min-width:0}}
 .cat-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
 .cat-grp{border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden}.cat-grp>header{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;background:var(--surface-2);flex-wrap:wrap}
 .cat-grp>summary{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;background:var(--surface-2);flex-wrap:wrap;cursor:pointer;list-style:none}
@@ -503,7 +514,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:0
         <button class="ib solo" id="btn-atualizar" title="Atualizar" aria-label="Atualizar"><svg class="ico"><use href="#i-refresh"/></svg></button>
         <button class="ib solo" id="btn-ajuda" hidden title="Como registar cada coisa" aria-label="Como registar cada coisa"><svg class="ico"><use href="#i-ajuda"/></svg></button>
         <button class="ib solo" id="btn-tema" title="Tema" aria-label="Alternar tema"><svg class="ico" id="ico-tema"><use href="#i-lua"/></svg></button>
-        <div class="user" id="user-box" title="Alterar a minha palavra-passe" style="cursor:pointer"><div class="avatar" id="avatar">U</div><span id="user-nome">Utilizador</span>
+        <div class="user" id="user-box" title="A minha conta" style="cursor:pointer"><div class="avatar" id="avatar">U</div><span id="user-nome">Utilizador</span>
           <button class="ib" id="btn-sair" title="Terminar sessão" aria-label="Terminar sessão" style="width:28px;height:28px"><svg class="ico"><use href="#i-sair"/></svg></button></div>
       </div>
     </header>
@@ -562,6 +573,9 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:0
 
       <!-- DEFINIÇÕES -->
       <section class="view" id="v-definicoes"><div id="def-corpo"></div></section>
+
+      <!-- MINHA CONTA -->
+      <section class="view" id="v-conta"><div id="conta-corpo"></div></section>
 
       <!-- PARTILHADAS -->
       <section class="view" id="v-partilhadas"><div id="part-corpo"></div></section>
@@ -633,7 +647,7 @@ const ico = n => `<svg class="ico"><use href="#i-${n}"/></svg>`;
 const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const ABREV = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 const PALETA = ['#7b1fa2','#16a34a','#f59e0b','#0ea5e9','#ef4444','#14b8a6','#ec4899','#6366f1','#84cc16','#f97316'];
-const TIT = {dashboard:'Painel', contas:'Contas', movimentos:'Movimentos', cartoes:'Cartões de crédito', relatorios:'Relatórios', anual:'Visão anual', definicoes:'Definições', partilhadas:'Despesas partilhadas', objetivos:'Objetivos', fecho:'Fecho do mês', importar:'Importar'};
+const TIT = {dashboard:'Painel', contas:'Contas', movimentos:'Movimentos', cartoes:'Cartões de crédito', relatorios:'Relatórios', anual:'Visão anual', definicoes:'Definições', partilhadas:'Despesas partilhadas', objetivos:'Objetivos', fecho:'Fecho do mês', importar:'Importar', conta:'A minha conta'};
 const ABA_DESP = 'DESPESAS', ABA_REC = 'RECEITA', ABA_CART = 'REGISTOS CARTÃO DE CRÉDITO';
 
 const S = {token:null, usuario:'', aba:'dashboard', opcoes:null, movs:[], movOrd:{col:'iso', dir:-1}, cartoes:[], cartaoSel:null,
@@ -761,7 +775,7 @@ function aplicarAcesso(r) {
 }
 function desenharNavegacao() {
   const l = paginasPermitidas();
-  $('#nav-main').innerHTML = l.map(p => `<button class="nav" data-aba="${p.aba}">${ico(p.ico)}${p.t}</button>`).join('');
+  $('#nav-main').innerHTML = l.map(p => `<button class="nav" data-aba="${p.aba}">${ico(p.ico)}${p.t}</button>`).join('') + `<button class="nav" data-aba="conta">${ico('pessoas')}A minha conta</button>`;
   const bn = $('#bottom-nav'), fora = l.length > 5 ? l.slice(4) : [], dentro = l.length > 5 ? l.slice(0, 4) : l;
   S.paginasMais = fora;
   bn.innerHTML = dentro.map(p => `<button data-aba="${p.aba}">${ico(p.ico)}${p.tb}</button>`).join('') + (fora.length ? `<button id="bn-mais" data-mais="1">${ico('mais')}Mais</button>` : '');
@@ -813,14 +827,14 @@ function sair() {
  * Navegação e período
  * =================================================================== */
 function irPara(aba) {
-  if (!podeAba(aba) && aba !== 'partilhadas' && !(aba === 'importar' && S.perms.LANCAR)) aba = abaInicial();
+  if (!podeAba(aba) && aba !== 'partilhadas' && aba !== 'conta' && !(aba === 'importar' && S.perms.LANCAR)) aba = abaInicial();
   S.aba = aba; S.cartaoSel = null; S.cartaoRef = null;
   if (aba === 'relatorios') S.relAtual = null;
   $$('.nav,.bottom-nav button').forEach(b => b.classList.toggle('ativo', b.dataset.aba === aba));
   $$('.view').forEach(v => v.classList.remove('ativo'));
   $('#v-' + aba).classList.add('ativo');
   $('#titulo').textContent = TIT[aba];
-  $('#periodo').hidden = ['relatorios', 'anual', 'definicoes', 'partilhadas', 'objetivos', 'fecho', 'importar'].includes(aba);
+  $('#periodo').hidden = ['relatorios', 'anual', 'definicoes', 'partilhadas', 'objetivos', 'fecho', 'importar', 'conta'].includes(aba);
   /* já carregado há pouco, no mesmo mês e sem alterações entretanto: mostra de imediato, sem voltar a carregar */
   const k = getAno() + '-' + getMes(), c = (S.cacheAba || (S.cacheAba = {}))[aba];
   if (['dashboard', 'contas', 'movimentos', 'anual'].includes(aba) && c && c.k === k && c.v === (S.versao || 0) && Date.now() - c.t < 120000) return;
@@ -839,6 +853,7 @@ function carregarAba(aba) {
   else if (aba === 'objetivos') carregarObjetivos();
   else if (aba === 'fecho') iniciarFecho();
   else if (aba === 'importar') iniciarImportar();
+  else if (aba === 'conta') carregarConta();
 }
 function sincronizar() {
   S.cacheAba = {};
@@ -859,7 +874,9 @@ function mudouPeriodo() {
   sincronizar();
 }
 function catMae(nome) {
-  const o = S.opcoes; if (!o || !nome) return '';
+  if (!nome) return '';
+  if (!S.opcoes && S.partOp && S.partOp.maes) return S.partOp.maes[norm(nome).replace(/\s+/g, ' ').trim()] || '';
+  const o = S.opcoes; if (!o) return '';
   if (!S._mae || S._mae.ref !== o) { const m = {}; [...(o.planoDespesa || []), ...(o.planoReceita || [])].forEach(g => g.subs.forEach(x => { const k = norm(x); if (!m[k]) m[k] = g.categoria; })); S._mae = {ref: o, m}; }
   const c = S._mae.m[norm(nome)]; return c && norm(c) !== norm(nome) ? c : '';
 }
@@ -970,7 +987,7 @@ function abrirNovo(t) {
 function abrirMenuMais(ancora) {
   const ant = $('#pop-mais'); if (ant) { ant.remove(); return; }
   const p = document.createElement('div'); p.id = 'pop-mais'; p.className = 'popover';
-  p.innerHTML = (S.paginasMais || []).map(x => `<button data-aba="${x.aba}">${ico(x.ico)}${x.t}</button>`).join('') + (S.perms.LANCAR ? `<button id="mais-ajuda">${ico('ajuda')}Como registar cada coisa</button>` : '');
+  p.innerHTML = (S.paginasMais || []).map(x => `<button data-aba="${x.aba}">${ico(x.ico)}${x.t}</button>`).join('') + `<button data-aba="conta">${ico('pessoas')}A minha conta</button>` + (S.perms.LANCAR ? `<button id="mais-ajuda">${ico('ajuda')}Como registar cada coisa</button>` : '');
   document.body.appendChild(p);
   p.style.right = '10px'; p.style.bottom = '70px';
   p.onclick = e => { const a = e.target.closest('button'); if (!a) return; p.remove(); if (a.id === 'mais-ajuda') abrirGuia(); };
@@ -1141,9 +1158,9 @@ function renderFluxo(h) {
 
 /** Legenda por categoria-mãe; clicar numa linha mostra as subcategorias. */
 function legendaGrupos(grupos, tot, cls) {
-  return grupos.map((g, i) => `<div class="leg-g"><div class="leg leg-cab" role="button" tabindex="0" aria-expanded="false"><span class="dot" style="background:${PALETA[i % PALETA.length]}"></span><span class="nome"><span class="chev">${ico('seta')}</span>${esc(g.categoria)}${g.incidencia ? ' <span class="chip av">a classificar</span>' : ''}</span>
+  return grupos.map((g, i) => `<div class="leg-g"><div class="leg leg-cab" role="button" tabindex="0" aria-expanded="false"><span class="dot" style="background:${PALETA[i % PALETA.length]}"></span><span class="nome"><span class="chev">${ico('seta')}</span>${esc(g.categoria)}${g.incidencia ? ' <span class="chip av">a classificar</span>' : ''}${g.det ? `<span class="muted mini det">${g.det}</span>` : ''}</span>
       <span class="pct">${tot ? pctLeg(g.total / tot * 100) : 0}%</span><b class="eur ${cls || ''}">${eur(g.total)}</b></div>
-    <div class="subs" hidden>${g.subs.map(x => `<div class="leg sub"><span class="nome">${esc(x.nome)}</span><span class="pct">${tot ? pctLeg(x.total / tot * 100) : 0}%</span><b class="eur">${eur(x.total)}</b></div>`).join('')}</div></div>`).join('');
+    <div class="subs" hidden>${g.subs.map(x => `<div class="leg sub"><span class="nome">${esc(x.nome)}${x.det ? `<span class="muted mini det">${x.det}</span>` : ''}</span><span class="pct">${tot ? pctLeg(x.total / tot * 100) : 0}%</span><b class="eur">${eur(x.total)}</b></div>`).join('')}</div></div>`).join('');
 }
 function desenharDonutGrupos(chave, canvasId, grupos, centro) {
   const tot = grupos.reduce((a, g) => a + g.total, 0), c = corTema();
@@ -1780,12 +1797,12 @@ async function carregarDefinicoes() {
     const [def, rec, cats, q, ac] = await Promise.all([api('getDefinicoes'), api('getRecorrentes'), api('getCategorias'), api('getQualidadeDados'), S.admin ? api('getAcessos') : Promise.resolve(null)]);
     if (id !== S.req.def) return;
     S.def = def; S.rec = rec; S.cats = cats; S.acessos = ac;
-    c.innerHTML = secNotificacoes(def) + secRecorrentes(rec) + secCategorias(cats) + secContas() + secParcelas() + (ac ? secAcessos(ac) : '') + secSeguranca(def) + secQualidade(q) + secLog(); pintarLock();
+    c.innerHTML = secNotificacoes(def) + secPrazos(def) + secRecorrentes(rec) + secCategorias(cats) + secContas() + secParcelas() + (ac ? secAcessos(ac) : '') + secSeguranca(def) + secQualidade(q) + secLog(); pintarLock();
   } catch (e) { falhou(e); }
 }
 
 function secNotificacoes(d) {
-  return `<div class="card sec"><h3>Notificações por e-mail</h3><p class="sub-t">Alertas de metas, vencimentos e resumos. Pode indicar vários e-mails separados por vírgula.</p>
+  return `<div class="card sec"><h3>Avisos por e-mail</h3><p class="sub-t">Alertas de metas, vencimentos e resumos. Pode indicar vários e-mails separados por vírgula.</p>
     ${d.rotinasAtivas ? '' : '<div style="padding:10px 12px;border-radius:10px;background:var(--warn-soft);color:var(--text);margin-bottom:12px;font-size:13px">As rotinas automáticas ainda não estão ativas. Na folha de cálculo: menu <b>Performance Financial ▸ Ativar rotinas automáticas</b>.</div>'}
     <div class="campo"><label for="def-emails">E-mails</label><input id="def-emails" type="text" value="${esc(d.emails)}" placeholder="eu@exemplo.pt, parceiro@exemplo.pt"></div>
     <label class="check"><input type="checkbox" id="def-sem" ${d.resumoSemanal ? 'checked' : ''}> Resumo semanal por categoria (segundas-feiras)</label>
@@ -1793,6 +1810,21 @@ function secNotificacoes(d) {
     <div class="campo"><label for="def-crit">Despesas de cartão contam em</label><select id="def-crit"><option value="fatura" ${d.criterioCartoes !== 'compra' ? 'selected' : ''}>Mês da fatura atribuída pelo banco (recomendado)</option><option value="compra" ${d.criterioCartoes === 'compra' ? 'selected' : ''}>Data da compra</option></select><p class="muted mini" style="margin:6px 0 0">Vale para o Painel, categorias, histórico, metas, relatórios e Visão anual.</p></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri" data-def="guardar-notif">Guardar</button><button class="btn" data-def="teste-alerta">E-mail de teste (alerta)</button>
       <button class="btn" data-def="teste-semanal">Teste do resumo semanal</button><button class="btn" data-def="teste-mensal">Teste do resumo mensal</button></div></div>`;
+}
+
+function secPrazos(d) {
+  const [A, B] = d.titulares || ['Titular 1', 'Titular 2'], p = d.prazos || {cc:{dia:5, mes:0}, ab:{dia:10, mes:1}, ba:{dia:10, mes:1}, antes:3};
+  const mesOp = k => opcHTML([{v:0, t:'no próprio mês'}, {v:1, t:'no mês seguinte'}, {v:2, t:'2 meses depois'}, {v:3, t:'3 meses depois'}], p[k].mes);
+  const linha = (k, tit, sub) => `<div class="prazo-r"><div><b>${tit}</b><div class="muted mini">${sub}</div></div>
+    <div class="prazo-c"><label class="muted mini" for="pz-${k}-d">Até ao dia</label><input id="pz-${k}-d" type="number" min="1" max="31" inputmode="numeric" value="${p[k].dia}"><select id="pz-${k}-m" aria-label="Mês do prazo">${mesOp(k)}</select></div></div>`;
+  return `<div class="card sec"><h3>Prazos dos acertos (despesas partilhadas)</h3>
+    <p class="sub-t">Até que dia cada pagamento deve estar feito. O mês conta a partir do mês da despesa. Os prazos aparecem no Resumo dos acertos e geram os avisos.</p>
+    ${linha('cc', 'Envio à conta conjunta', `${esc(A)} e ${esc(B)} enviam a sua parte das despesas da casa`)}
+    ${linha('ab', `${esc(A)} passa a ${esc(B)}`, 'quando as compras partilhadas deixam ' + esc(A) + ' a dever')}
+    ${linha('ba', `${esc(B)} passa a ${esc(A)}`, 'quando as compras partilhadas deixam ' + esc(B) + ' a dever')}
+    <div class="prazo-r"><div><b>Avisar antes do prazo</b><div class="muted mini">Avisa sempre no próprio dia e, se passar o prazo, 1 e 4 dias depois.</div></div>
+      <div class="prazo-c"><input id="pz-antes" type="number" min="0" max="14" inputmode="numeric" value="${p.antes}" aria-label="Dias de antecedência"><span class="muted">dias antes</span></div></div>
+    <div style="margin-top:14px"><button class="btn pri" data-def="guardar-prazos">Guardar prazos</button></div></div>`;
 }
 
 function secRecorrentes(l) {
@@ -1828,8 +1860,8 @@ function secContas() {
 
 function secSeguranca(d) {
   return `<div class="card sec"><h3>Segurança e cópias</h3><p class="sub-t">A palavra-passe é guardada cifrada. As cópias ficam na pasta "Performance Financial - Cópias de segurança" do seu Google Drive (mantêm-se as 8 mais recentes).</p>
-    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-def="senha">Alterar palavra-passe</button><button class="btn" data-def="backup">Fazer cópia de segurança agora</button></div>
-    <div id="lock-box"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-def="backup">Fazer cópia de segurança agora</button></div>
+    <p class="muted mini" style="margin:12px 0 0">A palavra-passe, o nome de utilizador e o Face ID de cada pessoa estão em <a href="#" data-aba="conta" style="color:var(--primary);font-weight:700">A minha conta</a>.</p>
     <p class="muted mini" style="margin:10px 0 0">Cópia automática semanal: ${d.backupAtivo ? '<b class="pos">ativa</b> (domingos, 3h)' : '<b class="neg">não ativa</b> — menu Performance Financial ▸ Ativar rotinas automáticas'}.</p></div>`;
 }
 
@@ -1855,6 +1887,8 @@ async function acaoDef(cmd) {
       await api('salvarDefinicoes', {emails:$('#def-emails').value, resumoSemanal:$('#def-sem').checked, resumoMensal:$('#def-men').checked, criterioCartoes:$('#def-crit').value}); S.criterioAnual = null; toast('Definições guardadas.', 'ok'); sincronizar();
     } else if (a === 'teste-alerta') { const d = await api('enviarTesteNotificacao'); toast('E-mail de teste enviado para ' + d + '.', 'ok'); }
     else if (a === 'teste-semanal' || a === 'teste-mensal') { await api('enviarResumoTeste', a === 'teste-semanal' ? 'semanal' : 'mensal'); toast('Resumo de teste enviado.', 'ok'); }
+    else if (a === 'guardar-prazos') { const o = {}; ['cc', 'ab', 'ba'].forEach(k => { o[k] = {dia:+$('#pz-' + k + '-d').value, mes:+$('#pz-' + k + '-m').value}; }); o.antes = +$('#pz-antes').value;
+      await api('salvarDefinicoes', {prazos:o}); toast('Prazos guardados.', 'ok'); S.part = null; carregarDefinicoes(); }
     else if (a === 'backup') { toast('A criar cópia…'); const n = await api('fazerBackupAgora'); toast('Cópia criada no Drive.', 'ok'); }
     else if (a === 'senha') formSenha();
     else if (a === 'ac-novo') formAcesso(null);
@@ -1977,8 +2011,19 @@ function tabelaPart(lista, colunas, vazioTxt, chave, totalCol) {
   const total = totalCol ? lista.reduce((a, x) => a + x.valor, 0) : null;
   return `<div class="tabela-wrap"><table><thead><tr>${colunas.map(c => `<th class="${c.dir ? 'dir-r' : ''}">${c.t}</th>`).join('')}<th></th></tr></thead><tbody>` +
     lista.map((x, i) => `<tr>${colunas.map(c => `<td class="${c.dir ? 'dir-r eur' : ''}">${c.f(x)}</td>`).join('')}<td class="dir-r" style="white-space:nowrap">${pode && x.editavel ?
-      `<button class="acao" data-ped="${chave}:${i}" aria-label="Editar">${ico('edit')}</button><button class="acao del" data-pdel="${chave}:${i}" aria-label="Eliminar">${ico('del')}</button>` : ''}</td></tr>`).join('') +
+      `<button class="acao" data-ped="${chave}:${x._i != null ? x._i : i}" aria-label="Editar">${ico('edit')}</button><button class="acao del" data-pdel="${chave}:${x._i != null ? x._i : i}" aria-label="Eliminar">${ico('del')}</button>` : ''}</td></tr>`).join('') +
     (total !== null ? `<tr class="tot-linha"><td colspan="${colunas.length - 1}">Total</td><td class="dir-r eur">${eur(total)}</td><td></td></tr>` : '') + '</tbody></table></div>';
+}
+
+const isoPt = iso => iso ? String(iso).split('-').reverse().join('/') : '';
+const diasAte = iso => Math.round((new Date(iso + 'T00:00:00') - new Date(new Date().toDateString())) / 86400000);
+/** Prazo de um acerto: data e, se ainda falta pagar, quanto tempo resta (ou quanto está em atraso). */
+function prazoHTML(x) {
+  if (!x.prazo) return '<span class="muted">—</span>';
+  let rel = '';
+  if (x.falta > 0.004) { const n = diasAte(x.prazo);
+    rel = n < 0 ? `<span class="chip mau">em atraso há ${-n} ${pl(-n, 'dia', 'dias')}</span>` : n === 0 ? '<span class="chip av">é hoje</span>' : `<span class="chip neu">${n === 1 ? 'amanhã' : 'em ' + n + ' dias'}</span>`; }
+  return `<span style="white-space:nowrap">${isoPt(x.prazo)}</span> ${rel}`;
 }
 
 function renderPartilhadas() {
@@ -2000,65 +2045,71 @@ function renderPartilhadas() {
     <div class="tx"><b>${certo ? 'Contas certas este mês' : `${esc(devedor)} tem de passar ${eur(Math.abs(liq))} a ${esc(credor)}`}</b>
     <span class="muted">Compras: ${esc(B)} deve ${eur(r.devBA)} a ${esc(A)} · ${esc(A)} deve ${eur(r.devAB)} a ${esc(B)}. Já acertado: ${eur(Math.abs(r.acertado))}${r.acertado ? ` (${r.acertado > 0 ? esc(B) + ' → ' + esc(A) : esc(A) + ' → ' + esc(B)})` : ''}.</span></div>
     <div class="muted mini" style="text-align:right">Acumulado em aberto (todos os meses)<br><b class="${Math.abs(acum) < 0.005 ? '' : 'neg'}" style="font-size:15px">${Math.abs(acum) < 0.005 ? 'tudo certo' : `${esc(acum > 0 ? B : A)} deve ${eur(Math.abs(acum))}`}</b></div></div>`;
-  const kpis = `<div class="grid kpis">
-    ${kpi('Total despesas', r.totalDespesas, `<span class="muted">Casa ${eur(r.casa)} · Compras ${eur(r.compras)}</span>`, 'neg')}
-    ${kpi('Total receitas', r.receitas, '<span class="muted">receitas fixas do mês</span>', 'pos')}
-    ${kpi('Contribuição fixa', r.pedro, '<span class="muted">contribuição fixa (abate à casa)</span>')}
-    ${kpi('Cada um envia à conta conjunta', r.cadaUm, `<span class="muted">(casa − receitas) ÷ 2 · ${esc(A)} e ${esc(B)}</span>`)}</div>`;
   const cc = r.contaConjuntaPago || {a:0, b:0}, ouro = r.liquido || 0, ac = r.acertado || 0;
-  const cartaoPessoa = (P, Q, ehA) => {
-    const bruto = ehA ? ouro : -ouro, feito = ehA ? ac : -ac, aberto = ehA ? liq : -liq, pagoCC = ehA ? cc.a : cc.b, faltaCC = Math.max(0, Math.round((r.cadaUm - pagoCC) * 100) / 100);
-    const sit = Math.abs(aberto) < 0.005 ? `<span class="chip ok">Compras acertadas</span>` : aberto > 0 ? `<span class="chip ok">A receber de ${esc(Q)}</span>` : `<span class="chip mau">Tem de passar a ${esc(Q)}</span>`;
-    const val = Math.abs(aberto) < 0.005 ? 0 : Math.abs(aberto);
-    return `<div class="card pessoa-card ${Math.abs(aberto) < 0.005 ? 'ok' : aberto > 0 ? 'rec' : 'dev'}">
-      <div class="pc-n"><span class="avatar">${esc(P.slice(0, 2).toUpperCase())}</span><b>${esc(P)}</b>${sit}</div>
-      <div class="pc-v ${Math.abs(aberto) < 0.005 ? '' : aberto > 0 ? 'pos' : 'neg'}">${Math.abs(aberto) < 0.005 ? eur(0) : (aberto > 0 ? '+ ' : '− ') + eur(val)}</div>
-      <div class="pc-l"><span>Para a conta conjunta</span><b>${eur(r.cadaUm)}</b></div>
-      <div class="pc-l"><span>↳ já enviado</span><b>${eur(pagoCC)}${faltaCC > 0.004 ? ` <span class="chip av">falta ${eur(faltaCC)}</span>` : ' <span class="chip ok">✓</span>'}</b></div>
-      <div class="pc-l"><span>Compras entre vocês (mês)</span><b class="${Math.abs(bruto) < 0.005 ? '' : bruto > 0 ? 'pos' : 'neg'}">${Math.abs(bruto) < 0.005 ? eur(0) : (bruto > 0 ? 'a receber ' : 'a pagar ') + eur(Math.abs(bruto))}</b></div>
-      <div class="pc-l"><span>↳ já acertado</span><b>${eur(Math.abs(feito))}</b></div></div>`;
-  };
-  const quem = `<div class="grid cols2 pessoas">${cartaoPessoa(A, B, true)}${cartaoPessoa(B, A, false)}</div>
-    ${r.porCartao && r.porCartao.length ? `<p class="muted mini" style="margin:-6px 0 16px">Compras por cartão: ${r.porCartao.map(x => `${esc(x.cartao)} ${eur(x.total)}`).join(' · ')}</p>` : ''}`;
+  const ehPrest = x => !!String(x.parcela || '').trim();
+  const idx = (l, f) => l.map((x, k) => ({...x, _i:k})).filter(f);
+  const compD = idx(d.compras, x => !ehPrest(x)), compP = idx(d.compras, ehPrest);
+  const som = (l, k) => l.reduce((t, x) => t + (x[k] || 0), 0);
+  const bloco = (cls, tit, sub, total, linhas) => `<div class="card bloco ${cls}"><div class="bl-t">${tit}</div><div class="bl-v">${eur(total)}</div><div class="muted mini bl-s">${sub}</div>${linhas.map(([a, b]) => `<div class="pc-l"><span>${a}</span><b>${b}</b></div>`).join('')}</div>`;
+  const blocos = `<div class="grid blocos3">
+    ${bloco('b-casa', 'Casa', 'renda, água, energia, internet… (todos os meses)', r.casa, [['Receitas fixas', '− ' + eur(r.receitas)], ['A dividir pelos dois', eur(Math.max(0, r.casa - r.receitas))], ['Cada um envia à conta conjunta', eur(r.cadaUm)]])}
+    ${bloco('b-comp', 'Compras do dia a dia', 'supermercado, portagens, restaurantes…', som(compD, 'valor'), [[`Parte de ${esc(A)}`, eur(som(compD, 'parteA'))], [`Parte de ${esc(B)}`, eur(som(compD, 'parteB'))]])}
+    ${bloco('b-prest', 'Compras a prestações', 'prestações do mês, divididas entre os dois', som(compP, 'valor'), [[`Parte de ${esc(A)}`, eur(som(compP, 'parteA'))], [`Parte de ${esc(B)}`, eur(som(compP, 'parteB'))]])}</div>
+    <p class="muted mini" style="margin:-6px 0 16px">Total das despesas partilhadas do mês: <b>${eur(r.totalDespesas)}</b> · receitas fixas: <b>${eur(r.receitas)}</b></p>`;
+  const pz = d.prazos || {};
+  const mk = (para, de, motivo, valor, pago, prazo) => ({para, de, motivo, valor, pago, prazo, falta:Math.max(0, Math.round((valor - pago) * 100) / 100)});
+  const linhasAc = [];
+  if (r.cadaUm > 0.004) linhasAc.push(mk('Conta conjunta', A, 'Casa', r.cadaUm, cc.a, pz.cc), mk('Conta conjunta', B, 'Casa', r.cadaUm, cc.b, pz.cc));
+  if (Math.abs(ouro) >= 0.005) { const bDeve = ouro > 0; linhasAc.push(mk(bDeve ? A : B, bDeve ? B : A, 'Compras partilhadas', Math.abs(ouro), bDeve ? ac : -ac, bDeve ? pz.ba : pz.ab)); }
+  const resumoAc = `<div class="card sec"><div class="card-h"><h3>Resumo dos acertos</h3><span class="muted">quem tem de passar a quem neste mês</span></div>
+    ${!linhasAc.length ? vazio('Sem valores a acertar neste mês') : `<div class="tabela-wrap"><table><thead><tr><th>Para</th><th>De</th><th>Motivo</th><th>Prazo</th><th class="dir-r">A passar</th><th class="dir-r">Já passado</th><th>Estado</th></tr></thead><tbody>${linhasAc.map(x =>
+      `<tr><td><b>${esc(x.para)}</b></td><td>${esc(x.de)}</td><td>${esc(x.motivo)}</td><td>${prazoHTML(x)}</td><td class="dir-r eur">${eur(x.valor)}</td><td class="dir-r eur">${eur(x.pago)}</td><td>${x.falta > 0.004 ? `<span class="chip av">falta ${eur(x.falta)}</span>` : '<span class="chip ok">Certo</span>'}</td></tr>`).join('')}</tbody></table></div>`}
+    ${r.porCartao && r.porCartao.length ? `<p class="muted mini" style="margin:10px 4px 2px">Compras por cartão: ${r.porCartao.map(x => `${esc(x.cartao)} ${eur(x.total)}`).join(' · ')}</p>` : ''}</div>`;
   const tCasa = tabelaPart(d.casa, [{t:'Data', f:x => esc(x.data)}, {t:'Descrição', f:x => `<b>${esc(x.desc)}</b>${x.parcela ? ` <span class="muted mini">${esc(x.parcela)}</span>` : ''}`}, {t:'Categoria', f:x => esc(x.cat)}, {t:'Valor', f:x => eur(x.valor), dir:1}], 'Sem despesas gerais da casa neste mês.', 'casa', true);
   const tRec = tabelaPart(d.receitas, [{t:'Data', f:x => esc(x.data)}, {t:'Descrição', f:x => `<b>${esc(x.desc)}</b>`}, {t:'Quem passou', f:x => esc(x.pagou)}, {t:'Valor', f:x => eur(x.valor), dir:1}], 'Sem receitas fixas neste mês.', 'rec', true);
-  const tComp = tabelaPart(d.compras, [{t:'Data', f:x => esc(x.data)}, {t:'Descrição', f:x => `<b>${esc(x.desc)}</b>${x.parcela ? ` <span class="muted mini">${esc(x.parcela)}</span>` : ''}${x.valor < 0 ? ' <span class="chip ok">Estorno</span>' : ''}${x.origem && /cart/i.test(x.origem) ? ' <span class="chip neu">da app</span>' : ''}`},
-    {t:'Cartão', f:x => esc(x.cartao)}, {t:'Pagou', f:x => esc(x.pagou)}, {t:'Divisão', f:x => esc(x.div)}, {t:'Valor', f:x => eur(x.valor), dir:1}, {t:esc(A), f:x => eur(x.parteA), dir:1}, {t:esc(B), f:x => eur(x.parteB), dir:1}], 'Sem compras neste mês.', 'comp', true);
+  const colsComp = [{t:'Data', f:x => esc(x.data)}, {t:'Descrição', f:x => `<b>${esc(x.desc)}</b>${x.parcela ? ` <span class="muted mini">${esc(x.parcela)}</span>` : ''}${x.valor < 0 ? ' <span class="chip ok">Estorno</span>' : ''}${x.origem && /cart/i.test(x.origem) ? ' <span class="chip neu">da app</span>' : ''}`},
+    {t:'Categoria', f:x => esc(x.cat)}, {t:'Cartão', f:x => esc(x.cartao)}, {t:'Pagou', f:x => esc(x.pagou)}, {t:'Divisão', f:x => esc(x.div)}, {t:'Valor', f:x => eur(x.valor), dir:1}, {t:esc(A), f:x => eur(x.parteA), dir:1}, {t:esc(B), f:x => eur(x.parteB), dir:1}];
+  const tCompD = tabelaPart(compD, colsComp, 'Sem compras do dia a dia neste mês.', 'comp', true);
+  const tCompP = tabelaPart(compP, colsComp, 'Sem compras a prestações neste mês.', 'comp', true);
   const tAc = !d.acertos.length ? vazio('Sem acertos neste mês', 'Registe aqui as transferências entre vocês e para a conta conjunta.') :
     `<div class="tabela-wrap"><table><thead><tr><th>Data</th><th>Quem → quem</th><th>Tipo</th><th class="dir-r">Valor</th><th>Notas</th><th></th></tr></thead><tbody>${d.acertos.map((x, j) =>
       `<tr><td>${esc(x.data)}</td><td><b>${esc(x.de)}</b> → ${esc(x.para)}</td><td>${esc(x.tipo)}</td><td class="dir-r eur">${eur(x.valor)}</td><td class="muted">${esc(x.obs)}</td><td class="dir-r">${x.editavel ? `<button class="acao del" data-acdel="${j}" aria-label="Eliminar">${ico('del')}</button>` : ''}</td></tr>`).join('')}</tbody></table></div>`;
-  c.innerHTML = topo + hero + kpis + quem +
+  c.innerHTML = topo + hero + blocos +
     `<div class="card sec"><div class="card-h"><h3>Despesas gerais da casa</h3><span class="muted">divididas ao meio depois das receitas fixas</span></div>${tCasa}</div>
      <div class="card sec"><div class="card-h"><h3>Receitas fixas</h3></div>${tRec}</div>
-     <div class="card sec"><div class="card-h"><h3>Compras do mês</h3><span class="muted">cartão que pagou e como se divide</span></div>${tComp}</div>
-     <div class="card sec"><div class="card-h"><h3>Acertos e pagamentos</h3></div>${tAc}</div>
+     <div class="card sec"><div class="card-h"><h3>Compras do dia a dia</h3><span class="muted">cartão que pagou e como se divide</span></div>${tCompD}</div>
+     <div class="card sec"><div class="card-h"><h3>Compras a prestações</h3><span class="muted">cada prestação conta no mês em que vence</span></div>${tCompP}</div>
+     ${resumoAc}
+     <div class="card sec"><div class="card-h"><h3>Acertos e pagamentos</h3><span class="muted">transferências já feitas</span></div>${tAc}</div>
      ${catPartilhadas(d, A, B)}`;
   desenharCatPart();
 }
 
-/** Despesas por categoria dos dois juntos (casa + compras do mês): mesmo desenho do Dashboard, no fim da página. */
+/** Despesas por categoria dos dois juntos: categoria › subcategoria, com filtro Casa / Dia a dia / Prestações. */
+function gruposPart(d, f) {
+  const prest = x => !!String(x.parcela || '').trim(), [A, B] = d.tit, it = [], G = {};
+  if (f === 'tudo' || f === 'casa') d.casa.forEach(x => it.push([x, true]));
+  d.compras.forEach(x => { if (f === 'tudo' || (f === 'compras' && !prest(x)) || (f === 'prest' && prest(x))) it.push([x, false]); });
+  it.forEach(([x, casa]) => {
+    const sub = x.cat || 'Sem categoria', mae = catMae(sub) || (casa ? 'Casa' : sub);
+    const g = G[mae] || (G[mae] = {categoria:mae, total:0, a:0, b:0, subs:{}});
+    g.total += x.valor; g.a += x.parteA; g.b += x.parteB;
+    const q = g.subs[sub] || (g.subs[sub] = {nome:sub, total:0, a:0, b:0}); q.total += x.valor; q.a += x.parteA; q.b += x.parteB;
+  });
+  const det = o => `${esc(A)} ${eur(o.a)} · ${esc(B)} ${eur(o.b)}`;
+  return Object.values(G).filter(g => g.total > 0.004).map(g => ({categoria:g.categoria, total:g.total, det:det(g),
+    subs:Object.values(g.subs).filter(q => q.total > 0.004).sort((p, q) => q.total - p.total).map(q => ({nome:q.nome, total:q.total, det:det(q)}))})).sort((p, q) => q.total - p.total);
+}
 function catPartilhadas(d, A, B) {
-  const m = {};
-  [...d.casa, ...d.compras].forEach(x => { const k = x.cat || 'Sem categoria'; const o = m[k] || (m[k] = {cat:k, tot:0, a:0, b:0}); o.tot += x.valor; o.a += x.parteA; o.b += x.parteB; });
-  const l = Object.values(m).filter(x => x.tot > 0.004).sort((x, y) => y.tot - x.tot);
-  S.partCats = l;
-  if (!l.length) return '';
-  const tot = l.reduce((t, x) => t + x.tot, 0);
-  return `<div class="card sec" id="part-cats"><div class="card-h"><h3>Despesas por categoria</h3><span class="muted">${esc(A)} + ${esc(B)} · casa e compras do mês</span></div>
-    <div style="display:grid;grid-template-columns:minmax(150px,200px) 1fr;gap:16px;align-items:center">
-    <div class="chart-h peq"><canvas id="ch-part-cats"></canvas></div>
-    <div class="legenda">${l.map((x, i) => `<div class="leg"><span class="dot" style="background:${PALETA[i % PALETA.length]}"></span><span class="nome">${esc(x.cat)}<span class="muted mini" style="display:block">${esc(A)} ${eur(x.a)} · ${esc(B)} ${eur(x.b)}</span></span>
-      <span class="pct">${pctLeg(x.tot / tot * 100)}%</span><b class="eur">${eur(x.tot)}</b></div>`).join('')}</div></div></div>`;
+  const f = S.partFiltro || 'tudo', gr = gruposPart(d, f); S.partGrupos = gr;
+  const tot = gr.reduce((t, g) => t + g.total, 0);
+  const chips = [['tudo', 'Tudo'], ['casa', 'Casa'], ['compras', 'Dia a dia'], ['prest', 'Prestações']].map(([k, t]) => `<button type="button" class="seg-b ${f === k ? 'on' : ''}" data-pfil="${k}" aria-pressed="${f === k}">${t}</button>`).join('');
+  return `<div class="card sec" id="part-cats"><div class="card-h"><div><h3>Despesas por categoria</h3><span class="muted">${esc(A)} + ${esc(B)} · toque numa categoria para ver as subcategorias</span></div><div class="seg">${chips}</div></div>
+    ${gr.length ? `<div class="cats-grid"><div class="chart-h peq"><canvas id="ch-part-cats"></canvas></div><div class="legenda">${legendaGrupos(gr, tot)}</div></div>` : vazio('Sem despesas neste filtro')}</div>`;
 }
 function desenharCatPart() {
-  const l = S.partCats || []; if (!l.length || !$('#ch-part-cats')) return;
-  const tot = l.reduce((t, x) => t + x.tot, 0), c = corTema();
-  desenhar('partcats', 'ch-part-cats', {type:'doughnut',
-    data:{labels:l.map(x => x.cat), datasets:[{data:l.map(x => x.tot), backgroundColor:l.map((_, i) => PALETA[i % PALETA.length]), borderWidth:2, borderColor:c.surface}]},
-    options:{responsive:true, maintainAspectRatio:false, cutout:'68%', plugins:{legend:{display:false}, tooltip:{callbacks:{label:x => ` ${x.label}: ${eur(x.parsed)}`}}}},
-    plugins:[{id:'centro', beforeDraw(ch) { const {ctx, width, height} = ch; ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillStyle = c.text; ctx.font = "700 14px 'Inter',sans-serif"; ctx.fillText(eur(tot), width / 2, height / 2 - 6);
-      ctx.fillStyle = c.muted; ctx.font = "500 11px 'Inter',sans-serif"; ctx.fillText('Total', width / 2, height / 2 + 12); ctx.restore(); }}]});
+  const gr = S.partGrupos || []; if (!gr.length || !$('#ch-part-cats')) return;
+  desenharDonutGrupos('partcats', 'ch-part-cats', gr);
 }
 
 function refsDisponiveis() {
@@ -2154,7 +2205,7 @@ function secAcessos(ac) {
     <button class="btn peq pri" data-def="ac-novo">${ico('plus')} Novo utilizador</button></div>
     <div class="tabela-wrap ac-desk"><table class="matriz-ac"><thead>${cab1}${cab2}</thead><tbody>${corpo}</tbody></table></div>
     <div class="ac-mob">${acMovel(ac)}</div>
-    <p class="muted mini" style="margin:10px 0 0"><b>E-mails:</b> os e-mails em "Notificações por e-mail" (acima) recebem sempre tudo. As outras pessoas só recebem o que marcar aqui. O alerta de metas mostra a categoria, o orçamento e o valor gasto.</p></div>`;
+    <p class="muted mini" style="margin:10px 0 0"><b>E-mails:</b> os e-mails em "Avisos por e-mail" (acima) recebem sempre tudo. As outras pessoas só recebem o que marcar aqui. O alerta de metas mostra a categoria, o orçamento e o valor gasto.</p></div>`;
 }
 
 /* versão para telemóvel das permissões: um cartão por pessoa, com as mesmas caixas */
@@ -2210,6 +2261,7 @@ document.addEventListener('toggle', e => { const d = e.target; if (d && d.classL
 document.addEventListener('click', e => {
   const t = e.target; let b;
   if ((b = t.closest('.leg-cab, tr.grp-cab'))) return alternarGrupo(b);
+  if ((b = t.closest('[data-pfil]'))) { S.partFiltro = b.dataset.pfil; const cx = $('#part-cats'); if (cx && S.part) { cx.outerHTML = catPartilhadas(S.part, S.part.tit[0], S.part.tit[1]); desenharCatPart(); } return; }
   if ((b = t.closest('[data-pnovo]'))) return formPartilhada(null);
   if (t.closest('[data-acnovo]')) return formAcerto();
   if ((b = t.closest('[data-ped]'))) { const [k, i] = b.dataset.ped.split(':'); return formPartilhada(S.partLista[k][+i]); }
@@ -2648,6 +2700,77 @@ async function pintarLock() {
 }
 
 /* =====================================================================
+ * A minha conta (todos os utilizadores)
+ * =================================================================== */
+const NOTIF_DESC = {
+  METAS: 'Quando uma categoria chega a 50%, 80% e 100% do orçamento.',
+  VENCIMENTOS: 'Faturas de cartão, fecho de fatura e prestações: 3 dias antes, 1 dia antes, no dia e 1 dia depois.',
+  SEMANAL: 'Resumo por categoria, às segundas-feiras.',
+  MENSAL: 'Resumo por categoria, no dia 1 de cada mês.',
+  ACERTOS: 'Prazos para enviar à conta conjunta e para acertar compras com a outra pessoa (definidos em Definições).'
+};
+async function carregarConta() {
+  const c = $('#conta-corpo'); skeleton(c, 1, 300);
+  const id = S.req.conta = (S.req.conta || 0) + 1;
+  try {
+    const d = await api('getMinhaConta');
+    if (id !== S.req.conta) return;
+    S.conta = d;
+    c.innerHTML = secContaDados(d) + secContaSeg() + secContaNotif(d);
+    pintarLock();
+  } catch (e) { falhou(e); }
+}
+
+function secContaDados(d) {
+  return `<div class="card sec"><h3>Os meus dados</h3>
+    <p class="sub-t">Perfil: <b>${esc(d.perfil)}</b>${d.pessoa ? ` · aparece como <b>${esc(d.pessoa)}</b> nas despesas partilhadas` : ''}.</p>
+    <div class="lin"><span><b>Nome de utilizador</b><div class="muted mini">${esc(d.utilizador)}</div></span><button class="btn peq" data-conta="utilizador">Alterar</button></div>
+    <div class="lin"><span><b>Palavra-passe</b><div class="muted mini">Guardada cifrada · mínimo de 8 caracteres</div></span><button class="btn peq" data-conta="senha">Alterar</button></div>
+    <div class="campo" style="margin-top:14px"><label for="ct-email">E-mail para receber os avisos</label><input id="ct-email" type="${d.dono ? 'text' : 'email'}" inputmode="email" autocomplete="email" value="${esc(d.email)}" placeholder="eu@exemplo.pt"></div>
+    <button class="btn pri" data-conta="email">Guardar e-mail</button></div>`;
+}
+function secContaSeg() {
+  return `<div class="card sec"><h3>Segurança neste dispositivo</h3>
+    ${MODO_PWA ? '<div id="lock-box"></div>' : '<p class="sub-t" style="margin:0">O Face ID está disponível na app instalada no ecrã principal do telemóvel.</p>'}</div>`;
+}
+function secContaNotif(d) {
+  const linhas = d.tipos.map(t => `<label class="ntf-r"><span><b>${esc(t.n)}</b><span class="muted mini">${esc(NOTIF_DESC[t.k] || '')}</span></span>
+      <span class="ntf-c"><input type="checkbox" data-nt="${t.k}:email" ${t.email ? 'checked' : ''} aria-label="Receber ${esc(t.n)} por e-mail"></span></label>`).join('');
+  return `<div class="card sec"><h3>Avisos por e-mail</h3>
+    <p class="sub-t">Escolha que avisos quer receber por e-mail. Só aparecem os avisos a que o seu acesso dá direito.</p>
+    ${d.tipos.length ? `${linhas}
+      <div style="margin-top:14px"><button class="btn pri" data-conta="notif">Guardar preferências</button></div>` : vazio('Sem avisos disponíveis', 'O seu acesso não inclui alertas.')}
+  </div>`;
+}
+
+function formUtilizador() {
+  abrirForm({titulo:'Alterar nome de utilizador', botao:'Alterar', campos:[
+    {id:'novo', label:'Novo nome de utilizador (2 a 30 caracteres)', valor:S.usuario, obrigatorio:true},
+    {id:'senha', label:'Palavra-passe atual (para confirmar)', tipo:'password', obrigatorio:true},
+    {id:'aviso', tipo:'info', html:'<span class="muted mini">Passa a entrar com o novo nome. Noutros dispositivos terá de iniciar sessão de novo.</span>'}],
+    onSubmit: async v => {
+      const r = await api('alterarUtilizador', v.novo.trim(), v.senha);
+      S.usuario = r.utilizador; $('#user-nome').textContent = S.usuario; $('#avatar').textContent = S.usuario.substring(0, 2).toUpperCase();
+      toast('Nome de utilizador alterado.', 'ok'); carregarConta(); }});
+}
+
+async function acaoConta(cmd) {
+  try {
+    if (cmd === 'utilizador') formUtilizador();
+    else if (cmd === 'senha') formSenha();
+    else if (cmd === 'email') { await api('salvarMinhaConta', {email:$('#ct-email').value.trim()}); toast('E-mail guardado.', 'ok'); carregarConta(); }
+    else if (cmd === 'notif') {
+      const n = {}; $$('#conta-corpo [data-nt]').forEach(i => { const [k, canal] = i.dataset.nt.split(':'); (n[k] = n[k] || {})[canal] = i.checked; });
+      await api('salvarMinhaConta', {notif:n}); toast('Preferências guardadas.', 'ok');
+    }
+  } catch (e) { falhou(e); }
+}
+document.addEventListener('click', e => {
+  let b;
+  if ((b = e.target.closest('[data-conta]'))) return acaoConta(b.dataset.conta);
+});
+
+/* =====================================================================
  * Eventos
  * =================================================================== */
 document.addEventListener('click', e => {
@@ -2716,7 +2839,7 @@ $('#f-mes').onchange = mudouPeriodo; $('#f-ano').onchange = mudouPeriodo;
 $('#btn-atualizar').onclick = () => { S.opcoes = null; S.partOp = null; sincronizar(); };
 $('#btn-tema').onclick = alternarTema;
 $('#btn-sair').onclick = sair;
-$('#user-box').onclick = e => { if (!e.target.closest('#btn-sair')) formSenha(); };
+$('#user-box').onclick = e => { if (!e.target.closest('#btn-sair')) irPara('conta'); };
 $('#l-btn').onclick = fazerLogin;
 $('#l-ver').onchange = e => { $('#l-pass').type = e.target.checked ? 'text' : 'password'; };
 ['l-user', 'l-pass'].forEach(id => $('#' + id).addEventListener('keydown', e => { if (e.key === 'Enter') fazerLogin(); }));
