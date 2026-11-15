@@ -417,6 +417,19 @@ tr.grp-sub td.ind{padding-left:28px;color:var(--muted)}
 .prazo-r{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--border);flex-wrap:wrap}.prazo-r>div:first-child{flex:1;min-width:200px}
 .prazo-c{display:flex;gap:8px;align-items:center}.prazo-c input{width:70px}.prazo-c select{min-width:150px}
 @media (max-width:760px){.ntf-r{grid-template-columns:1fr 48px}.prazo-c{width:100%}.prazo-c select{flex:1;min-width:0}}
+
+/* títulos das caixas: barra de cor + peso maior, para separar bem cada bloco (a cor vem de --sc) */
+.card-h h3,.sec>h3{display:flex;align-items:center;gap:9px;font-size:16px;font-weight:800;letter-spacing:-.01em}
+.card-h h3::before,.sec>h3::before{content:"";flex:none;width:5px;height:1.25em;border-radius:3px;background:var(--sc,var(--primary))}
+.card[style*="--sc"]{border-top:3px solid var(--sc)}
+.pessoas2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))!important;margin-bottom:16px}
+.pessoa{border-top:4px solid var(--sc);padding-top:14px}
+.pe-h{display:flex;align-items:center;gap:10px;font-size:17px}.pe-av{width:34px;height:34px;border-radius:50%;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800}
+.pe-tot{display:flex;flex-direction:column;margin:10px 0 6px}.pe-tot b{font-size:28px;font-weight:800;letter-spacing:-.02em}
+.pe-l{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--border)}
+.pe-v{display:flex;flex-direction:column;align-items:flex-end;gap:3px;text-align:right}.pe-v .eur{font-size:16px;white-space:nowrap}
+.recolher>summary{cursor:pointer;font-weight:700;color:var(--primary);font-size:13px;padding:4px 0 10px}
+@media (min-width:761px){.recolher>summary{display:none}}
 .cat-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
 .cat-grp{border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden}.cat-grp>header{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;background:var(--surface-2);flex-wrap:wrap}
 .cat-grp>summary{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;background:var(--surface-2);flex-wrap:wrap;cursor:pointer;list-style:none}
@@ -2026,6 +2039,13 @@ function prazoHTML(x) {
   return `<span style="white-space:nowrap">${isoPt(x.prazo)}</span> ${rel}`;
 }
 
+/** No telemóvel, listas longas ficam fechadas (só o total à vista); no computador abrem sempre. */
+function listaRecolhivel(n, html) {
+  if (n < 6) return html;
+  const aberta = window.innerWidth > 760;
+  return `<details class="recolher" ${aberta ? 'open' : ''}><summary>${aberta ? 'Lista' : 'Ver as ' + n}</summary>${html}</details>`;
+}
+
 function renderPartilhadas() {
   const d = S.part, r = d.resumo, [A, B] = d.tit, c = $('#part-corpo'), liq = r.emAberto;
   const i = d.meses.findIndex(m => m.ref === d.ref);
@@ -2057,30 +2077,38 @@ function renderPartilhadas() {
     ${bloco('b-prest', 'Compras a prestações', 'prestações do mês, divididas entre os dois', som(compP, 'valor'), [[`Parte de ${esc(A)}`, eur(som(compP, 'parteA'))], [`Parte de ${esc(B)}`, eur(som(compP, 'parteB'))]])}</div>
     <p class="muted mini" style="margin:-6px 0 16px">Total das despesas partilhadas do mês: <b>${eur(r.totalDespesas)}</b> · receitas fixas: <b>${eur(r.receitas)}</b></p>`;
   const pz = d.prazos || {};
-  const mk = (para, de, motivo, valor, pago, prazo) => ({para, de, motivo, valor, pago, prazo, falta:Math.max(0, Math.round((valor - pago) * 100) / 100)});
-  const linhasAc = [];
-  if (r.cadaUm > 0.004) linhasAc.push(mk('Conta conjunta', A, 'Casa', r.cadaUm, cc.a, pz.cc), mk('Conta conjunta', B, 'Casa', r.cadaUm, cc.b, pz.cc));
-  if (Math.abs(ouro) >= 0.005) { const bDeve = ouro > 0; linhasAc.push(mk(bDeve ? A : B, bDeve ? B : A, 'Compras partilhadas', Math.abs(ouro), bDeve ? ac : -ac, bDeve ? pz.ba : pz.ab)); }
-  const resumoAc = `<div class="card sec"><div class="card-h"><h3>Resumo dos acertos</h3><span class="muted">quem tem de passar a quem neste mês</span></div>
-    ${!linhasAc.length ? vazio('Sem valores a acertar neste mês') : `<div class="tabela-wrap"><table><thead><tr><th>Para</th><th>De</th><th>Motivo</th><th>Prazo</th><th class="dir-r">A passar</th><th class="dir-r">Já passado</th><th>Estado</th></tr></thead><tbody>${linhasAc.map(x =>
-      `<tr><td><b>${esc(x.para)}</b></td><td>${esc(x.de)}</td><td>${esc(x.motivo)}</td><td>${prazoHTML(x)}</td><td class="dir-r eur">${eur(x.valor)}</td><td class="dir-r eur">${eur(x.pago)}</td><td>${x.falta > 0.004 ? `<span class="chip av">falta ${eur(x.falta)}</span>` : '<span class="chip ok">Certo</span>'}</td></tr>`).join('')}</tbody></table></div>`}
-    ${r.porCartao && r.porCartao.length ? `<p class="muted mini" style="margin:10px 4px 2px">Compras por cartão: ${r.porCartao.map(x => `${esc(x.cartao)} ${eur(x.total)}`).join(' · ')}</p>` : ''}</div>`;
+  const estadoLinha = x => x.falta > 0.004 ? `<span class="chip av">falta ${x.passa ? '' : 'receber '}${eur(x.falta)}</span>` : '<span class="chip ok">Certo</span>';
+  const cartaoPessoa = (P, O, cor, cc_) => {                                  // ac > 0: o 2.º titular já passou ao 1.º
+    const L = [];
+    if (r.cadaUm > 0.004) L.push({t:'Enviar à conta conjunta', v:r.cadaUm, pago:cc_, prazo:pz.cc, passa:true});
+    if (Math.abs(ouro) >= 0.005) {
+      const devo = (ouro > 0) === (P === B);                                  // quem está a dever nas compras
+      const val = Math.abs(ouro), pago = (ouro > 0) ? ac : -ac;
+      L.push({t:devo ? `Passar a ${esc(O)}` : `A receber de ${esc(O)}`, v:val, pago:pago, prazo:(ouro > 0) ? pz.ba : pz.ab, passa:devo});
+    }
+    L.forEach(x => { x.falta = Math.max(0, Math.round((x.v - x.pago) * 100) / 100); });
+    const aPassar = L.filter(x => x.passa).reduce((t, x) => t + x.falta, 0), aReceber = L.filter(x => !x.passa).reduce((t, x) => t + x.falta, 0);
+    return `<div class="card pessoa" style="--sc:${cor}"><div class="pe-h"><span class="pe-av" style="background:${cor}">${esc(P.substring(0, 2).toUpperCase())}</span><b>${esc(P)}</b></div>
+      <div class="pe-tot"><span class="muted mini">Ainda por passar</span><b class="${aPassar > 0.004 ? 'neg' : 'pos'}">${eur(aPassar)}</b>${aReceber > 0.004 ? `<span class="muted mini">e a receber ${eur(aReceber)}</span>` : ''}</div>
+      ${L.length ? L.map(x => `<div class="pe-l"><div><b>${x.t}</b><div class="mini">${prazoHTML(x)}</div></div><div class="pe-v"><b class="eur">${eur(x.v)}</b>${estadoLinha(x)}<span class="muted mini">já ${x.passa ? 'passado' : 'recebido'} ${eur(Math.max(0, x.pago))}</span></div></div>`).join('') : '<div class="muted mini" style="padding:8px 0">Sem valores a passar neste mês.</div>'}</div>`;
+  };
+  const resumoAc = `<div class="grid pessoas2">${cartaoPessoa(A, B, '#7c3aed', cc.a)}${cartaoPessoa(B, A, '#0891b2', cc.b)}</div>
+    ${r.porCartao && r.porCartao.length ? `<p class="muted mini" style="margin:-4px 4px 16px">Compras por cartão: ${r.porCartao.map(x => `${esc(x.cartao)} ${eur(x.total)}`).join(' · ')}</p>` : ''}`;
   const tCasa = tabelaPart(d.casa, [{t:'Data', f:x => esc(x.data)}, {t:'Descrição', f:x => `<b>${esc(x.desc)}</b>${x.parcela ? ` <span class="muted mini">${esc(x.parcela)}</span>` : ''}`}, {t:'Categoria', f:x => esc(x.cat)}, {t:'Valor', f:x => eur(x.valor), dir:1}], 'Sem despesas gerais da casa neste mês.', 'casa', true);
   const tRec = tabelaPart(d.receitas, [{t:'Data', f:x => esc(x.data)}, {t:'Descrição', f:x => `<b>${esc(x.desc)}</b>`}, {t:'Quem passou', f:x => esc(x.pagou)}, {t:'Valor', f:x => eur(x.valor), dir:1}], 'Sem receitas fixas neste mês.', 'rec', true);
-  const colsComp = [{t:'Data', f:x => esc(x.data)}, {t:'Descrição', f:x => `<b>${esc(x.desc)}</b>${x.parcela ? ` <span class="muted mini">${esc(x.parcela)}</span>` : ''}${x.valor < 0 ? ' <span class="chip ok">Estorno</span>' : ''}${x.origem && /cart/i.test(x.origem) ? ' <span class="chip neu">da app</span>' : ''}`},
-    {t:'Categoria', f:x => esc(x.cat)}, {t:'Cartão', f:x => esc(x.cartao)}, {t:'Pagou', f:x => esc(x.pagou)}, {t:'Divisão', f:x => esc(x.div)}, {t:'Valor', f:x => eur(x.valor), dir:1}, {t:esc(A), f:x => eur(x.parteA), dir:1}, {t:esc(B), f:x => eur(x.parteB), dir:1}];
+  const colsComp = [{t:'Descrição', f:x => `<b>${esc(x.desc)}</b>${x.parcela ? ` <span class="muted mini">${esc(x.parcela)}</span>` : ''}${x.valor < 0 ? ' <span class="chip ok">Estorno</span>' : ''}`},
+    {t:'Categoria', f:x => esc(x.cat)}, {t:'Valor', f:x => eur(x.valor), dir:1}];
   const tCompD = tabelaPart(compD, colsComp, 'Sem compras do dia a dia neste mês.', 'comp', true);
   const tCompP = tabelaPart(compP, colsComp, 'Sem compras a prestações neste mês.', 'comp', true);
   const tAc = !d.acertos.length ? vazio('Sem acertos neste mês', 'Registe aqui as transferências entre vocês e para a conta conjunta.') :
     `<div class="tabela-wrap"><table><thead><tr><th>Data</th><th>Quem → quem</th><th>Tipo</th><th class="dir-r">Valor</th><th>Notas</th><th></th></tr></thead><tbody>${d.acertos.map((x, j) =>
       `<tr><td>${esc(x.data)}</td><td><b>${esc(x.de)}</b> → ${esc(x.para)}</td><td>${esc(x.tipo)}</td><td class="dir-r eur">${eur(x.valor)}</td><td class="muted">${esc(x.obs)}</td><td class="dir-r">${x.editavel ? `<button class="acao del" data-acdel="${j}" aria-label="Eliminar">${ico('del')}</button>` : ''}</td></tr>`).join('')}</tbody></table></div>`;
-  c.innerHTML = topo + hero + blocos +
-    `<div class="card sec"><div class="card-h"><h3>Despesas gerais da casa</h3><span class="muted">divididas ao meio depois das receitas fixas</span></div>${tCasa}</div>
-     <div class="card sec"><div class="card-h"><h3>Receitas fixas</h3></div>${tRec}</div>
-     <div class="card sec"><div class="card-h"><h3>Compras do dia a dia</h3><span class="muted">cartão que pagou e como se divide</span></div>${tCompD}</div>
-     <div class="card sec"><div class="card-h"><h3>Compras a prestações</h3><span class="muted">cada prestação conta no mês em que vence</span></div>${tCompP}</div>
-     ${resumoAc}
-     <div class="card sec"><div class="card-h"><h3>Acertos e pagamentos</h3><span class="muted">transferências já feitas</span></div>${tAc}</div>
+  c.innerHTML = topo + hero + resumoAc + blocos +
+    `<div class="card sec" style="--sc:#2563eb"><div class="card-h"><h3>Despesas gerais da casa</h3><span class="muted">divididas ao meio depois das receitas fixas</span></div>${tCasa}</div>
+     <div class="card sec" style="--sc:#0d9488"><div class="card-h"><h3>Receitas fixas</h3></div>${tRec}</div>
+     <div class="card sec" style="--sc:#16a34a"><div class="card-h"><h3>Compras do dia a dia</h3><span class="muted">${compD.length} ${pl(compD.length, 'compra', 'compras')} · ${eur(som(compD, 'valor'))}</span></div>${listaRecolhivel(compD.length, tCompD)}</div>
+     <div class="card sec" style="--sc:#d97706"><div class="card-h"><h3>Compras a prestações</h3><span class="muted">${compP.length} ${pl(compP.length, 'prestação', 'prestações')} · ${eur(som(compP, 'valor'))}</span></div>${listaRecolhivel(compP.length, tCompP)}</div>
+     <div class="card sec" style="--sc:#7c3aed"><div class="card-h"><h3>Acertos e pagamentos</h3><span class="muted">transferências já feitas</span></div>${tAc}</div>
      ${catPartilhadas(d, A, B)}`;
   desenharCatPart();
 }
@@ -2770,6 +2798,17 @@ document.addEventListener('click', e => {
   if ((b = e.target.closest('[data-conta]'))) return acaoConta(b.dataset.conta);
 });
 
+
+/** Cada caixa ganha a cor do seu tema (receitas verde, despesas vermelho, cartões laranja…), para se distinguirem à primeira vista. */
+const CORES_TEMA = [[/receita/i, '#16a34a'], [/despesa|gasto/i, '#dc2626'], [/cart[aã]o|cartões|fatura/i, '#d97706'], [/d[ií]vida|presta/i, '#b45309'], [/objetivo|meta|or[cç]amento/i, '#0d9488'],
+  [/categoria/i, '#db2777'], [/balan[cç]o|fluxo|saldo|resumo/i, '#2563eb'], [/acerto|partilh/i, '#7c3aed'], [/seguran|c[oó]pia|registo|qualidade/i, '#64748b']];
+function colorirTitulos(raiz) {
+  (raiz || document).querySelectorAll('.content .card h3').forEach(h => {
+    const c = h.closest('.card'); if (!c || (c.style.getPropertyValue('--sc'))) return;
+    const m = CORES_TEMA.find(x => x[0].test(h.textContent)); if (m) c.style.setProperty('--sc', m[1]);
+  });
+}
+new MutationObserver(() => colorirTitulos()).observe(document.querySelector('.content'), {childList:true, subtree:true});
 /* =====================================================================
  * Eventos
  * =================================================================== */
