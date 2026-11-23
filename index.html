@@ -139,7 +139,9 @@ tfoot td{font-weight:700;border-bottom:0;background:var(--surface-2)}
 .abas button.ativo{background:var(--surface);color:var(--primary);box-shadow:var(--shadow)}
 .rel-lay{display:grid;grid-template-columns:1.2fr 1fr;gap:20px;align-items:start}
 .fat-nav{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
-.fat-nav select{min-width:230px;flex:1;max-width:340px}
+.fat-nav select{min-width:230px;flex:1;max-width:340px;padding:9px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text)}
+:root[data-tema="escuro"]{color-scheme:dark}
+select option{background:var(--surface);color:var(--text)}
 .fat-nav .btn[disabled]{opacity:.4;cursor:default}
 .fat-tab tr[data-cdtab]{cursor:pointer}.fat-tab tr.sel{background:var(--primary-soft)}
 .cartao-fin{display:flex;flex-direction:column;gap:12px;cursor:pointer;transition:.15s}
@@ -844,6 +846,7 @@ function mostrarApp(usuario, acesso) {
   $('#app').hidden = false; $('#bottom-nav').hidden = false;
   pintarAvatar();
   irPara(abaInicial());
+  setTimeout(() => garantirOpcoes().catch(() => {}), 50);   // opções dos formulários em paralelo com o Painel
 }
 
 function fazerLogin() {
@@ -891,7 +894,7 @@ function irPara(aba) {
   $('#periodo').hidden = ['relatorios', 'anual', 'definicoes', 'partilhadas', 'objetivos', 'perfil', 'fecho', 'importar', 'conta'].includes(aba);
   /* já carregado há pouco, no mesmo mês e sem alterações entretanto: mostra de imediato, sem voltar a carregar */
   const k = getAno() + '-' + getMes(), c = (S.cacheAba || (S.cacheAba = {}))[aba];
-  if (['dashboard', 'contas', 'movimentos', 'anual'].includes(aba) && c && c.k === k && c.v === (S.versao || 0) && Date.now() - c.t < 120000) return;
+  if (['dashboard', 'contas', 'movimentos', 'anual', 'partilhadas', 'perfil', 'objetivos', 'fecho'].includes(aba) && c && c.k === k && c.v === (S.versao || 0) && Date.now() - c.t < 300000) return;
   carregarAba(aba);
   S.cacheAba[aba] = {k, v:S.versao || 0, t:Date.now()};
 }
@@ -1197,6 +1200,7 @@ function renderBalanco(b, ot) {
     <div class="prog" style="height:10px;margin:10px 0 16px;background:var(--danger-soft)"><i style="width:${pr}%;background:var(--success)"></i></div>
     <div class="linha-kv"><span>Receitas</span><b class="pos eur">${eur(b.receitas)}</b></div>
     <div class="linha-kv"><span>Despesas</span><b class="neg eur">${eur(b.despesas)}</b></div>
+    ${b.reembolsos > 0.004 ? `<div class="linha-kv" title="Dinheiro devolvido por despesas que pagou (ex.: a parte do outro titular). Não conta como rendimento: abate às despesas."><span class="muted">Reembolsos recebidos (já descontados)</span><span class="muted eur">− ${eur(b.reembolsos)}</span></div>` : ''}
     <div class="linha-kv" title="Pagar a fatura é uma transferência da conta para o cartão. As compras já foram contadas como despesa no dia em que as fez."><span class="muted">Faturas de cartão pagas (não é despesa)</span><span class="muted eur">${eur(b.pagFaturas)}</span></div>${orcHTML}`;
 }
 
@@ -1231,7 +1235,7 @@ function renderCategorias(cat) {
   const tot = grupos.reduce((a, g) => a + g.total, 0);
   if (!grupos.length) { $('#c-cats').innerHTML = vazio('Sem despesas neste mês', 'Registe uma despesa para ver a distribuição.'); return; }
   $('#c-cats').innerHTML = `<div class="cats-grid"><div class="chart-h peq"><canvas id="ch-cats"></canvas></div>
-    <div class="legenda">${legendaGrupos(grupos, tot)}</div></div>`;
+    <div class="legenda">${legendaGrupos(grupos, tot)}${cat.reembolsos > 0.004 ? `<div class="leg" title="Não conta como rendimento: abate às despesas do mês."><span class="nome muted">Reembolsos recebidos</span><span class="pct"></span><b class="eur pos">− ${eur(cat.reembolsos)}</b></div><div class="leg"><span class="nome"><b>Despesa líquida</b></span><span class="pct"></span><b class="eur">${eur(tot - cat.reembolsos)}</b></div>` : ''}</div></div>`;
   desenharDonutGrupos('cats', 'ch-cats', grupos);
 }
 
@@ -1363,10 +1367,17 @@ async function carregarMovimentos() {
   const id = S.req.mov = (S.req.mov || 0) + 1;
   skeleton($('#t-mov'), 1, 260);
   S.mvGlobal = $('#mv-global').checked; $('#mv-datas').hidden = !S.mvGlobal;
-  const oc = $('#mv-tipo option[value="cartao"]'); oc.hidden = oc.disabled = !S.mvGlobal;
+  const oc = $('#mv-tipo option[value="cartao"]'); oc.hidden = oc.disabled = false;
+  const soCartao = !S.mvGlobal && $('#mv-tipo').value === 'cartao';
   try {
-    let l, o = await garantirOpcoes();
-    if (S.mvGlobal) {
+    let l; const po = garantirOpcoes();
+    if (soCartao) {
+      /* despesas de cartão do mês escolhido (pela data da compra) */
+      const m = getMes(), a = getAno(), ini = `${a}-${String(m).padStart(2, '0')}-01`, fim = `${a}-${String(m).padStart(2, '0')}-${String(new Date(a, m, 0).getDate()).padStart(2, '0')}`;
+      const r = await api('pesquisarMovimentos', {texto:'', tipo:'cartao', categoria:'', conta:'', ini, fim});
+      if (id !== S.req.mov) return;
+      l = r.itens; S.mvTruncado = r.truncado; S.mvTotal = r.total;
+    } else if (S.mvGlobal) {
       const r = await api('pesquisarMovimentos', {texto:$('#mv-q').value, tipo:$('#mv-tipo').value || 'todos', categoria:$('#mv-cat').value, conta:$('#mv-conta').value, ini:$('#mv-ini').value, fim:$('#mv-fim').value});
       if (id !== S.req.mov) return;
       l = r.itens; S.mvTruncado = r.truncado; S.mvTotal = r.total;
@@ -1375,6 +1386,7 @@ async function carregarMovimentos() {
       if (id !== S.req.mov) return;
       S.mvTruncado = false;
     }
+    const o = await po; S.mvSoCartao = soCartao;
     S.movs = l.map((m, i) => ({...m, _i:i}));
     const fill = (sel, vals, rotulo) => { const atual = $(sel).value; $(sel).innerHTML = `<option value="">${rotulo}</option>` + opcHTML([...new Set(vals)].sort(), atual); $(sel).value = atual; };
     fill('#mv-cat', S.mvGlobal ? [...o.categoriasDespesa, ...o.categoriasReceita] : S.movs.map(m => m.categoria), 'Todas as categorias');
@@ -1819,7 +1831,7 @@ async function carregarAnual() {
     c.innerHTML = `<div class="filtros no-print" style="align-items:center"><select class="sel-inline" id="an-ano">${opcHTML(anos, ano)}</select>
         <select class="sel-inline" id="an-crit" title="Em que mês contam as compras de cartão"><option value="fatura" ${r.criterio === 'fatura' ? 'selected' : ''}>Cartões: pela fatura do banco</option><option value="compra" ${r.criterio === 'compra' ? 'selected' : ''}>Cartões: pela data da compra</option></select><span style="flex:1"></span>
         <button class="btn peq" id="an-csv">Exportar CSV</button><button class="btn peq" id="an-pdf">Imprimir / guardar PDF</button></div>
-      <div class="grid kpis">${kpi('Receitas ' + ano, t.receita, '<span class="muted">no ano</span>', 'pos')}${kpi('Despesas ' + ano, t.despesa, `<span class="muted">contas + cartões ${r.criterio === 'fatura' ? '(por fatura)' : '(por data de compra)'}</span>`)}
+      <div class="grid kpis">${kpi('Receitas ' + ano, t.receita, `<span class="muted">${t.ateMes ? 'até ' + t.ateMes.toLowerCase() : 'no ano'}</span>`, 'pos')}${kpi('Despesas ' + ano, t.despesa, `<span class="muted">contas + cartões ${r.criterio === 'fatura' ? '(por fatura)' : '(por data de compra)'}${t.ateMes ? ', até ' + t.ateMes.toLowerCase() : ''}</span>`)}
         ${kpi('Balanço', t.balanco, '<span class="muted">receitas − despesas</span>', t.balanco >= 0 ? 'pos' : 'neg')}
         <div class="card"><div class="kpi-t">Taxa de poupança</div><div class="kpi-v ${t.poupanca >= 0 ? 'pos' : 'neg'}">${t.poupanca}%</div><div class="kpi-x muted">do que recebeu</div></div></div>
       <div class="card sec"><div class="card-h"><h3>Mês a mês</h3></div><div class="chart-h"><canvas id="ch-anual"></canvas></div></div>
@@ -2523,7 +2535,7 @@ function renderFecho() {
   const gs = ordem.map(k => { const o = gm[k]; o.a = Math.round(o.a * 100) / 100; o.b = Math.round(o.b * 100) / 100; o.dif = Math.round((o.a - o.b) * 100) / 100; o.pct = o.b > 0.004 ? Math.round((o.a - o.b) / o.b * 100) : null; return o; }).sort((x, y) => Math.max(y.a, y.b) - Math.max(x.a, x.b));
   const max = Math.max(1, ...gs.map(x => Math.max(x.a, x.b)));
   const lin = (x, sub) => `<td${sub ? ' class="ind"' : ''}>${sub ? '' : `<span class="chev">${ico('seta')}</span>`}<b>${esc(x.nome)}</b></td><td class="dir-r eur">${eur(x.b)}</td><td class="dir-r eur">${eur(x.a)}</td><td class="dir-r">${chipVar(x.dif, false, x.pct)}</td>
-    <td class="fe-bars">${sub ? '' : `<div class="fe-b"><i style="width:${x.b / max * 100}%"></i></div><div class="fe-a"><i style="width:${x.a / max * 100}%"></i></div>`}</td>`;
+    <td class="fe-bars">${sub ? '' : `<div class="fe-b"><i style="width:${Math.max(0, x.b) / max * 100}%"></i></div><div class="fe-a"><i style="width:${Math.max(0, x.a) / max * 100}%"></i></div>`}</td>`;
   const corpoCats = gs.map(g => `<tr class="grp-cab" tabindex="0" role="button" aria-expanded="false">${lin(g, false)}</tr>` + g.subs.map(x => `<tr class="grp-sub" hidden>${lin(x, true)}</tr>`).join('')).join('');
   const lista = (t, l, cls) => l.length ? `<div class="card"><div class="card-h"><h3>${t}</h3></div>${l.map(x => `<div class="linha-kv"><span><b>${esc(x.nome)}</b> <span class="muted mini">${x.categoria && x.categoria !== x.nome ? esc(x.categoria) + ' · ' : ''}${eur(x.b)} → ${eur(x.a)}</span></span><b class="eur ${cls}">${x.dif > 0 ? '+' : '−'} ${eur(Math.abs(x.dif))}</b></div>`).join('')}</div>` : '';
   const resumo = (() => {
@@ -3001,7 +3013,7 @@ function pfCompromissos(d) {
   const c = d.compromissos;
   return `<div class="card sec" style="--sc:#b45309"><div class="card-h"><h3>Compromissos e dívidas</h3><span class="chip ${CLS_ESTADO[c.nivel]}">${c.pct}% do rendimento</span></div>
     <div class="pf-meter"><div class="prog ${CLS_ESTADO[c.nivel]}" style="height:12px"><i style="width:${Math.min(100, c.pct * 2)}%"></i></div><span class="pf-marca" style="left:60%"><em>30%</em></span><span class="pf-marca" style="left:70%"><em>35%</em></span></div>
-    <div class="pf-kvs" style="margin-top:18px"><div class="pf-kv"><span>Prestações por mês</span><b>${eur(c.prestacoes)}</b><em>${c.pctDividas}% do rendimento</em></div><div class="pf-kv"><span>Recorrentes fixos</span><b>${eur(c.recorrentes)}</b></div><div class="pf-kv"><span>Dívida por pagar</span><b>${eur(c.dividaRestante)}</b></div></div>
+    <div class="pf-kvs" style="margin-top:18px"><div class="pf-kv"><span>Prestações por mês</span><b>${eur(c.prestacoes)}</b><em>${c.pctDividas}% do rendimento</em></div><div class="pf-kv"><span>Recorrentes fixos</span><b>${eur(c.recorrentes)}</b>${c.contaConjunta > 0 ? `<em>inclui ${eur(c.contaConjunta)} para a conta conjunta</em>` : ''}</div><div class="pf-kv"><span>Dívida por pagar</span><b>${eur(c.dividaRestante)}</b></div></div>
     <p class="sub-t" style="margin:12px 0 0">${esc(c.texto)}</p></div>`;
 }
 function pfPrevisao(d) {
@@ -3069,14 +3081,14 @@ document.addEventListener('click', e => { if (e.target.closest('#perfil-corpo [d
 
 /* ---------- património líquido ---------- */
 const sinalEur = v => (v > 0 ? '+ ' : v < 0 ? '− ' : '') + eur(Math.abs(v));
-function chipVar(rot, v) { return v === null || v === undefined ? '' : `<span class="chip ${v > 0 ? 'ok' : v < 0 ? 'mau' : 'neu'}">${esc(rot)} ${sinalEur(v)}</span>`; }
+function chipPat(rot, v) { return v === null || v === undefined ? '' : `<span class="chip ${v > 0 ? 'ok' : v < 0 ? 'mau' : 'neu'}">${esc(rot)} ${sinalEur(v)}</span>`; }
 async function carregarPatrimonioCard() {
   const el = $('#pf-patr'); if (!el) return;
   try {
     const d = await api('getPatrimonio'); if (!$('#pf-patr')) return;
     const h = d.hoje, linha = (t, v, cl) => `<div class="linha-kv"><span>${esc(t)}</span><b class="eur ${cl || ''}">${eur(v)}</b></div>`;
     el.innerHTML = `<div class="card sec" style="--sc:#2563eb"><div class="card-h"><h3>Património líquido</h3><span class="muted">o que tem menos o que deve</span></div>
-      <div class="pt-topo"><b class="pt-v ${h.liquido < 0 ? 'neg' : 'pos'}">${eur(h.liquido)}</b><div class="pt-chips">${chipVar('no último mês', d.variacaoMes)}${chipVar('em 3 meses', d.variacao3)}${d.mesesPeriodo > 4 ? chipVar('em ' + (d.mesesPeriodo - 1) + ' meses', d.variacaoPeriodo) : ''}</div></div>
+      <div class="pt-topo"><b class="pt-v ${h.liquido < 0 ? 'neg' : 'pos'}">${eur(h.liquido)}</b><div class="pt-chips">${chipPat('no último mês', d.variacaoMes)}${chipPat('em 3 meses', d.variacao3)}${d.mesesPeriodo > 4 ? chipPat('em ' + (d.mesesPeriodo - 1) + ' meses', d.variacaoPeriodo) : ''}</div></div>
       <div class="grid pf-2" style="margin:14px 0 0"><div><h4 class="pf-sub" style="margin-top:0">O que tem</h4>${linha('Contas e dinheiro', h.liquidez)}${linha('Poupança', h.poupanca)}${linha('Investimentos', h.investimentos)}${linha('Total', h.ativos, 'pos')}</div>
         <div><h4 class="pf-sub" style="margin-top:0">O que deve</h4>${linha('Dívidas e empréstimos', h.dividas)}${linha('Cartões de crédito', h.cartoes)}${linha('Total', h.passivos, 'neg')}</div></div>
       ${d.evolucao.length > 1 ? '<div class="chart-h" style="height:220px;margin-top:12px"><canvas id="pf-ch-patr"></canvas></div>' : '<p class="muted mini">A evolução mensal aparece quando houver mais de um mês de movimentos.</p>'}
@@ -3196,7 +3208,7 @@ document.addEventListener('change', e => {
   if (e.target.id === 'mq') { S.mostrarQuitadas = e.target.checked; relDividas(); }
   if (e.target.id === 'pan-per') { S.panPer = e.target.value; relDividas(); }
   if (e.target.id === 'mv-global') return carregarMovimentos();
-  if (['mv-tipo', 'mv-cat', 'mv-conta'].includes(e.target.id)) return S.mvGlobal ? carregarMovimentos() : renderMovimentos();
+  if (['mv-tipo', 'mv-cat', 'mv-conta'].includes(e.target.id)) return S.mvGlobal || (e.target.id === 'mv-tipo' && (e.target.value === 'cartao' || S.mvSoCartao)) ? carregarMovimentos() : renderMovimentos();
   if (['mv-ini', 'mv-fim'].includes(e.target.id)) return carregarMovimentos();
   if (e.target.id === 'an-ano') { S.anoAnual = +e.target.value; carregarAnual(); }
   if (e.target.id === 'an-crit') { S.criterioAnual = e.target.value; carregarAnual(); }
