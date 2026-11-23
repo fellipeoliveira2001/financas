@@ -1,6 +1,6 @@
 /* Performance Financial · service worker: guarda o "esqueleto" da app para abrir depressa e mesmo sem rede.
    Os dados (pedidos ao servidor) nunca são guardados. */
-const VERSAO = "pf-v3";
+const VERSAO = "pf-v4";
 const FICHEIROS = ["./", "index.html", "manifest.webmanifest", "config.js", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(VERSAO).then(c => c.addAll(FICHEIROS)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== VERSAO).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
