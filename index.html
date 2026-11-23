@@ -73,7 +73,7 @@ td.eur,td.dir-r{white-space:nowrap}
 .ib:hover{background:var(--primary-soft);color:var(--primary)}
 .ib.solo{border:1px solid var(--border);background:var(--surface);box-shadow:var(--shadow)}
 .user{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:4px 12px 4px 4px;font-weight:600;box-shadow:var(--shadow)}
-.avatar{width:28px;height:28px;border-radius:50%;background:var(--primary);color:var(--on-primary);display:grid;place-items:center;font-size:11px;font-weight:800}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--primary) center/cover no-repeat;color:var(--on-primary);display:grid;place-items:center;font-size:11px;font-weight:800}
 .content{padding:24px 28px 40px;width:100%;max-width:none}
 .view{display:none}.view.ativo{display:block}
 
@@ -443,6 +443,45 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:0
 .inc-card{border:1px solid var(--warn,#f0b429);background:var(--warn-soft);border-radius:12px;padding:12px 14px;margin-bottom:14px}
 .inc-it{display:grid;grid-template-columns:1fr minmax(180px,260px) auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid rgba(0,0,0,.08)}.inc-it:first-of-type{border-top:0}
 @media (max-width:760px){.inc-it{grid-template-columns:1fr}.cat-grp .lin{padding-left:14px}}
+/* perfil do utilizador */
+.pu-top{display:flex;align-items:center;gap:14px;margin-bottom:12px}.pu-av{flex:none;width:76px;height:76px;border-radius:50%;background:var(--primary) center/cover no-repeat;color:var(--on-primary);display:grid;place-items:center;font-size:26px;font-weight:800;border:3px solid var(--surface);box-shadow:0 0 0 2px var(--primary)}
+.pu-t{display:flex;flex-direction:column;gap:2px;min-width:0}.pu-t b{font-size:18px}.pu-t span{font-size:13.5px}.pu-comp{margin-bottom:12px}.pu-foto{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}.pu-foto label{cursor:pointer}
+.pf-id{display:flex;align-items:center;gap:12px;margin-bottom:14px}.pf-id .pu-av{width:48px;height:48px;font-size:17px}.pf-id>div{display:flex;flex-direction:column}
+.pf-orc-t{width:100%;border-collapse:collapse}.pf-orc-t td{padding:8px 6px;border-top:1px solid var(--border);vertical-align:middle}.pf-orc-t td:first-child{width:28px}.pf-orc-t td:last-child{width:96px}.pf-orc-t input[type=number]{width:96px;text-align:right}
+.pt-topo{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.pt-v{font-size:30px;letter-spacing:-.02em}.pt-v.neg{color:var(--danger)}.pt-v.pos{color:var(--success)}.pt-chips{display:flex;gap:6px;flex-wrap:wrap}
+.pf-sub-i{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--border);flex-wrap:wrap}.pf-sub-i>div:first-child{flex:1;min-width:200px}.pf-sub-d{display:flex;align-items:center;gap:10px}
+/* perfil financeiro */
+.pf-2{grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
+.pf-plano{margin-bottom:16px}.pf-plano .card-h{flex-wrap:wrap;align-items:center}
+.pf-res{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.pf-score{--p:0;--c:var(--primary);flex:none;width:104px;height:104px;border-radius:50%;display:grid;place-content:center;text-align:center;background:conic-gradient(var(--c) calc(var(--p)*1%),var(--surface-2) 0);position:relative}
+.pf-score::before{content:"";position:absolute;inset:9px;border-radius:50%;background:var(--surface)}
+.pf-score b,.pf-score span{position:relative;line-height:1}.pf-score b{font-size:30px;font-weight:800}.pf-score span{font-size:11px;color:var(--muted);margin-top:2px}
+.pf-res-t{flex:1;min-width:220px}.pf-res-t p{margin:6px 0 10px;line-height:1.5;font-size:14px}
+.pf-perfil{display:flex;align-items:center;gap:8px;font-size:19px}.pf-perfil span{font-size:24px}
+.pf-partes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:16px}
+.pf-parte-h{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;color:var(--muted);font-weight:600}.pf-parte-h b{color:var(--text)}
+.pf-kvs{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+.pf-kv{display:flex;flex-direction:column;gap:2px}.pf-kv span{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}.pf-kv b{font-size:19px}.pf-kv em{font-style:normal;font-size:12px;color:var(--muted)}
+.pf-barras{display:flex;flex-direction:column;gap:14px}.pf-barra-h,.pf-cat-h,.pf-eco-h,.pf-acao-h{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px}
+.pf-sub{margin:20px 0 6px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.pf-cat{padding:9px 0;border-top:1px solid var(--border)}.pf-var{margin-top:6px}
+.pf-eco{padding:10px 0;border-top:1px solid var(--border)}.pf-eco:first-of-type{border-top:0}.pf-eco p,.pf-acao p{margin:2px 0 0;font-size:13px;line-height:1.5;color:var(--muted)}
+.pf-cen{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.pf-c{border:1px solid var(--border);border-radius:12px;padding:12px 10px;text-align:center;display:flex;flex-direction:column;gap:3px;min-width:0}
+.pf-c span{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase}.pf-c b{font-size:18px}.pf-c em{font-style:normal;font-size:11.5px;color:var(--muted)}
+.pf-c.rec{border-color:var(--primary);background:color-mix(in srgb,var(--primary) 8%,transparent)}
+.pf-res-v{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin-bottom:8px}.pf-res-v b{font-size:24px}
+.pf-meter{position:relative;margin-top:6px}.pf-marca{position:absolute;top:-4px;width:2px;height:20px;background:var(--text);opacity:.45}.pf-marca em{position:absolute;top:22px;left:50%;transform:translateX(-50%);font-size:10px;font-style:normal;color:var(--muted)}
+.pf-prevs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:12px}
+.pf-prev{border:1px solid var(--border);border-left-width:5px;border-radius:12px;padding:12px 14px}
+.pf-prev.ok{border-left-color:var(--success)}.pf-prev.av{border-left-color:var(--warn)}.pf-prev.mau{border-left-color:var(--danger)}
+.pf-prev p{margin:6px 0;font-weight:700;font-size:14px;line-height:1.35}.pf-prev-d{font-size:12.5px;line-height:1.6}
+.pf-acao{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--border)}.pf-acao:first-of-type{border-top:0}
+.pf-n{flex:none;width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-content:center;font-size:13px;font-weight:800}
+.pf-acao>div{flex:1;min-width:0}.pf-aviso{margin:6px 2px 24px;line-height:1.5}
+@media(max-width:560px){.pf-cen{grid-template-columns:1fr}.pf-score{width:92px;height:92px}}
+@media(max-width:560px){.topbar h1{font-size:17px}}
+
 </style>
 </head>
 <body>
@@ -470,6 +509,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:0
   <symbol id="i-meta" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
   <symbol id="i-balanca" viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M5 7h14"/><path d="m5 7-3 8a4 4 0 0 0 6 0Z"/><path d="m19 7-3 8a4 4 0 0 0 6 0Z"/></symbol>
   <symbol id="i-divida" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></symbol>
+  <symbol id="i-perfil" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/><circle cx="19" cy="8" r="0.8"/></symbol>
   <symbol id="i-ativ" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
   <symbol id="i-busca" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
   <symbol id="i-ok" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
@@ -594,6 +634,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:0
       <section class="view" id="v-partilhadas"><div id="part-corpo"></div></section>
 
       <!-- OBJETIVOS / FECHO / IMPORTAR -->
+      <section class="view" id="v-perfil"><div id="perfil-corpo"></div></section>
       <section class="view" id="v-objetivos"><div id="obj-corpo"></div></section>
       <section class="view" id="v-fecho"><div id="fecho-corpo"></div></section>
       <section class="view" id="v-importar"><div id="imp-corpo"></div></section>
@@ -660,7 +701,7 @@ const ico = n => `<svg class="ico"><use href="#i-${n}"/></svg>`;
 const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const ABREV = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 const PALETA = ['#7b1fa2','#16a34a','#f59e0b','#0ea5e9','#ef4444','#14b8a6','#ec4899','#6366f1','#84cc16','#f97316'];
-const TIT = {dashboard:'Painel', contas:'Contas', movimentos:'Movimentos', cartoes:'Cartões de crédito', relatorios:'Relatórios', anual:'Visão anual', definicoes:'Definições', partilhadas:'Despesas partilhadas', objetivos:'Objetivos', fecho:'Fecho do mês', importar:'Importar', conta:'A minha conta'};
+const TIT = {dashboard:'Painel', contas:'Contas', movimentos:'Movimentos', cartoes:'Cartões de crédito', relatorios:'Relatórios', anual:'Visão anual', definicoes:'Definições', partilhadas:'Despesas partilhadas', objetivos:'Objetivos', perfil:'Perfil financeiro', fecho:'Fecho do mês', importar:'Importar', conta:'A minha conta'};
 const ABA_DESP = 'DESPESAS', ABA_REC = 'RECEITA', ABA_CART = 'REGISTOS CARTÃO DE CRÉDITO';
 
 const S = {token:null, usuario:'', aba:'dashboard', opcoes:null, movs:[], movOrd:{col:'iso', dir:-1}, cartoes:[], cartaoSel:null,
@@ -763,6 +804,7 @@ const PAGINAS = [
   {aba:'cartoes', t:'Cartões', tb:'Cartões', ico:'cartao', perm:['CARTOES_VER']},
   {aba:'partilhadas', t:'Partilhadas', tb:'Partilhadas', ico:'pessoas', perm:['PARTILHADAS_VER']},
   {aba:'objetivos', t:'Objetivos', tb:'Objetivos', ico:'meta', perm:['OBJETIVOS_VER']},
+  {aba:'perfil', t:'Perfil financeiro', tb:'Perfil', ico:'perfil', perm:['DASHBOARD_VER', 'PARTILHADAS_VER']},
   {aba:'fecho', t:'Fecho do mês', tb:'Fecho', ico:'balanca', perm:['FECHO_VER']},
   {aba:'relatorios', t:'Relatórios', tb:'Relatórios', ico:'rel', perm:['DIVIDAS_VER', 'REL_INTERVALO', 'REL_METAS', 'REL_MEDIA', 'REL_ORCADO']},
   {aba:'anual', t:'Visão anual', tb:'Anual', ico:'cal', perm:['ANUAL_VER']},
@@ -775,7 +817,7 @@ const paginasPermitidas = () => PAGINAS.filter(p => podeAba(p.aba));
 function aplicarAcesso(r) {
   r = r || {};
   S.admin = r.perfil === 'Administrador';
-  S.pessoa = r.pessoa || '';
+  S.pessoa = r.pessoa || ''; S.meu = r.meu || {};
   const p = r.perms || {};
   S.perms = {}; PERMS_TODAS.forEach(k => { S.perms[k] = S.admin || !!p[k]; });
   PERMS_TODAS.forEach(k => document.body.classList.toggle('p-' + k, S.perms[k]));
@@ -800,8 +842,7 @@ function mostrarApp(usuario, acesso) {
   aplicarAcesso(acesso);
   $('#login').hidden = true;
   $('#app').hidden = false; $('#bottom-nav').hidden = false;
-  $('#user-nome').textContent = usuario;
-  $('#avatar').textContent = usuario.substring(0, 2).toUpperCase();
+  pintarAvatar();
   irPara(abaInicial());
 }
 
@@ -847,7 +888,7 @@ function irPara(aba) {
   $$('.view').forEach(v => v.classList.remove('ativo'));
   $('#v-' + aba).classList.add('ativo');
   $('#titulo').textContent = TIT[aba];
-  $('#periodo').hidden = ['relatorios', 'anual', 'definicoes', 'partilhadas', 'objetivos', 'fecho', 'importar', 'conta'].includes(aba);
+  $('#periodo').hidden = ['relatorios', 'anual', 'definicoes', 'partilhadas', 'objetivos', 'perfil', 'fecho', 'importar', 'conta'].includes(aba);
   /* já carregado há pouco, no mesmo mês e sem alterações entretanto: mostra de imediato, sem voltar a carregar */
   const k = getAno() + '-' + getMes(), c = (S.cacheAba || (S.cacheAba = {}))[aba];
   if (['dashboard', 'contas', 'movimentos', 'anual'].includes(aba) && c && c.k === k && c.v === (S.versao || 0) && Date.now() - c.t < 120000) return;
@@ -864,6 +905,7 @@ function carregarAba(aba) {
   else if (aba === 'definicoes') carregarDefinicoes();
   else if (aba === 'partilhadas') carregarPartilhadas();
   else if (aba === 'objetivos') carregarObjetivos();
+  else if (aba === 'perfil') carregarPerfil();
   else if (aba === 'fecho') iniciarFecho();
   else if (aba === 'importar') iniciarImportar();
   else if (aba === 'conta') carregarConta();
@@ -2733,8 +2775,9 @@ async function pintarLock() {
 const NOTIF_DESC = {
   METAS: 'Quando uma categoria chega a 50%, 80% e 100% do orçamento.',
   VENCIMENTOS: 'Faturas de cartão, fecho de fatura e prestações: 3 dias antes, 1 dia antes, no dia e 1 dia depois.',
-  SEMANAL: 'Resumo por categoria, às segundas-feiras.',
+  SEMANAL: 'Resumo da semana (categorias, cartões de crédito e previsão do próximo mês), às segundas-feiras.',
   MENSAL: 'Resumo por categoria, no dia 1 de cada mês.',
+  PREVISAO: 'Aviso imediato, no próprio dia, quando a previsão indica que pode faltar dinheiro no próximo mês.',
   ACERTOS: 'Prazos para enviar à conta conjunta e para acertar compras com a outra pessoa (definidos em Definições).'
 };
 async function carregarConta() {
@@ -2744,10 +2787,64 @@ async function carregarConta() {
     const d = await api('getMinhaConta');
     if (id !== S.req.conta) return;
     S.conta = d;
-    c.innerHTML = secContaDados(d) + secContaSeg() + secContaNotif(d);
+    S.meu = d.meu || S.meu; pintarAvatar();
+    c.innerHTML = secContaPerfil(d) + secContaDados(d) + secContaSeg() + secContaNotif(d);
     pintarLock();
   } catch (e) { falhou(e); }
 }
+
+/* ---------- perfil do utilizador: foto e dados ---------- */
+const iniciaisDe = n => String(n || '?').trim().split(/\s+/).slice(0, 2).map(x => x[0]).join('').toUpperCase() || '?';
+function pintarAvatar() {
+  const m = S.meu || {}, a = $('#avatar'); if (!a) return;
+  a.textContent = m.foto ? '' : iniciaisDe(m.nome || S.usuario);
+  a.style.backgroundImage = m.foto ? `url(${m.foto})` : '';
+  const n = $('#user-nome'); if (n) n.textContent = m.nome || S.usuario;
+}
+function avatarGrande(m, usuario) {
+  return `<div class="pu-av" style="${m.foto ? `background-image:url(${m.foto})` : ''}">${m.foto ? '' : esc(iniciaisDe(m.nome || usuario))}</div>`;
+}
+function secContaPerfil(d) {
+  const m = d.meu || {}, campos = [m.foto, m.nome, m.profissao, m.cargo, m.local, m.meta], pct = Math.round(campos.filter(Boolean).length / campos.length * 100);
+  const opc = (lista, v) => `<option value="">— escolher —</option>` + lista.map(x => `<option ${x === v ? 'selected' : ''}>${esc(x)}</option>`).join('');
+  return `<div class="card sec" style="--sc:#7c3aed"><h3>O meu perfil</h3>
+    <div class="pu-top">${avatarGrande(m, d.utilizador)}<div class="pu-t"><b>${esc(m.nome || d.utilizador)}</b>
+      <span>${esc([m.profissao, m.cargo].filter(Boolean).join(' · ') || 'Indique a sua profissão')}</span><span class="muted mini">${esc(m.local || '')}</span></div></div>
+    <div class="pu-comp"><span class="muted mini">Perfil ${pct}% completo</span><div class="prog ${pct >= 80 ? 'ok' : 'av'}"><i style="width:${pct}%"></i></div></div>
+    <div class="pu-foto"><label class="btn peq">${ico('plus')} ${m.foto ? 'Mudar foto' : 'Adicionar foto'}<input type="file" id="pu-file" accept="image/*" hidden></label>${m.foto ? '<button class="btn peq" data-conta="foto-rem">Remover foto</button>' : ''}</div>
+    <div class="campo"><label for="pu-nome">Nome a mostrar</label><input id="pu-nome" maxlength="40" value="${esc(m.nome || '')}" placeholder="${esc(d.utilizador)}"></div>
+    <div class="campo"><label for="pu-prof">Situação profissional</label><select id="pu-prof">${opc(d.profissoes || [], m.profissao)}</select></div>
+    <div class="campo"><label for="pu-cargo">Profissão ou função</label><input id="pu-cargo" maxlength="60" value="${esc(m.cargo || '')}" placeholder="Ex.: Team Leader, designer, enfermeira"></div>
+    <div class="campo"><label for="pu-local">Cidade e país</label><input id="pu-local" maxlength="60" value="${esc(m.local || '')}" placeholder="Ex.: Lisboa, Portugal"></div>
+    <div class="campo"><label for="pu-meta">Objetivo financeiro principal</label><select id="pu-meta">${opc(d.metas || [], m.meta)}</select></div>
+    <p class="muted mini" style="margin:0 0 10px">A profissão e o objetivo servem para personalizar as sugestões do Perfil financeiro. A foto fica só guardada na sua conta.</p>
+    <button class="btn pri" data-conta="perfil">Guardar perfil</button></div>`;
+}
+function fotoParaDataUrl(file) {
+  return new Promise((ok, ko) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const lado = Math.min(img.width, img.height), cv = document.createElement('canvas'); let tam = 128, q = .75, out = '';
+      for (let i = 0; i < 10; i++) {
+        cv.width = cv.height = tam; const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, tam, tam);
+        cx.drawImage(img, (img.width - lado) / 2, (img.height - lado) / 2, lado, lado, 0, 0, tam, tam);
+        out = cv.toDataURL('image/jpeg', q); if (out.length <= 8800) break;
+        if (q > .5) q -= .1; else tam -= 16;
+      }
+      out.length <= 8800 ? ok(out) : ko(new Error('Não foi possível reduzir a foto. Escolha outra.'));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); ko(new Error('Esse ficheiro não é uma imagem válida.')); };
+    img.src = url;
+  });
+}
+async function guardarPerfilUsr(dados, msg) {
+  try { S.meu = await api('salvarMeuPerfil', dados); pintarAvatar(); toast(msg, 'ok'); carregarConta(); } catch (e) { falhou(e); }
+}
+document.addEventListener('change', async e => {
+  if (e.target.id !== 'pu-file' || !e.target.files[0]) return;
+  try { const f = await fotoParaDataUrl(e.target.files[0]); await guardarPerfilUsr({foto:f}, 'Foto atualizada.'); } catch (er) { falhou(er); }
+});
 
 function secContaDados(d) {
   return `<div class="card sec"><h3>Os meus dados</h3>
@@ -2778,7 +2875,7 @@ function formUtilizador() {
     {id:'aviso', tipo:'info', html:'<span class="muted mini">Passa a entrar com o novo nome. Noutros dispositivos terá de iniciar sessão de novo.</span>'}],
     onSubmit: async v => {
       const r = await api('alterarUtilizador', v.novo.trim(), v.senha);
-      S.usuario = r.utilizador; $('#user-nome').textContent = S.usuario; $('#avatar').textContent = S.usuario.substring(0, 2).toUpperCase();
+      S.usuario = r.utilizador; pintarAvatar();
       toast('Nome de utilizador alterado.', 'ok'); carregarConta(); }});
 }
 
@@ -2786,6 +2883,8 @@ async function acaoConta(cmd) {
   try {
     if (cmd === 'utilizador') formUtilizador();
     else if (cmd === 'senha') formSenha();
+    else if (cmd === 'perfil') await guardarPerfilUsr({nome:$('#pu-nome').value, profissao:$('#pu-prof').value, cargo:$('#pu-cargo').value, local:$('#pu-local').value, meta:$('#pu-meta').value}, 'Perfil guardado.');
+    else if (cmd === 'foto-rem') await guardarPerfilUsr({foto:''}, 'Foto removida.');
     else if (cmd === 'email') { await api('salvarMinhaConta', {email:$('#ct-email').value.trim()}); toast('E-mail guardado.', 'ok'); carregarConta(); }
     else if (cmd === 'notif') {
       const n = {}; $$('#conta-corpo [data-nt]').forEach(i => { const [k, canal] = i.dataset.nt.split(':'); (n[k] = n[k] || {})[canal] = i.checked; });
@@ -2809,6 +2908,247 @@ function colorirTitulos(raiz) {
   });
 }
 new MutationObserver(() => colorirTitulos()).observe(document.querySelector('.content'), {childList:true, subtree:true});
+/* =====================================================================
+ * Perfil financeiro (análise automática dos movimentos)
+ * =================================================================== */
+const ROT_CLASSE = {essencial:'Essencial', flexivel:'Flexível', poupanca:'Poupança'};
+const ICO_ESTADO = {verde:'🟢', amarelo:'🟡', vermelho:'🔴'};
+const CLS_ESTADO = {verde:'ok', amarelo:'av', vermelho:'mau', ok:'ok', atencao:'av', alerta:'mau', alto:'mau'};
+async function carregarPerfil() {
+  const c = $('#perfil-corpo'), podeP = !!S.perms.DASHBOARD_VER, podeC = !!S.perms.PARTILHADAS_VER;
+  if (!podeP && !podeC) { c.innerHTML = vazio('Sem acesso', 'O seu perfil não inclui esta análise.'); return; }
+  if (!S.perfilEsc || (S.perfilEsc === 'pessoal' && !podeP) || (S.perfilEsc === 'casal' && !podeC)) S.perfilEsc = podeP ? 'pessoal' : 'casal';
+  skeleton(c, 3, 150);
+  const id = S.req.perfil = (S.req.perfil || 0) + 1;
+  try {
+    const d = await api('getPerfilFinanceiro', S.perfilEsc);
+    if (id !== S.req.perfil) return;
+    S.perfil = d; renderPerfil();
+  } catch (e) { falhou(e); }
+}
+function pfCabecalho(d) {
+  const podeP = !!S.perms.DASHBOARD_VER, podeC = !!S.perms.PARTILHADAS_VER, man = d.plano && d.plano.modo === 'manual';
+  const sw = podeP && podeC ? `<div class="seg" role="tablist"><button class="seg-b ${S.perfilEsc === 'pessoal' ? 'on' : ''}" data-pf-esc="pessoal">Pessoal</button><button class="seg-b ${S.perfilEsc === 'casal' ? 'on' : ''}" data-pf-esc="casal">Casal</button></div>` : '';
+  return `<div class="part-top">${sw}<span class="muted">${S.perfilEsc === 'casal' ? 'Despesas partilhadas do casal' : 'Os seus movimentos'}${d.periodo ? ` · ${esc(d.periodo.de)} a ${esc(d.periodo.ate)}` : ''}</span><span class="esp"></span>
+    <button class="btn peq" data-pf-recarregar="1">${ico('refresh')} Atualizar</button></div>
+    <div class="card sec pf-plano" style="--sc:#7c3aed"><div class="card-h"><div><h3>O meu plano</h3><span class="muted">Escolha como a análise classifica os seus gastos e quanto sugere guardar.</span></div>
+      <div class="seg"><button class="seg-b ${man ? '' : 'on'}" data-pf-modo="auto" aria-pressed="${!man}">Automático</button><button class="seg-b ${man ? 'on' : ''}" data-pf-modo="manual" aria-pressed="${man}">Manual</button></div></div>
+      <p class="sub-t" style="margin:0">${man ? `<b>Plano manual ativo.</b> Poupar ${d.plano.poupancaPct}% · essencial até ${d.plano.essencialPct}% · flexível até ${d.plano.flexivelPct}%, com as suas classificações de categorias. A reserva de emergência continua em 3 meses.` : '<b>Plano automático.</b> Proposta fixa recomendada: 50% essencial, 30% flexível, 20% poupança (ajustada às suas dívidas) e reserva de 3 meses. As categorias são classificadas automaticamente.'}</p>
+      ${man ? `<button class="btn peq" style="margin-top:10px" data-pf-edit="1">${ico('edit')} Editar o meu plano</button>` : ''}</div>`;
+}
+function pfResumo(d) {
+  const s = d.score, p = d.perfil, cor = s.total >= 65 ? 'var(--success)' : s.total >= 45 ? 'var(--warn)' : 'var(--danger)';
+  const conf = d.confianca, chipC = conf.nivel === 'alta' ? 'ok' : conf.nivel === 'média' ? 'neu' : 'av';
+  const u = d.utilizador, id = u ? `<div class="pf-id">${avatarGrande(S.meu || {}, S.usuario)}<div><b>${esc(u.nome)}</b><span class="muted mini">${esc([u.profissao, u.cargo].filter(Boolean).join(' · ') || 'Complete o perfil em A minha conta')}</span></div></div>` : '';
+  return `<div class="card sec" style="--sc:#2563eb"><div class="card-h"><h3>O seu perfil</h3><span class="chip ${chipC}">Confiança ${esc(conf.nivel)}</span></div>${id}
+    <div class="pf-res"><div class="pf-score" style="--p:${s.total};--c:${cor}"><b>${s.total}</b><span>/100</span></div>
+      <div class="pf-res-t"><div class="pf-perfil"><span>${esc(p.emoji)}</span><b>${esc(p.nome)}</b></div><p>${esc(p.texto)}</p><span class="chip ${s.total >= 65 ? 'ok' : s.total >= 45 ? 'av' : 'mau'}">Saúde financeira: ${esc(s.rotulo)}${s.provisoria ? ' (provisória)' : ''}</span></div></div>
+    <div class="pf-partes">${s.partes.map(x => `<div class="pf-parte" title="${esc(x.dica)}"><div class="pf-parte-h"><span>${esc(x.n)}</span><b>${x.pts}/${x.max}</b></div><div class="prog ${x.pts >= x.max * .7 ? 'ok' : x.pts >= x.max * .4 ? 'av' : 'mau'}"><i style="width:${Math.round(x.pts / x.max * 100)}%"></i></div></div>`).join('')}</div>
+    <p class="muted mini" style="margin:12px 0 0">${esc(conf.texto)}</p></div>`;
+}
+function pfRenda(d) {
+  const r = d.renda, casal = d.escopo === 'casal';
+  const kv = (t, v, x) => `<div class="pf-kv"><span>${t}</span><b>${eur(v)}</b>${x ? `<em>${x}</em>` : ''}</div>`;
+  const chipE = `<span class="chip ${r.estabilidade === 'estável' ? 'ok' : r.estabilidade === 'moderada' ? 'neu' : 'av'}">${casal ? 'Despesas' : 'Rendimento'} ${esc(r.estabilidade)}</span>`;
+  const corpo = casal
+    ? kv('Despesas por mês', r.media, 'média') + kv('Mês mais baixo', r.min) + kv('Mês mais alto', r.max) + kv('Cada um contribui', r.cadaUm, 'depois das receitas fixas de ' + eur(r.receitas))
+    : kv('Rendimento médio', r.media, 'por mês') + kv('Mediana', r.mediana) + kv('Mínimo / máximo', r.min, 'até ' + eur(r.max)) + kv('Parte fixa', r.fixa, 'e variável ' + eur(r.variavel));
+  return `<div class="card sec" style="--sc:#16a34a"><div class="card-h"><h3>${casal ? 'Despesas e contribuições do casal' : 'Rendimento mensal'}</h3>${chipE}</div>
+    <div class="pf-kvs">${corpo}</div>
+    ${!casal && r.base < r.media ? `<p class="muted mini" style="margin:8px 0 0">Como o rendimento varia, os cálculos usam um valor prudente: <b>${eur(r.base)}</b> por mês.</p>` : ''}
+    <div class="chart-h" style="height:200px;margin-top:12px"><canvas id="pf-ch-renda"></canvas></div></div>`;
+}
+function pfGastos(d) {
+  const g = d.gastos, casal = d.escopo === 'casal';
+  const barra = (x, tipo) => { const meta = x.meta; const ok = x.ok; return `<div class="pf-barra"><div class="pf-barra-h"><span><b>${esc(x.nome)}</b> <span class="muted">${eur(x.valor)} por mês</span></span><span class="chip ${CLS_ESTADO[x.estado] || (ok ? 'ok' : 'av')}">${x.pct}%${meta != null ? ` · ${tipo === 'min' ? 'mín.' : 'até'} ${meta}%` : ''}</span></div>
+    <div class="prog ${CLS_ESTADO[x.estado] || (ok === false ? 'av' : 'ok')}"><i style="width:${Math.min(100, x.pct)}%"></i></div></div>`; };
+  const tops = g.top.map(t => `<div class="pf-cat"><div class="pf-cat-h"><span><b>${esc(t.categoria)}</b> <span class="chip neu">${esc(ROT_CLASSE[t.classe] || '')}</span></span><span><b class="eur">${eur(t.media)}</b><span class="muted mini"> ${t.pctGasto}% das despesas</span></span></div>
+    <div class="prog"><i style="width:${Math.max(3, t.pctGasto)}%"></i></div>${t.variacao != null && Math.abs(t.variacao) >= 10 ? `<span class="chip ${t.variacao > 0 ? 'mau' : 'ok'} pf-var">${t.variacao > 0 ? '▲' : '▼'} ${Math.abs(t.variacao)}% face à sua média</span>` : ''}</div>`).join('');
+  return `<div class="card sec" style="--sc:#dc2626"><div class="card-h"><h3>Onde gasta mais</h3><span class="muted">média mensal</span></div>
+    <div class="pf-barras">${barra(g.essencial, 'max')}${barra(g.flexivel, 'max')}${casal ? '' : barra(g.poupanca, 'min')}</div>
+    <h4 class="pf-sub">Categorias com mais peso</h4>${tops || '<p class="muted">Sem categorias.</p>'}</div>`;
+}
+function pfEconomizar(d) {
+  const e = d.economizar, l = e.itens;
+  return `<div class="card sec" style="--sc:#db2777"><div class="card-h"><h3>Onde pode economizar</h3>${l.length ? `<span class="chip ok">até ${eur(e.potencial)} por mês</span>` : ''}</div>
+    ${l.length ? l.map(x => `<div class="pf-eco"><div class="pf-eco-h"><b>${esc(x.categoria)}</b><span class="chip ok">− ${eur(x.impacto)}/mês</span></div><p>${esc(x.texto)}</p></div>`).join('') + '<p class="muted mini" style="margin:10px 0 0">Só entram gastos flexíveis. Os essenciais (renda, contas, saúde…) ficam de fora.</p>' : vazio('Sem sugestões', 'Os seus gastos flexíveis estão controlados.')}</div>`;
+}
+function pfGuardar(d) {
+  const g = d.guardar;
+  return `<div class="card sec" style="--sc:#0d9488"><div class="card-h"><h3>Quanto guardar por mês</h3><span class="muted">sobre ${eur(g.base)} de rendimento</span></div>
+    <div class="pf-cen">${g.cenarios.map(x => `<div class="pf-c ${x.nome === 'Recomendado' ? 'rec' : ''}"><span>${esc(x.nome)}</span><b>${eur(x.valor)}</b><em>${x.pct}% do rendimento</em></div>`).join('')}</div>
+    <p class="sub-t" style="margin:12px 0 0">Hoje guarda <b>${eur(g.valorAtual)}</b> por mês (${g.taxaAtual}% do rendimento).${g.cabe ? ' O valor recomendado cabe no seu orçamento atual.' : ` <b>Para guardar o valor recomendado precisa de libertar ${eur(g.falta)} por mês.</b> ${d.economizar.potencial > 0 ? `As sugestões acima podem libertar cerca de ${eur(d.economizar.potencial)}.` : ''}`}</p></div>`;
+}
+function pfReserva(d) {
+  const r = d.reserva, casal = d.escopo === 'casal';
+  if (casal) return `<div class="card sec" style="--sc:#0d9488"><div class="card-h"><h3>Reserva de emergência do casal</h3><span class="chip neu">3 meses de essenciais</span></div>
+    <div class="pf-res-v"><b class="eur">${eur(r.alvo)}</b><span class="muted"> para cobrir 3 meses de despesas essenciais (${eur(r.essencialMensal)} por mês)</span></div>
+    <p class="sub-t" style="margin:10px 0 0">Para a juntar em 12 meses: <b>${eur(r.por12Meses)}</b> por mês, ou seja, <b>${eur(r.porPessoa12)}</b> de cada um.</p></div>`;
+  const cor = r.pct >= 100 ? 'ok' : r.pct >= 40 ? 'av' : 'mau', ob = r.objetivo;
+  return `<div class="card sec" style="--sc:#0d9488"><div class="card-h"><h3>Reserva de emergência</h3><span class="chip neu">3 meses de essenciais</span></div>
+    <div class="pf-res-v"><b class="eur">${eur(r.atual)}</b><span class="muted"> de ${eur(r.alvo)}</span><span class="obj-pct">${r.pct}%</span></div>
+    <div class="prog ${cor}" style="height:10px"><i style="width:${r.pct}%"></i></div>
+    <p class="sub-t" style="margin:10px 0 0">Os seus gastos essenciais são ${eur(r.essencialMensal)} por mês. ${r.mesesCobertos > 0 ? `A poupança atual cobre ${String(r.mesesCobertos).replace('.', ',')} ${pl(r.mesesCobertos, 'mês', 'meses')}.` : 'Ainda não tem reserva guardada.'}${r.mesesParaAtingir ? ` Guardando ${eur(d.guardar.cenarios[1].valor)} por mês chega lá em <b>${r.mesesParaAtingir} ${pl(r.mesesParaAtingir, 'mês', 'meses')}</b>.` : ''}</p>
+    ${S.perms.OBJETIVOS_GERIR ? `<button class="btn pri" style="margin-top:12px" data-pf-reserva="1">${ico('meta')} ${ob.existe ? 'Atualizar o objetivo Reserva de emergência' : 'Criar objetivo Reserva de emergência'}</button>` : ''}
+    ${ob.existe ? `<p class="muted mini" style="margin:8px 0 0">Já existe o objetivo “${esc(ob.nome)}” com ${eur(ob.guardado)} guardados.</p>` : ''}</div>`;
+}
+function pfCompromissos(d) {
+  if (d.escopo === 'casal') {
+    const a = d.acertos.emAberto;
+    return `<div class="card sec" style="--sc:#7c3aed"><div class="card-h"><h3>Acertos entre os dois</h3><span class="chip ${Math.abs(a) < 50 ? 'ok' : 'av'}">${Math.abs(a) < 50 ? 'Em dia' : 'Por acertar'}</span></div>
+      <p class="sub-t" style="margin:0">${Math.abs(a) < 20 ? 'Não há diferenças relevantes por acertar.' : `Há <b>${eur(Math.abs(a))}</b> por acertar entre os dois. Veja os detalhes em Partilhadas.`}</p></div>`;
+  }
+  const c = d.compromissos;
+  return `<div class="card sec" style="--sc:#b45309"><div class="card-h"><h3>Compromissos e dívidas</h3><span class="chip ${CLS_ESTADO[c.nivel]}">${c.pct}% do rendimento</span></div>
+    <div class="pf-meter"><div class="prog ${CLS_ESTADO[c.nivel]}" style="height:12px"><i style="width:${Math.min(100, c.pct * 2)}%"></i></div><span class="pf-marca" style="left:60%"><em>30%</em></span><span class="pf-marca" style="left:70%"><em>35%</em></span></div>
+    <div class="pf-kvs" style="margin-top:18px"><div class="pf-kv"><span>Prestações por mês</span><b>${eur(c.prestacoes)}</b><em>${c.pctDividas}% do rendimento</em></div><div class="pf-kv"><span>Recorrentes fixos</span><b>${eur(c.recorrentes)}</b></div><div class="pf-kv"><span>Dívida por pagar</span><b>${eur(c.dividaRestante)}</b></div></div>
+    <p class="sub-t" style="margin:12px 0 0">${esc(c.texto)}</p></div>`;
+}
+function pfPrevisao(d) {
+  const p = d.previsao;
+  if (!p || p.semDados) return `<div class="card sec" style="--sc:#2563eb"><div class="card-h"><h3>Previsão dos próximos 3 meses</h3></div>${vazio('Sem previsão', 'Faltam dados para estimar os próximos meses.')}</div>`;
+  const casal = d.escopo === 'casal';
+  const cartoes = p.meses.map(m => `<div class="pf-prev ${CLS_ESTADO[m.estado]}"><div class="pf-prev-h"><span>${ICO_ESTADO[m.estado]} <b>${esc(m.rotulo)}</b></span></div><p>${esc(m.texto)}</p>
+    <div class="pf-prev-d">${casal ? `Despesas previstas <b>${eur(m.despesa)}</b>` : `Entra <b>${eur(m.receita)}</b><br>Sai <b>${eur(m.despesa)}</b><br><span class="muted">cartões ${eur(m.cartao)} · prestações ${eur(m.prestacoes)} · restante ${eur(m.variavel)}</span>`}</div></div>`).join('');
+  return `<div class="card sec" style="--sc:#2563eb"><div class="card-h"><h3>Previsão dos próximos 3 meses</h3><span class="muted">${casal ? 'quanto cada um deve contar' : 'rendimentos esperados contra compromissos'}</span></div>
+    <div class="pf-prevs">${cartoes}</div>
+    <p class="muted mini" style="margin:12px 0 0">${casal ? 'Baseada nas despesas já registadas para os próximos meses (compras a prestações) e na média dos últimos meses.' : `Parte do dinheiro que tem hoje nas contas (${eur(p.liquidez)}) e usa o seu histórico de rendimentos, as faturas dos cartões, as prestações e o gasto médio, com uma margem de prudência de 5%.`} Se a previsão ficar vermelha, recebe um aviso por e-mail logo nesse dia.</p></div>`;
+}
+function pfAcoes(d) {
+  return `<div class="card sec" style="--sc:#d97706"><div class="card-h"><h3>Plano de ação</h3><span class="muted">por ordem de prioridade</span></div>
+    ${d.acoes.length ? d.acoes.map((a, i) => `<div class="pf-acao"><span class="pf-n">${i + 1}</span><div><div class="pf-acao-h"><b>${esc(a.icone)} ${esc(a.titulo)}</b>${a.impacto > 0 ? `<span class="chip ok">${eur(a.impacto)}/mês</span>` : ''}</div><p>${esc(a.detalhe)}</p></div></div>`).join('') : vazio('Tudo em ordem', 'Não há ações urgentes.')}</div>`;
+}
+function renderPerfil() {
+  const d = S.perfil, c = $('#perfil-corpo');
+  if (d.semDados) { c.innerHTML = pfCabecalho(d) + `<div class="card sec">${vazio('Ainda não há dados suficientes', d.motivo)}</div><p class="muted mini">${esc(d.aviso)}</p>`; return; }
+  const casal = d.escopo === 'casal';
+  c.innerHTML = pfCabecalho(d) + pfResumo(d) + (casal || !(S.perms.CONTAS_VER || S.perms.DASHBOARD_VER) ? '' : '<div id="pf-patr"></div>') + `<div class="grid pf-2">${pfRenda(d)}${pfGastos(d)}</div><div class="grid pf-2">${pfEconomizar(d)}${casal ? '' : pfGuardar(d)}</div>${casal ? '' : '<div id="pf-subs"></div>'}
+    <div class="grid pf-2">${pfReserva(d)}${pfCompromissos(d)}</div>${pfPrevisao(d)}${pfAcoes(d)}${pfOrcamentos(d)}
+    <p class="muted mini pf-aviso">${esc(d.aviso)} Gerado em ${esc(d.geradoEm || '')}.</p>`;
+  if (!casal) { carregarPatrimonioCard(); carregarSubscricoesCard(); }
+  const t = corTema(), h = d.renda.historico;
+  desenhar('pf-renda', 'pf-ch-renda', {type:'bar', data:{labels:h.map(x => x.mes), datasets: casal
+    ? [{label:'Despesas', data:h.map(x => x.valor), backgroundColor:'#dc2626', borderRadius:6}, {label:'Receitas fixas', data:h.map(x => x.receitas), backgroundColor:'#16a34a', borderRadius:6}]
+    : [{label:'Rendimento', data:h.map(x => x.valor), backgroundColor:'#16a34a', borderRadius:6}, {label:'Gastos', data:d.gastos.historico.map(x => x.gasto), backgroundColor:'#dc2626', borderRadius:6}]},
+    options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom', labels:{boxWidth:10}}, tooltip:{callbacks:{label:c => ` ${c.dataset.label}: ${eur(c.parsed.y)}`}}}, scales:{y:{beginAtZero:true, ticks:{callback:v => eur(v)}}, x:{grid:{display:false}}}}});
+}
+/* ---------- orçamentos (metas) a partir do plano ---------- */
+function pfOrcamentos(d) {
+  if (d.escopo === 'casal') return '';
+  return `<div class="card sec" style="--sc:#0d9488"><div class="card-h"><h3>Orçamentos a partir do meu plano</h3></div>
+    <p class="sub-t" style="margin:0 0 12px">Transforme este plano em orçamentos por categoria nas Metas, com um toque. Os essenciais ficam pela sua média com uma pequena folga e os flexíveis são ajustados para conseguir poupar o que o plano pede.</p>
+    ${S.perms.METAS_EDITAR ? `<button class="btn pri" data-pf-orc="1">${ico('meta')} Ver proposta e criar orçamentos</button>` : '<p class="muted mini" style="margin:0">O seu acesso não permite editar metas.</p>'}</div>`;
+}
+async function abrirPropostaOrc() {
+  try {
+    const p = await api('getPropostaOrcamento', getMes(), getAno());
+    if (p.semDados) return toast(p.motivo, 'erro');
+    const linhas = p.itens.map((x, i) => `<tr><td><input type="checkbox" class="pf-ock" data-i="${i}" checked aria-label="Incluir ${esc(x.categoria)}"></td>
+      <td><b>${esc(x.categoria)}</b><div class="muted mini">${esc(ROT_CLASSE[x.classe])} · média ${eur(x.media)}${x.atual > 0 ? ` · agora ${eur(x.atual)}` : ''}</div></td>
+      <td><input type="number" class="pf-orc" data-i="${i}" step="5" min="0" value="${x.proposto}" inputmode="decimal" aria-label="Orçamento de ${esc(x.categoria)}"></td></tr>`).join('');
+    abrirForm({titulo:'Orçamentos de ' + p.rotulo.toLowerCase(), botao:'Aplicar a ' + MESES[p.mes - 1].toLowerCase(), campos:[
+      {id:'resumo', tipo:'info', html:`<div id="pf-orc-res"></div>${p.aviso ? `<p class="mini" style="margin:6px 0 0;color:var(--warn)">${esc(p.aviso)}</p>` : ''}${p.jaTem ? `<p class="muted mini" style="margin:6px 0 0">Já tem ${p.jaTem} orçamentos neste mês. Ao aplicar, são atualizados.</p>` : ''}`},
+      {id:'tab', tipo:'info', html:`<table class="pf-orc-t"><tbody>${linhas}</tbody></table>`}],
+      aoAbrir: d => {
+        const calc = () => {
+          let tot = 0; $$('.pf-orc', d).forEach(i => { if ($(`.pf-ock[data-i="${i.dataset.i}"]`, d).checked) tot += parseFloat(i.value) || 0; });
+          const sobra = p.base - tot; $('#pf-orc-res', d).innerHTML = `Total de orçamentos: <b>${eur(tot)}</b> · rendimento ${eur(p.base)}<br>Sobra para poupar: <b style="color:var(--${sobra >= p.base * p.pctPoupanca / 100 - 1 ? 'success' : 'warn'})">${eur(sobra)}</b> (${Math.round(sobra / p.base * 100)}%, o plano pede ${p.pctPoupanca}%)`;
+        };
+        d.oninput = calc; d.onchange = calc; calc();
+      },
+      onSubmit: async v => {
+        const d = $('#drawer'), itens = [];
+        $$('.pf-orc', d).forEach(i => { if ($(`.pf-ock[data-i="${i.dataset.i}"]`, d).checked) itens.push({categoria:p.itens[i.dataset.i].categoria, valor:parseFloat(i.value) || 0}); });
+        if (!itens.length) throw new Error('Escolha pelo menos uma categoria.');
+        const r = await api('aplicarPropostaOrcamento', {mes:p.mes, ano:p.ano, itens});
+        S.cacheAba = {}; toast(`${r.categorias} orçamentos aplicados (${eur(r.total)}). Veja-os em Relatórios > Metas.`, 'ok');
+      }});
+  } catch (e) { falhou(e); }
+}
+document.addEventListener('click', e => { if (e.target.closest('#perfil-corpo [data-pf-orc]')) abrirPropostaOrc(); });
+
+/* ---------- património líquido ---------- */
+const sinalEur = v => (v > 0 ? '+ ' : v < 0 ? '− ' : '') + eur(Math.abs(v));
+function chipVar(rot, v) { return v === null || v === undefined ? '' : `<span class="chip ${v > 0 ? 'ok' : v < 0 ? 'mau' : 'neu'}">${esc(rot)} ${sinalEur(v)}</span>`; }
+async function carregarPatrimonioCard() {
+  const el = $('#pf-patr'); if (!el) return;
+  try {
+    const d = await api('getPatrimonio'); if (!$('#pf-patr')) return;
+    const h = d.hoje, linha = (t, v, cl) => `<div class="linha-kv"><span>${esc(t)}</span><b class="eur ${cl || ''}">${eur(v)}</b></div>`;
+    el.innerHTML = `<div class="card sec" style="--sc:#2563eb"><div class="card-h"><h3>Património líquido</h3><span class="muted">o que tem menos o que deve</span></div>
+      <div class="pt-topo"><b class="pt-v ${h.liquido < 0 ? 'neg' : 'pos'}">${eur(h.liquido)}</b><div class="pt-chips">${chipVar('no último mês', d.variacaoMes)}${chipVar('em 3 meses', d.variacao3)}${d.mesesPeriodo > 4 ? chipVar('em ' + (d.mesesPeriodo - 1) + ' meses', d.variacaoPeriodo) : ''}</div></div>
+      <div class="grid pf-2" style="margin:14px 0 0"><div><h4 class="pf-sub" style="margin-top:0">O que tem</h4>${linha('Contas e dinheiro', h.liquidez)}${linha('Poupança', h.poupanca)}${linha('Investimentos', h.investimentos)}${linha('Total', h.ativos, 'pos')}</div>
+        <div><h4 class="pf-sub" style="margin-top:0">O que deve</h4>${linha('Dívidas e empréstimos', h.dividas)}${linha('Cartões de crédito', h.cartoes)}${linha('Total', h.passivos, 'neg')}</div></div>
+      ${d.evolucao.length > 1 ? '<div class="chart-h" style="height:220px;margin-top:12px"><canvas id="pf-ch-patr"></canvas></div>' : '<p class="muted mini">A evolução mensal aparece quando houver mais de um mês de movimentos.</p>'}
+      ${d.contas.length ? `<details class="obj-hist" style="margin-top:10px"><summary>Contas incluídas (${d.contas.length})</summary>${d.contas.map(x => `<div class="linha-kv"><span>${esc(x.nome)} <span class="muted mini">${esc(x.modalidade)}</span></span><b class="eur ${x.saldo < 0 ? 'neg' : ''}">${eur(x.saldo)}</b></div>`).join('')}</details>` : ''}
+      <p class="muted mini" style="margin:10px 0 0">As dívidas contam só o capital que falta pagar. A poupança e os investimentos são os saldos das contas dessas modalidades.</p></div>`;
+    if (d.evolucao.length > 1) desenhar('pf-patr', 'pf-ch-patr', {type:'bar', data:{labels:d.evolucao.map(x => x.mes), datasets:[
+      {type:'line', label:'Património líquido', data:d.evolucao.map(x => x.liquido), borderColor:'#2563eb', backgroundColor:'#2563eb', tension:.25, pointRadius:3, order:0},
+      {label:'Contas e dinheiro', data:d.evolucao.map(x => x.liquidez), backgroundColor:'#16a34a', stack:'a'}, {label:'Poupança', data:d.evolucao.map(x => x.poupanca), backgroundColor:'#0d9488', stack:'a'},
+      {label:'Investimentos', data:d.evolucao.map(x => x.investimentos), backgroundColor:'#7c3aed', stack:'a'},
+      {label:'Dívidas', data:d.evolucao.map(x => -x.dividas), backgroundColor:'#dc2626', stack:'a'}, {label:'Cartões', data:d.evolucao.map(x => -x.cartoes), backgroundColor:'#d97706', stack:'a'}]},
+      options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom', labels:{boxWidth:10}}, tooltip:{callbacks:{label:c => ` ${c.dataset.label}: ${eur(c.parsed.y)}`}}}, scales:{x:{stacked:true, grid:{display:false}}, y:{stacked:true, ticks:{callback:v => eur(v)}}}}});
+  } catch (e) { if (el) el.innerHTML = ''; }
+}
+/* ---------- subscrições e despesas repetidas ---------- */
+async function carregarSubscricoesCard() {
+  const el = $('#pf-subs'); if (!el) return;
+  try {
+    const d = await api('getSubscricoesDetetadas'); if (!$('#pf-subs')) return;
+    if (!d.itens.length) { el.innerHTML = ''; return; }
+    el.innerHTML = `<div class="card sec" style="--sc:#db2777"><div class="card-h"><h3>Subscrições e despesas repetidas</h3><span class="chip av">${eur(d.totalMes)}/mês · ${eur(d.totalAno)}/ano</span></div>
+      <p class="sub-t" style="margin:0 0 8px">Encontrámos cobranças que se repetem todos os meses e que ainda não são recorrentes. Ao criar a recorrente, o valor passa a entrar nos compromissos e na previsão, sem ter de o lançar à mão.</p>
+      ${d.itens.map(x => `<div class="pf-sub-i"><div><b>${esc(x.descricao)}</b>${x.variavel ? ' <span class="chip neu">valor variável</span>' : ''}<div class="muted mini">${esc(x.categoria)} · ${esc(x.conta)} · dia ${x.dia} · ${x.ocorrencias} meses seguidos · próxima ${esc(x.proximaTxt)}</div></div>
+        <div class="pf-sub-d"><b class="eur">${eur(x.valor)}</b>${d.podeCriar ? `<button class="btn peq" data-pf-sub="${esc(x.chave)}">Criar recorrente</button>` : ''}</div></div>`).join('')}
+      ${d.podeCriar && d.itens.length > 1 ? `<button class="btn pri" style="margin-top:12px" data-pf-sub-todas="1">Criar todas (${d.itens.length})</button>` : ''}</div>`;
+    el.dataset.chaves = JSON.stringify(d.itens.map(x => x.chave));
+  } catch (e) { if (el) el.innerHTML = ''; }
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('#perfil-corpo [data-pf-sub],#perfil-corpo [data-pf-sub-todas]'); if (!b) return;
+  const chaves = b.dataset.pfSub ? [b.dataset.pfSub] : JSON.parse($('#pf-subs').dataset.chaves || '[]');
+  try { const r = await api('criarRecorrentesDetetadas', chaves); S.cacheAba = {}; toast(r.criadas === 1 ? 'Recorrente criada. Passa a contar a partir da próxima cobrança.' : `${r.criadas} recorrentes criadas.`, 'ok'); carregarSubscricoesCard(); } catch (er) { falhou(er); }
+});
+
+async function formPlanoPerfil() {
+  try {
+    const p = await api('getPerfilPlano'), casal = S.perfilEsc === 'casal', lista = casal ? p.casal : p.pessoal, cl = p.manual.classes || {};
+    const opc = [{v:'essencial', t:'Essencial'}, {v:'flexivel', t:'Flexível'}, {v:'poupanca', t:'Poupança'}];
+    const campos = [];
+    if (!casal) campos.push({id:'pou', label:'Quanto quer poupar do rendimento (%)', tipo:'number', min:0, max:60, step:'1', valor:p.manual.poupancaPct}, {id:'ess', label:'Máximo para gastos essenciais (%)', tipo:'number', min:20, max:80, step:'1', valor:p.manual.essencialPct},
+      {id:'i1', tipo:'info', html:'<span class="muted mini">O que sobrar fica para gastos flexíveis. A reserva de emergência fica sempre em 3 meses de essenciais.</span>'});
+    campos.push({id:'i2', tipo:'info', html:'<b>Classifique cada categoria</b><div class="muted mini">A sugestão automática vem pré-selecionada.</div>'});
+    lista.forEach((x, i) => campos.push({id:'c' + i, label:x.nome, tipo:'select', opcoes:opc, valor:cl[norm(x.nome)] || x.auto}));
+    abrirForm({titulo:'O meu plano', botao:'Guardar e ativar', campos, onSubmit: async v => {
+      const classes = Object.assign({}, cl);
+      lista.forEach((x, i) => { const k = norm(x.nome); if (v['c' + i] === x.auto) delete classes[k]; else classes[k] = v['c' + i]; });
+      const manual = {classes}; if (!casal) { manual.poupancaPct = parseFloat(v.pou); manual.essencialPct = parseFloat(v.ess); }
+      await api('salvarPerfilPlano', {modo:'manual', manual});
+      toast('Plano manual ativo.', 'ok'); carregarPerfil();
+    }});
+  } catch (e) { falhou(e); }
+}
+document.addEventListener('click', async e => {
+  const t = e.target; let b;
+  if (!t.closest('#perfil-corpo')) return;
+  if ((b = t.closest('[data-pf-esc]'))) { S.perfilEsc = b.dataset.pfEsc; return carregarPerfil(); }
+  if (t.closest('[data-pf-recarregar]')) return carregarPerfil();
+  if ((b = t.closest('[data-pf-modo]'))) {
+    try {
+      if (b.dataset.pfModo === 'manual') {
+        const p = await api('getPerfilPlano'), jaTem = p.manual && (Object.keys(p.manual.classes || {}).length || p.modo === 'manual');
+        if (!jaTem) return formPlanoPerfil();
+      }
+      await api('salvarPerfilPlano', {modo:b.dataset.pfModo}); toast(b.dataset.pfModo === 'manual' ? 'Plano manual ativado.' : 'Plano automático ativado.', 'ok'); carregarPerfil();
+    } catch (er) { falhou(er); }
+    return;
+  }
+  if (t.closest('[data-pf-edit]')) return formPlanoPerfil();
+  if (t.closest('[data-pf-reserva]')) {
+    try { const r = await api('criarObjetivoReserva'); S.cacheAba = {}; toast(r.criado ? 'Objetivo criado. Veja-o em Objetivos.' : 'Objetivo atualizado.', 'ok'); carregarPerfil(); } catch (er) { falhou(er); }
+  }
+});
+
 /* =====================================================================
  * Eventos
  * =================================================================== */
